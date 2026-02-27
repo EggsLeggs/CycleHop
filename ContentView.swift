@@ -157,7 +157,6 @@ struct ContentView: View {
     @ViewBuilder
     private var floatingToolbar: some View {
         VStack {
-            Spacer()
             HStack {
                 Spacer()
                 VStack(spacing: 0) {
@@ -191,9 +190,10 @@ struct ContentView: View {
                 .background(.regularMaterial)
                 .clipShape(RoundedRectangle(cornerRadius: 10))
                 .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
-                .padding(.trailing, 12)
             }
-            .padding(.bottom, isCompact ? 160 : 20)
+            .padding(.top, 16)
+            .padding(.trailing, 12)
+            Spacer()
         }
     }
 }
