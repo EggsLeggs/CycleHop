@@ -1,6 +1,6 @@
 # CycleHop
 
-A Swift Playground app for finding London bike-sharing stations. Search for a destination and Cycle Hop recommends the best nearby docking stations based on distance, bike availability, and direction of travel.
+A Swift Playground app for finding London bike-sharing stations. Search for a destination and CycleHop recommends the best nearby docking stations based on distance, bike availability, and direction of travel.
 
 ## Features
 
@@ -17,5 +17,3 @@ A Swift Playground app for finding London bike-sharing stations. Search for a de
 ## Getting Started
 
 Open `My App.swiftpm` in Swift Playgrounds or Xcode and run on a simulator or device.
-# CycleHop
-# CycleHop

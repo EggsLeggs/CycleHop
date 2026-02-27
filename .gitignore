@@ -1,0 +1,9 @@
+.swiftpm/playgrounds/CachedManifest.plist
+.swiftpm/playgrounds/DocumentThumbnail.plist
+.swiftpm/playgrounds/DocumentThumbnail.png
+.swiftpm/playgrounds/Workspace.plist
+.swiftpm/xcode/
+.swiftpm/configuration/
+.claude/
+.DS_Store
+.build/
