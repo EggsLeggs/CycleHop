@@ -6,7 +6,7 @@ enum SantanderCyclesConfig {
     static let city = "London"
     static let country = "GB"
     static let operatorName = "Transport for London"
-    static let brandColour = "#E1001A"
+    static let brandColour = "#E5362C"
     static let timezone = "Europe/London"
     static let liveAPIURL = URL(string: "https://api.tfl.gov.uk/BikePoint")!
     static let localJSONName = "santander-stations"

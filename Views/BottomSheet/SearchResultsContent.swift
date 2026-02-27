@@ -142,6 +142,20 @@ struct SearchResultsContent: View {
                         .padding(.horizontal)
                     }
                 }
+                Divider()
+                    .padding(.horizontal)
+                    .padding(.top, 16)
+
+                Button("Return to onboarding") {
+                    UserDefaults.standard.set(false, forKey: "hasCompletedOnboarding")
+                    UserDefaults.standard.removeObject(forKey: "selectedProviderID")
+                }
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 12)
+                .padding(.horizontal)
+                .padding(.bottom, 8)
             }
             .padding(.vertical, 8)
         }

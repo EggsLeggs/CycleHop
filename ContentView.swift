@@ -2,6 +2,8 @@ import SwiftUI
 import MapKit
 
 struct ContentView: View {
+    let selectedProviderID: String?
+
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @StateObject private var bikePointService = BikePointService()
     @StateObject private var locationManager = LocationManager()
@@ -11,15 +13,36 @@ struct ContentView: View {
     @State private var sheetMode: SheetMode = .search
     @State private var searchText: String = ""
     @State private var destinationCoordinate: CLLocationCoordinate2D? = nil
-    @State private var cameraPosition: MapCameraPosition = .region(
-        MKCoordinateRegion(
-            center: CLLocationCoordinate2D(latitude: 51.509, longitude: -0.118),
-            span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
-        )
-    )
+    @State private var cameraPosition: MapCameraPosition
     @State private var mapCameraCenter: CLLocationCoordinate2D? = nil
     @State private var selectedDetent: PresentationDetent = .height(90)
     @State private var midDetentHeight: CGFloat = 384
+    @State private var hasMovedCamera = false
+
+    private let initialCenter: CLLocationCoordinate2D
+
+    init(selectedProviderID: String? = nil) {
+        self.selectedProviderID = selectedProviderID
+
+        let center: CLLocationCoordinate2D
+        if let id = selectedProviderID,
+           let provider = ProviderRegistry.shared.provider(id: id) as? any OnboardingCityProvider {
+            center = CLLocationCoordinate2D(
+                latitude: provider.defaultCenter.latitude,
+                longitude: provider.defaultCenter.longitude
+            )
+        } else {
+            center = CLLocationCoordinate2D(latitude: 51.509, longitude: -0.118)
+        }
+
+        self.initialCenter = center
+        _cameraPosition = State(wrappedValue: .region(
+            MKCoordinateRegion(
+                center: center,
+                span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
+            )
+        ))
+    }
 
     private var isCompact: Bool {
         horizontalSizeClass == .compact
@@ -30,7 +53,7 @@ struct ContentView: View {
     }
 
     private var filteredBikePoints: [BikePoint] {
-        let center = mapCameraCenter ?? CLLocationCoordinate2D(latitude: 51.509, longitude: -0.118)
+        let center = mapCameraCenter ?? initialCenter
         let centerLocation = CLLocation(latitude: center.latitude, longitude: center.longitude)
         return bikePointService.bikePoints
             .sorted { a, b in
@@ -149,6 +172,20 @@ struct ContentView: View {
                     if isCompact {
                         selectedDetent = .height(90)
                     }
+                }
+            }
+        }
+        .onChange(of: locationManager.userLocation) { _, newLocation in
+            guard !hasMovedCamera, let newLocation else { return }
+            let userLoc = CLLocation(latitude: newLocation.latitude, longitude: newLocation.longitude)
+            let cityLoc = CLLocation(latitude: initialCenter.latitude, longitude: initialCenter.longitude)
+            if userLoc.distance(from: cityLoc) < 50_000 {
+                hasMovedCamera = true
+                withAnimation {
+                    cameraPosition = .region(MKCoordinateRegion(
+                        center: newLocation,
+                        span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
+                    ))
                 }
             }
         }

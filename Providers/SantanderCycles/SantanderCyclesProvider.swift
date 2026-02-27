@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 
 /// BikeShareProvider implementation for Santander Cycles (London).
 /// Loads station data from a bundled JSON snapshot by default;
@@ -137,4 +138,15 @@ public final class SantanderCyclesProvider: BikeShareProvider, @unchecked Sendab
             throw ProviderError.decodingFailed(underlying: error)
         }
     }
+}
+
+// MARK: - OnboardingCityProvider
+
+extension SantanderCyclesProvider: OnboardingCityProvider {
+    public var cityDisplayName: String { SantanderCyclesConfig.city }
+    public var systemDisplayName: String { SantanderCyclesConfig.systemName }
+    public var defaultCenter: Coordinate { Coordinate(latitude: 51.509, longitude: -0.118) }
+    public var brandColor: Color { Color(hex: SantanderCyclesConfig.brandColour) ?? .red }
+    public var brandForegroundColor: Color { .white }
+    public var cityArtSVGName: String? { "London" }
 }
