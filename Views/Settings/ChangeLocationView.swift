@@ -7,7 +7,9 @@ struct ChangeLocationView: View {
     @State private var selectedProvider: (any OnboardingCityProvider)?
 
     private var cityProviders: [any OnboardingCityProvider] {
-        registry.providers.compactMap { $0 as? any OnboardingCityProvider }
+        registry.providers
+            .compactMap { $0 as? any OnboardingCityProvider }
+            .sorted { $0.cityDisplayName.localizedCaseInsensitiveCompare($1.cityDisplayName) == .orderedAscending }
     }
 
     var body: some View {

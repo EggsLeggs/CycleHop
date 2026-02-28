@@ -128,6 +128,23 @@
 "Miles" = "Miles";
 "Controls how distances to stations are displayed throughout the app." = "Définit le format d'affichage des distances aux stations dans l'app.";
 
+/* Map style (onboarding + settings) */
+"Choose Your Map" = "Choisissez votre carte";
+"Offline Map" = "Carte hors ligne";
+"Works without internet" = "Fonctionne sans internet";
+"Apple Maps" = "Plans Apple";
+"Requires connection" = "Connexion requise";
+"This app is built for the Swift Student Challenge, which requires offline support. The bundled map uses OpenStreetMap tiles and works anywhere - no connection needed." = "Cette app est conçue pour l'Apple Student Challenge, qui exige un fonctionnement hors ligne. La carte intégrée utilise des tuiles OpenStreetMap et fonctionne partout — aucune connexion requise.";
+"Apple Maps loads live map tiles from Apple's servers. If you have offline regions downloaded in the Maps app, those will work here too." = "Plans Apple charge des tuiles en direct depuis les serveurs d'Apple. Si vous avez téléchargé des régions hors ligne dans l'app Plans, elles fonctionneront ici aussi.";
+"Requires Internet" = "Connexion requise";
+"Use Apple Maps Anyway" = "Utiliser Plans Apple quand même";
+"Keep Offline Map" = "Garder la carte hors ligne";
+"Apple Maps needs an internet connection to load map tiles. The offline map works anywhere." = "Plans Apple nécessite une connexion internet pour charger les tuiles. La carte hors ligne fonctionne partout.";
+"Map Style" = "Style de carte";
+"This app is built for the Swift Student Challenge, which requires projects to work fully offline. The bundled offline map uses OpenStreetMap tiles so everything works without a network connection. If you have Apple Maps regions downloaded for offline use, Apple Maps should work here too." = "Cette app est conçue pour l'Apple Student Challenge, qui exige un fonctionnement entièrement hors ligne. La carte hors ligne intégrée utilise des tuiles OpenStreetMap pour tout faire fonctionner sans connexion. Si vous avez téléchargé des régions Plans Apple pour l'utilisation hors ligne, elles devraient aussi fonctionner ici.";
+"Offline Map works without an internet connection using locally bundled tiles." = "La carte hors ligne fonctionne sans connexion internet grâce aux tuiles intégrées.";
+"Apple Maps shows live map data but requires an internet connection." = "Plans Apple affiche des données cartographiques en direct, mais nécessite une connexion internet.";
+
 /* Provider open-app buttons */
 "Open Vélib' Métropole" = "Ouvrir Vélib' Métropole";
 "Open in Citi Bike" = "Ouvrir dans Citi Bike";

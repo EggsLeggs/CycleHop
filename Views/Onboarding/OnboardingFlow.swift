@@ -8,7 +8,9 @@ struct OnboardingFlow: View {
     @EnvironmentObject private var registry: ProviderRegistry
 
     private var cityProviders: [any OnboardingCityProvider] {
-        registry.providers.compactMap { $0 as? any OnboardingCityProvider }
+        registry.providers
+            .compactMap { $0 as? any OnboardingCityProvider }
+            .sorted { $0.cityDisplayName.localizedCaseInsensitiveCompare($1.cityDisplayName) == .orderedAscending }
     }
 
     var body: some View {
@@ -27,10 +29,15 @@ struct OnboardingFlow: View {
                         providers: cityProviders,
                         selectedProvider: $selectedProvider
                     ) {
-                        if let provider = selectedProvider {
-                            onComplete(provider.id)
+                        if selectedProvider != nil {
+                            path.append("mapStyle")
                         }
                     }
+                case "mapStyle":
+                    MapStyleScreen(
+                        providerID: selectedProvider?.id ?? "",
+                        onComplete: onComplete
+                    )
                 default:
                     EmptyView()
                 }

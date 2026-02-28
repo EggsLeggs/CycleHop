@@ -40,7 +40,7 @@ struct CitySelectScreen: View {
                         Image(uiImage: img)
                             .resizable()
                             .aspectRatio(contentMode: .fit)
-                            .frame(height: 72)
+                            .frame(height: 84)
                             .opacity(0.5)
                     }
 

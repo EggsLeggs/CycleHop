@@ -62,8 +62,12 @@ struct SettingsView: View {
 
                     Divider().padding(.leading, dividerInset)
 
-                    settingsRow(icon: "map", title: "Online / Offline Maps")
-                        .foregroundStyle(.secondary)
+                    NavigationLink {
+                        MapStyleSettingsView()
+                    } label: {
+                        settingsRow(icon: "map", title: "Online / Offline Maps")
+                    }
+                    .buttonStyle(.plain)
 
                     Divider()
 

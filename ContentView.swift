@@ -24,6 +24,7 @@ struct ContentView: View {
     @State private var hasMovedCamera = false
     @AppStorage("hasSeenDebugTooltip") private var hasSeenDebugTooltip = false
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
+    @AppStorage("useOfflineMap") private var useOfflineMap = true
     @State private var showDebugTooltip = false
     @State private var showDebugMenu = false
 
@@ -178,70 +179,123 @@ struct ContentView: View {
 
     @ViewBuilder
     private var mapView: some View {
-        Map(position: $cameraPosition) {
-            UserAnnotation()
-
-            ForEach(filteredBikePoints) { bikePoint in
-                Annotation(bikePoint.commonName, coordinate: bikePoint.coordinate, anchor: .bottom) {
-                    BikePointMarker(
-                        bikePoint: bikePoint,
-                        isSelected: selectedBikePoint?.id == bikePoint.id
-                    )
-                    .onTapGesture {
-                        withAnimation(.spring(response: 0.3)) {
-                            selectedBikePoint = bikePoint
-                            sheetMode = .bikePointDetail
+        if useOfflineMap {
+            OfflineMapView(
+                initialCenter: initialCenter,
+                cameraPosition: $cameraPosition,
+                mapCameraCenter: $mapCameraCenter,
+                filteredBikePoints: filteredBikePoints,
+                selectedBikePoint: $selectedBikePoint,
+                destinationCoordinate: destinationCoordinate,
+                isCompact: isCompact,
+                onBikePointTap: { bikePoint in
+                    withAnimation(.spring(response: 0.3)) {
+                        selectedBikePoint = bikePoint
+                        sheetMode = .bikePointDetail
+                        if isCompact {
+                            selectedDetent = midDetent
+                        }
+                        cameraPosition = .region(MKCoordinateRegion(
+                            center: CLLocationCoordinate2D(
+                                latitude: bikePoint.coordinate.latitude - (isCompact ? 0.001 : 0),
+                                longitude: bikePoint.coordinate.longitude
+                            ),
+                            span: MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005)
+                        ))
+                    }
+                },
+                onMapTap: {
+                    if selectedBikePoint != nil {
+                        withAnimation {
+                            selectedBikePoint = nil
+                            sheetMode = .search
                             if isCompact {
-                                selectedDetent = midDetent
+                                selectedDetent = collapsedDetent
                             }
-                            cameraPosition = .region(MKCoordinateRegion(
-                                center: CLLocationCoordinate2D(
-                                    latitude: bikePoint.coordinate.latitude - (isCompact ? 0.001 : 0),
-                                    longitude: bikePoint.coordinate.longitude
-                                ),
-                                span: MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005)
-                            ))
+                        }
+                    }
+                }
+            )
+            .onChange(of: locationManager.userLocation) { _, newLocation in
+                guard !hasMovedCamera, let newLocation else { return }
+                let userLoc = CLLocation(latitude: newLocation.latitude, longitude: newLocation.longitude)
+                let cityLoc = CLLocation(latitude: initialCenter.latitude, longitude: initialCenter.longitude)
+                if userLoc.distance(from: cityLoc) < 50_000 {
+                    hasMovedCamera = true
+                    withAnimation {
+                        cameraPosition = .region(MKCoordinateRegion(
+                            center: newLocation,
+                            span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
+                        ))
+                    }
+                }
+            }
+        } else {
+            Map(position: $cameraPosition) {
+                UserAnnotation()
+
+                ForEach(filteredBikePoints) { bikePoint in
+                    Annotation(bikePoint.commonName, coordinate: bikePoint.coordinate, anchor: .bottom) {
+                        BikePointMarker(
+                            bikePoint: bikePoint,
+                            isSelected: selectedBikePoint?.id == bikePoint.id
+                        )
+                        .onTapGesture {
+                            withAnimation(.spring(response: 0.3)) {
+                                selectedBikePoint = bikePoint
+                                sheetMode = .bikePointDetail
+                                if isCompact {
+                                    selectedDetent = midDetent
+                                }
+                                cameraPosition = .region(MKCoordinateRegion(
+                                    center: CLLocationCoordinate2D(
+                                        latitude: bikePoint.coordinate.latitude - (isCompact ? 0.001 : 0),
+                                        longitude: bikePoint.coordinate.longitude
+                                    ),
+                                    span: MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005)
+                                ))
+                            }
+                        }
+                    }
+                }
+
+                // Destination pin
+                if let dest = destinationCoordinate {
+                    Marker("Destination", coordinate: dest)
+                        .tint(.orange)
+                }
+            }
+            .mapStyle(.standard(pointsOfInterest: .excludingAll))
+            .safeAreaPadding(.bottom, isCompact ? 100 : 0)
+            .mapControls {
+                MapScaleView()
+            }
+            .onMapCameraChange(frequency: .onEnd) { context in
+                mapCameraCenter = context.region.center
+            }
+            .onTapGesture { _ in
+                if selectedBikePoint != nil {
+                    withAnimation {
+                        selectedBikePoint = nil
+                        sheetMode = .search
+                        if isCompact {
+                            selectedDetent = collapsedDetent
                         }
                     }
                 }
             }
-
-            // Destination pin
-            if let dest = destinationCoordinate {
-                Marker("Destination", coordinate: dest)
-                    .tint(.orange)
-            }
-        }
-        .mapStyle(.standard(pointsOfInterest: .excludingAll))
-        .safeAreaPadding(.bottom, isCompact ? 100 : 0)
-        .mapControls {
-            MapScaleView()
-        }
-        .onMapCameraChange(frequency: .onEnd) { context in
-            mapCameraCenter = context.region.center
-        }
-        .onTapGesture { _ in
-            if selectedBikePoint != nil {
-                withAnimation {
-                    selectedBikePoint = nil
-                    sheetMode = .search
-                    if isCompact {
-                        selectedDetent = collapsedDetent
+            .onChange(of: locationManager.userLocation) { _, newLocation in
+                guard !hasMovedCamera, let newLocation else { return }
+                let userLoc = CLLocation(latitude: newLocation.latitude, longitude: newLocation.longitude)
+                let cityLoc = CLLocation(latitude: initialCenter.latitude, longitude: initialCenter.longitude)
+                if userLoc.distance(from: cityLoc) < 50_000 {
+                    hasMovedCamera = true
+                    withAnimation {
+                        cameraPosition = .region(MKCoordinateRegion(
+                            center: newLocation,
+                            span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
+                        ))
                     }
-                }
-            }
-        }
-        .onChange(of: locationManager.userLocation) { _, newLocation in
-            guard !hasMovedCamera, let newLocation else { return }
-            let userLoc = CLLocation(latitude: newLocation.latitude, longitude: newLocation.longitude)
-            let cityLoc = CLLocation(latitude: initialCenter.latitude, longitude: initialCenter.longitude)
-            if userLoc.distance(from: cityLoc) < 50_000 {
-                hasMovedCamera = true
-                withAnimation {
-                    cameraPosition = .region(MKCoordinateRegion(
-                        center: newLocation,
-                        span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
-                    ))
                 }
             }
         }

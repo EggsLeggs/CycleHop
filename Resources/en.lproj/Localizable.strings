@@ -128,6 +128,23 @@
 "Miles" = "Miles";
 "Controls how distances to stations are displayed throughout the app." = "Controls how distances to stations are displayed throughout the app.";
 
+/* Map style (onboarding + settings) */
+"Choose Your Map" = "Choose Your Map";
+"Offline Map" = "Offline Map";
+"Works without internet" = "Works without internet";
+"Apple Maps" = "Apple Maps";
+"Requires connection" = "Requires connection";
+"This app is built for the Swift Student Challenge, which requires offline support. The bundled map uses OpenStreetMap tiles and works anywhere - no connection needed." = "This app is built for the Swift Student Challenge, which requires offline support. The bundled map uses OpenStreetMap tiles and works anywhere - no connection needed.";
+"Apple Maps loads live map tiles from Apple's servers. If you have offline regions downloaded in the Maps app, those will work here too." = "Apple Maps loads live map tiles from Apple's servers. If you have offline regions downloaded in the Maps app, those will work here too.";
+"Requires Internet" = "Requires Internet";
+"Use Apple Maps Anyway" = "Use Apple Maps Anyway";
+"Keep Offline Map" = "Keep Offline Map";
+"Apple Maps needs an internet connection to load map tiles. The offline map works anywhere." = "Apple Maps needs an internet connection to load map tiles. The offline map works anywhere.";
+"Map Style" = "Map Style";
+"This app is built for the Swift Student Challenge, which requires projects to work fully offline. The bundled offline map uses OpenStreetMap tiles so everything works without a network connection. If you have Apple Maps regions downloaded for offline use, Apple Maps should work here too." = "This app is built for the Swift Student Challenge, which requires projects to work fully offline. The bundled offline map uses OpenStreetMap tiles so everything works without a network connection. If you have Apple Maps regions downloaded for offline use, Apple Maps should work here too.";
+"Offline Map works without an internet connection using locally bundled tiles." = "Offline Map works without an internet connection using locally bundled tiles.";
+"Apple Maps shows live map data but requires an internet connection." = "Apple Maps shows live map data but requires an internet connection.";
+
 /* Provider open-app buttons */
 "Open Vélib' Métropole" = "Open Vélib' Métropole";
 "Open in Citi Bike" = "Open in Citi Bike";
