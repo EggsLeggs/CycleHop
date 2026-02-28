@@ -18,6 +18,10 @@ struct ContentView: View {
     @State private var selectedDetent: PresentationDetent = .height(90)
     @State private var midDetentHeight: CGFloat = 384
     @State private var hasMovedCamera = false
+    @AppStorage("hasSeenDebugTooltip") private var hasSeenDebugTooltip = false
+    @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
+    @State private var showDebugTooltip = false
+    @State private var showDebugMenu = false
 
     private let initialCenter: CLLocationCoordinate2D
 
@@ -223,13 +227,83 @@ struct ContentView: View {
                             .frame(width: 44, height: 44)
                     }
                 }
-                .tint(.red)
                 .background(.regularMaterial)
                 .clipShape(RoundedRectangle(cornerRadius: 10))
                 .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
             }
             .padding(.top, 16)
             .padding(.trailing, 12)
+
+            HStack(alignment: .center, spacing: 8) {
+                Spacer()
+
+                if showDebugTooltip {
+                    HStack(spacing: 6) {
+                        Text("Try out demo features!")
+                            .font(.system(size: 13, weight: .medium))
+                            .foregroundStyle(.primary)
+                        Image(systemName: "arrow.right")
+                            .font(.system(size: 11, weight: .semibold))
+                            .foregroundStyle(.secondary)
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .background(.regularMaterial)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                    .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
+                    .transition(.asymmetric(
+                        insertion: .opacity.combined(with: .offset(x: 8)),
+                        removal: .opacity.combined(with: .offset(x: 8))
+                    ))
+                    .onTapGesture {
+                        withAnimation(.spring(duration: 0.3)) {
+                            showDebugTooltip = false
+                        }
+                        hasSeenDebugTooltip = true
+                    }
+                }
+
+                Button {
+                    withAnimation(.spring(duration: 0.3)) {
+                        showDebugTooltip = false
+                    }
+                    hasSeenDebugTooltip = true
+                    showDebugMenu = true
+                } label: {
+                    Image(systemName: "ladybug")
+                        .font(.system(size: 16, weight: .medium))
+                        .frame(width: 44, height: 44)
+                }
+                .background(.regularMaterial)
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+                .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
+                .sheet(isPresented: $showDebugMenu) {
+                    DebugMenuView(
+                        onRetriggerTooltip: {
+                            hasSeenDebugTooltip = false
+                            showDebugMenu = false
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+                                withAnimation(.spring(duration: 0.4)) {
+                                    showDebugTooltip = true
+                                }
+                            }
+                        },
+                        onRestartOnboarding: {
+                            hasCompletedOnboarding = false
+                        }
+                    )
+                }
+            }
+            .padding(.top, 8)
+            .padding(.trailing, 12)
+            .onAppear {
+                if !hasSeenDebugTooltip {
+                    withAnimation(.spring(duration: 0.4).delay(0.8)) {
+                        showDebugTooltip = true
+                    }
+                }
+            }
+
             Spacer()
         }
     }

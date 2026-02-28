@@ -10,6 +10,11 @@ struct OnboardingHost: View {
         horizontalSizeClass == .compact
     }
 
+    private var providerAccentColor: Color? {
+        guard hasCompletedOnboarding, !selectedProviderID.isEmpty else { return nil }
+        return (registry.provider(id: selectedProviderID) as? any OnboardingCityProvider)?.brandColor
+    }
+
     var body: some View {
         Group {
             if hasCompletedOnboarding {
@@ -31,6 +36,7 @@ struct OnboardingHost: View {
                     }
             }
         }
+        .tint(providerAccentColor)
         .task {
             registry.register(SantanderCyclesProvider())
             registry.register(CitiBikeProvider())
