@@ -27,9 +27,9 @@ let package = Package(
             ],
             supportedInterfaceOrientations: [
                 .portrait,
-                .landscapeRight,
-                .landscapeLeft,
                 .portraitUpsideDown(.when(deviceFamilies: [.pad])),
+                .landscapeLeft(.when(deviceFamilies: [.pad])),
+                .landscapeRight(.when(deviceFamilies: [.pad])),
             ],
             capabilities: [
                 .locationWhenInUse(
