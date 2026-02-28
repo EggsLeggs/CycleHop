@@ -2,10 +2,13 @@ import SwiftUI
 
 struct DebugMenuView: View {
     @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var stampStore: StampStore
     @AppStorage("userName") private var userName = ""
 
     let onRetriggerTooltip: () -> Void
     let onRestartOnboarding: () -> Void
+
+    @State private var selectedStampID = ""
 
     var body: some View {
         NavigationStack {
@@ -31,6 +34,34 @@ struct DebugMenuView: View {
                     }
                 }
 
+                Section("Stamps") {
+                    Button(role: .destructive) {
+                        stampStore.resetAllStamps()
+                    } label: {
+                        Label {
+                            Text("Reset Stamps")
+                        } icon: {
+                            Image(systemName: "seal.fill")
+                                .foregroundStyle(.red)
+                        }
+                    }
+
+                    if !stampStore.allDefinitions.isEmpty {
+                        Picker("Add Stamp", selection: $selectedStampID) {
+                            Text("Select…").tag("")
+                            ForEach(stampStore.allDefinitions) { definition in
+                                Text(definition.displayName).tag(definition.id)
+                            }
+                        }
+                        .pickerStyle(.menu)
+                        .onChange(of: selectedStampID) { _, newValue in
+                            guard !newValue.isEmpty else { return }
+                            stampStore.claimStamp(id: newValue)
+                            selectedStampID = ""
+                        }
+                    }
+                }
+
                 Section("Onboarding") {
                     Button(role: .destructive) {
                         onRestartOnboarding()
@@ -52,7 +83,7 @@ struct DebugMenuView: View {
                 }
             }
         }
-        .presentationDetents([.medium])
+        .presentationDetents([.medium, .large])
         .presentationDragIndicator(.visible)
         .presentationBackground(.regularMaterial)
     }

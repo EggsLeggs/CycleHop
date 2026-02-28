@@ -8,10 +8,14 @@ struct BottomSheetView: View {
     @Binding var destinationCoordinate: CLLocationCoordinate2D?
     @Binding var cameraPosition: MapCameraPosition
     @Binding var selectedDetent: PresentationDetent
+    @Binding var showStampClaimSheet: Bool
+    let nearbyStamps: [StampDefinition]
     let midDetent: PresentationDetent
+    let collapsedDetent: PresentationDetent
     @ObservedObject var bikePointService: BikePointService
     @ObservedObject var locationManager: LocationManager
     @ObservedObject var searchCompleter: SearchCompleter
+    @ObservedObject var stampStore: StampStore
 
     @State private var destinationName: String?
     @State private var showProfilePanel = false
@@ -25,6 +29,7 @@ struct BottomSheetView: View {
                 selectedDetent: $selectedDetent,
                 showProfilePanel: $showProfilePanel,
                 midDetent: midDetent,
+                collapsedDetent: collapsedDetent,
                 destinationName: destinationName
             )
 
@@ -89,6 +94,20 @@ struct BottomSheetView: View {
                         Divider().padding(.leading, 52)
                     }
                 }
+            }
+        } else {
+            let promoStamps = nearbyStamps.filter { !stampStore.dismissedPromoIDs.contains($0.id) }
+            if !promoStamps.isEmpty && selectedDetent != collapsedDetent {
+                VStack(spacing: 0) {
+                    ForEach(promoStamps) { stamp in
+                        StampPromoCard(
+                            stamp: stamp,
+                            onTap: { showStampClaimSheet = true },
+                            onDismiss: { stampStore.dismissPromo(id: stamp.id) }
+                        )
+                    }
+                }
+                .padding(.top, 4)
             }
         }
     }

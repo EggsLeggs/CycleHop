@@ -5,6 +5,7 @@ struct OnboardingHost: View {
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
     @AppStorage("selectedProviderID") private var selectedProviderID = ""
     @EnvironmentObject private var registry: ProviderRegistry
+    @EnvironmentObject private var stampStore: StampStore
 
     private var isCompact: Bool {
         horizontalSizeClass == .compact
@@ -41,6 +42,7 @@ struct OnboardingHost: View {
             registry.register(SantanderCyclesProvider())
             registry.register(CitiBikeProvider())
             registry.register(VelibProvider())
+            stampStore.loadDefinitions(from: registry)
         }
         .onAppear {
             #if DEBUG

@@ -9,12 +9,16 @@ struct ContentView: View {
     @StateObject private var locationManager = LocationManager()
     @StateObject private var searchCompleter = SearchCompleter()
 
+    @EnvironmentObject private var stampStore: StampStore
+
     @State private var selectedBikePoint: BikePoint? = nil
     @State private var sheetMode: SheetMode = .search
     @State private var searchText: String = ""
     @State private var destinationCoordinate: CLLocationCoordinate2D? = nil
     @State private var cameraPosition: MapCameraPosition
     @State private var mapCameraCenter: CLLocationCoordinate2D? = nil
+    @State private var nearbyStamps: [StampDefinition] = []
+    @State private var showStampClaimSheet = false
     @State private var selectedDetent: PresentationDetent = .height(90)
     @State private var midDetentHeight: CGFloat = 384
     @State private var hasMovedCamera = false
@@ -52,6 +56,8 @@ struct ContentView: View {
         horizontalSizeClass == .compact
     }
 
+    private var collapsedDetent: PresentationDetent { .height(90) }
+
     private var midDetent: PresentationDetent {
         .height(midDetentHeight)
     }
@@ -77,18 +83,36 @@ struct ContentView: View {
             destinationCoordinate: $destinationCoordinate,
             cameraPosition: $cameraPosition,
             selectedDetent: $selectedDetent,
+            showStampClaimSheet: $showStampClaimSheet,
+            nearbyStamps: nearbyStamps,
             midDetent: midDetent,
+            collapsedDetent: collapsedDetent,
             bikePointService: bikePointService,
             locationManager: locationManager,
-            searchCompleter: searchCompleter
+            searchCompleter: searchCompleter,
+            stampStore: stampStore
         )
     }
 
     var body: some View {
-        if isCompact {
-            compactLayout
-        } else {
-            regularLayout
+        Group {
+            if isCompact {
+                compactLayout
+            } else {
+                regularLayout
+            }
+        }
+        .onChange(of: locationManager.userLocation) { _, newLocation in
+            updateNearbyStamps(location: newLocation)
+        }
+        .onChange(of: stampStore.allDefinitions) { _, _ in
+            updateNearbyStamps(location: locationManager.userLocation)
+        }
+        .onChange(of: stampStore.claimedStamps) { _, _ in
+            updateNearbyStamps(location: locationManager.userLocation)
+        }
+        .onAppear {
+            updateNearbyStamps(location: locationManager.userLocation)
         }
     }
 
@@ -96,14 +120,32 @@ struct ContentView: View {
         GeometryReader { geometry in
             ZStack {
                 mapView
+                    .sheet(isPresented: $showStampClaimSheet) {
+                        StampClaimSheet(stamps: nearbyStamps)
+                            .environmentObject(stampStore)
+                    }
+
                 floatingToolbar
+
+                // Stamp pill floats above the collapsed sheet
+                VStack {
+                    Spacer()
+                    if !nearbyStamps.isEmpty {
+                        StampPill(nearbyStamps: nearbyStamps) {
+                            showStampClaimSheet = true
+                        }
+                        .transition(.move(edge: .bottom).combined(with: .opacity))
+                    }
+                }
+                .padding(.bottom, 90)
+                .animation(.spring(response: 0.35, dampingFraction: 0.8), value: nearbyStamps.isEmpty)
             }
             .onAppear {
                 midDetentHeight = min(350 + geometry.safeAreaInsets.bottom, geometry.size.height)
             }
             .sheet(isPresented: .constant(true)) {
                 bottomSheetContent
-                    .presentationDetents([.height(90), midDetent, .large], selection: $selectedDetent)
+                    .presentationDetents([collapsedDetent, midDetent, .large], selection: $selectedDetent)
                     .presentationDragIndicator(.visible)
                     .presentationBackgroundInteraction(.enabled(upThrough: midDetent))
                     .interactiveDismissDisabled()
@@ -174,7 +216,7 @@ struct ContentView: View {
                     selectedBikePoint = nil
                     sheetMode = .search
                     if isCompact {
-                        selectedDetent = .height(90)
+                        selectedDetent = collapsedDetent
                     }
                 }
             }
@@ -306,5 +348,14 @@ struct ContentView: View {
 
             Spacer()
         }
+    }
+
+    private func updateNearbyStamps(location: CLLocationCoordinate2D?) {
+        guard let location else {
+            withAnimation { nearbyStamps = [] }
+            return
+        }
+        let coord = Coordinate(latitude: location.latitude, longitude: location.longitude)
+        withAnimation { nearbyStamps = stampStore.nearbyUnclaimed(at: coord) }
     }
 }

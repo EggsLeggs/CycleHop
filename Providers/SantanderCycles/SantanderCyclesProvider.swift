@@ -151,4 +151,12 @@ extension SantanderCyclesProvider: OnboardingCityProvider {
     public var cityArtSVGName: String? { "London" }
     public var cityArtPNGBaseName: String? { "LondonLocation" }
     public var stampSVGName: String? { "LondonStamp" }
+    public var stampDefinitions: [StampDefinition] { [
+        StampDefinition(id: "london-city", displayName: "London", type: .city,
+            stampPNGBaseName: "LondonStamp", cityArtPNGBaseName: "LondonLocation",
+            area: StampArea(centerLatitude: 51.509, centerLongitude: -0.118, radiusMeters: 20_000)),
+        StampDefinition(id: "tower-bridge", displayName: "Tower Bridge", type: .attraction,
+            stampPNGBaseName: "TowerBridgeAttractionStamp", cityArtPNGBaseName: "LondonLocation",
+            area: StampArea(centerLatitude: 51.5055, centerLongitude: -0.0754, radiusMeters: 500))
+    ] }
 }

@@ -118,4 +118,9 @@ extension CitiBikeProvider: OnboardingCityProvider {
     public var cityArtSVGName: String? { "NewYork" }
     public var cityArtPNGBaseName: String? { "NewYorkLocation" }
     public var stampSVGName: String? { "NewYorkStamp" }
+    public var stampDefinitions: [StampDefinition] { [
+        StampDefinition(id: "new-york-city", displayName: "New York", type: .city,
+            stampPNGBaseName: "NewYorkStamp", cityArtPNGBaseName: "NewYorkLocation",
+            area: StampArea(centerLatitude: 40.7580, centerLongitude: -73.9855, radiusMeters: 30_000))
+    ] }
 }

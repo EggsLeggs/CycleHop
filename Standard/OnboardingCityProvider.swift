@@ -19,6 +19,8 @@ public protocol OnboardingCityProvider: BikeShareProvider {
     var cityArtPNGBaseName: String? { get }
     /// Name of the bundled stamp SVG for this city (without extension), or nil if unavailable
     var stampSVGName: String? { get }
+    /// Stamp definitions for this city and its attractions
+    var stampDefinitions: [StampDefinition] { get }
 }
 
 public extension OnboardingCityProvider {
@@ -26,4 +28,5 @@ public extension OnboardingCityProvider {
     var cityArtSVGName: String? { nil }
     var cityArtPNGBaseName: String? { nil }
     var stampSVGName: String? { nil }
+    var stampDefinitions: [StampDefinition] { [] }
 }

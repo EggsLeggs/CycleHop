@@ -108,4 +108,15 @@ extension VelibProvider: OnboardingCityProvider {
     public var cityArtSVGName: String? { "Paris" }
     public var cityArtPNGBaseName: String? { "ParisLocation" }
     public var stampSVGName: String? { "ParisStamp" }
+    public var stampDefinitions: [StampDefinition] { [
+        StampDefinition(id: "paris-city", displayName: "Paris", type: .city,
+            stampPNGBaseName: "ParisStamp", cityArtPNGBaseName: "ParisLocation",
+            area: StampArea(centerLatitude: 48.8566, centerLongitude: 2.3522, radiusMeters: 20_000)),
+        StampDefinition(id: "eiffel-tower", displayName: "Eiffel Tower", type: .attraction,
+            stampPNGBaseName: "EifelAttractionStamp", cityArtPNGBaseName: "ParisLocation",
+            area: StampArea(centerLatitude: 48.8584, centerLongitude: 2.2945, radiusMeters: 500)),
+        StampDefinition(id: "arc-de-triomphe", displayName: "Arc de Triomphe", type: .attraction,
+            stampPNGBaseName: "ArcdeTriompheAttractionStamp", cityArtPNGBaseName: "ParisLocation",
+            area: StampArea(centerLatitude: 48.8738, centerLongitude: 2.2950, radiusMeters: 300))
+    ] }
 }

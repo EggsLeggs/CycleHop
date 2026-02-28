@@ -8,6 +8,7 @@ struct SheetHeader: View {
     @Binding var selectedDetent: PresentationDetent
     @Binding var showProfilePanel: Bool
     let midDetent: PresentationDetent
+    let collapsedDetent: PresentationDetent
     let destinationName: String?
     @FocusState private var isSearchFocused: Bool
 
@@ -48,7 +49,7 @@ struct SheetHeader: View {
             case .searchResults:
                 Button {
                     sheetMode = .search
-                    selectedDetent = .height(90)
+                    selectedDetent = collapsedDetent
                 } label: {
                     Image(systemName: "chevron.left")
                         .fontWeight(.semibold)
@@ -73,7 +74,7 @@ struct SheetHeader: View {
                         selectedDetent = midDetent
                     } else {
                         sheetMode = .search
-                        selectedDetent = .height(90)
+                        selectedDetent = collapsedDetent
                     }
                     selectedBikePoint = nil
                 } label: {

@@ -3,20 +3,30 @@ import SwiftUI
 struct ProfileView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) private var colorScheme
+    @EnvironmentObject private var stampStore: StampStore
     @AppStorage("userName") private var userName = ""
 
     @State private var isEditingName = false
     @State private var editingText = ""
     @State private var selectedFilter = "All Time"
+    @State private var showMissing = false
     @State private var stampImage: UIImage?
 
-    // Stamps will be populated in a future update
-    private let stamps: [String] = []
-
     private var filterOptions: [String] {
-        let options = ["All Time"]
-        // Years from collected stamps will be appended here
-        return options
+        let years = stampStore.claimedStamps
+            .map { Calendar.current.component(.year, from: $0.dateClaimed) }
+        let sortedYears = Array(Set(years)).sorted()
+        return ["All Time"] + sortedYears.map { String($0) }
+    }
+
+    private var filteredClaimedStamps: [ClaimedStamp] {
+        if selectedFilter == "All Time" {
+            return stampStore.claimedStamps
+        }
+        guard let year = Int(selectedFilter) else { return stampStore.claimedStamps }
+        return stampStore.claimedStamps.filter {
+            Calendar.current.component(.year, from: $0.dateClaimed) == year
+        }
     }
 
     var body: some View {
@@ -24,8 +34,10 @@ struct ProfileView: View {
             header
             Divider()
             filterBar
-            if stamps.isEmpty {
-                emptyState
+            if showMissing {
+                if stampStore.allDefinitions.isEmpty { emptyState } else { stampSections }
+            } else {
+                if filteredClaimedStamps.isEmpty { emptyState } else { stampSections }
             }
         }
         .presentationDetents([.medium, .large])
@@ -63,6 +75,14 @@ struct ProfileView: View {
             }
 
             Spacer()
+
+            Button {
+                showMissing.toggle()
+            } label: {
+                Image(systemName: showMissing ? "eye.fill" : "eye")
+                    .fontWeight(.semibold)
+                    .foregroundStyle(showMissing ? .primary : .secondary)
+            }
 
             Button {
                 dismiss()
@@ -131,6 +151,119 @@ struct ProfileView: View {
             Spacer()
         }
         .frame(maxWidth: .infinity)
+    }
+
+    private func sectionHasContent(for type: StampType) -> Bool {
+        let defs = stampStore.allDefinitions.filter { $0.type == type }
+        if showMissing { return !defs.isEmpty }
+        return defs.contains { def in filteredClaimedStamps.contains { $0.id == def.id } }
+    }
+
+    private var stampSections: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 24) {
+                let cityDefs = stampStore.allDefinitions.filter { $0.type == .city }
+                let attractionDefs = stampStore.allDefinitions.filter { $0.type == .attraction }
+
+                if sectionHasContent(for: .city) {
+                    stampSection(title: "Cities", definitions: cityDefs)
+                }
+                if sectionHasContent(for: .attraction) {
+                    stampSection(title: "Attractions", definitions: attractionDefs)
+                }
+            }
+            .padding(16)
+        }
+    }
+
+    private func stampSection(title: String, definitions: [StampDefinition]) -> some View {
+        let claimedCount = definitions.filter { stampStore.isAlreadyClaimed($0) }.count
+        return VStack(alignment: .leading, spacing: 12) {
+            HStack(spacing: 8) {
+                Text(title)
+                    .font(.headline)
+                if showMissing {
+                    Text("\(claimedCount)/\(definitions.count)")
+                        .font(.caption)
+                        .fontWeight(.medium)
+                        .foregroundStyle(.secondary)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 3)
+                        .background(Color.secondary.opacity(0.12))
+                        .clipShape(Capsule())
+                }
+                Spacer()
+            }
+
+            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
+                ForEach(definitions) { definition in
+                    if let claimed = filteredClaimedStamps.first(where: { $0.id == definition.id }) {
+                        stampCell(definition: definition, claimed: claimed)
+                    } else if !stampStore.isAlreadyClaimed(definition) && showMissing {
+                        teaserCell(definition: definition)
+                    }
+                }
+            }
+        }
+    }
+
+    private func stampCell(definition: StampDefinition, claimed: ClaimedStamp) -> some View {
+        VStack(spacing: 8) {
+            StampImageView(stampPNGBaseName: definition.stampPNGBaseName, size: 100)
+            Text(definition.displayName)
+                .font(.caption)
+                .fontWeight(.medium)
+                .multilineTextAlignment(.center)
+            Text(claimed.dateClaimed, style: .date)
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+        }
+        .padding(12)
+        .frame(maxWidth: .infinity)
+        .background(Color(.secondarySystemBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+    }
+
+    private func teaserCell(definition: StampDefinition) -> some View {
+        VStack(spacing: 8) {
+            ZStack {
+                if let baseName = definition.cityArtPNGBaseName,
+                   let img = UIImage(named: "\(baseName)\(colorScheme == .dark ? "Dark" : "Light")") {
+                    Image(uiImage: img)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 100, height: 100)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(.ultraThinMaterial)
+                        )
+                } else {
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color.secondary.opacity(0.12))
+                        .frame(width: 100, height: 100)
+                }
+
+                Image(systemName: "mappin.circle.fill")
+                    .font(.system(size: 28))
+                    .foregroundStyle(.secondary)
+            }
+            .frame(width: 100, height: 100)
+
+            Text(definition.displayName)
+                .font(.caption)
+                .fontWeight(.medium)
+                .multilineTextAlignment(.center)
+                .foregroundStyle(.secondary)
+
+            Text("Visit to collect")
+                .font(.caption2)
+                .foregroundStyle(.tertiary)
+        }
+        .padding(12)
+        .frame(maxWidth: .infinity)
+        .background(Color(.secondarySystemBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 
     private func saveName() {
