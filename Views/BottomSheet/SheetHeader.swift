@@ -6,6 +6,7 @@ struct SheetHeader: View {
     @Binding var searchText: String
     @Binding var selectedBikePoint: BikePoint?
     @Binding var selectedDetent: PresentationDetent
+    @Binding var showProfilePanel: Bool
     let midDetent: PresentationDetent
     let destinationName: String?
     @FocusState private var isSearchFocused: Bool
@@ -35,6 +36,14 @@ struct SheetHeader: View {
                 .padding(.vertical, 8)
                 .background(.quaternary.opacity(0.5))
                 .clipShape(RoundedRectangle(cornerRadius: 10))
+
+                Button {
+                    showProfilePanel = true
+                } label: {
+                    Image(systemName: "person.crop.circle")
+                        .font(.system(size: 26))
+                        .foregroundStyle(.secondary)
+                }
 
             case .searchResults:
                 Button {

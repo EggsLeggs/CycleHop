@@ -14,6 +14,7 @@ struct BottomSheetView: View {
     @ObservedObject var searchCompleter: SearchCompleter
 
     @State private var destinationName: String?
+    @State private var showProfilePanel = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -22,6 +23,7 @@ struct BottomSheetView: View {
                 searchText: $searchText,
                 selectedBikePoint: $selectedBikePoint,
                 selectedDetent: $selectedDetent,
+                showProfilePanel: $showProfilePanel,
                 midDetent: midDetent,
                 destinationName: destinationName
             )
@@ -57,6 +59,9 @@ struct BottomSheetView: View {
             Spacer(minLength: 0)
         }
         .frame(maxHeight: .infinity, alignment: .top)
+        .sheet(isPresented: $showProfilePanel) {
+            ProfileView()
+        }
         .onChange(of: searchText) { _, newValue in
             searchCompleter.searchQuery = newValue
         }

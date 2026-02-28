@@ -57,7 +57,6 @@ struct AboutScreen: View {
                             .aspectRatio(contentMode: .fit)
                             .frame(height: sectionImageHeight * 1.6)
                             .opacity(0.5)
-                            .padding(.bottom, -16)
                     }
 
                     Text("Bikes Across Your City")
@@ -107,7 +106,6 @@ struct AboutScreen: View {
                             .aspectRatio(contentMode: .fit)
                             .frame(height: sectionImageHeight * 1.6)
                             .opacity(0.5)
-                            .padding(.bottom, -16)
                     }
 
                     Text("Open Protocol")

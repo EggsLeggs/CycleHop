@@ -2,6 +2,7 @@ import SwiftUI
 
 struct DebugMenuView: View {
     @Environment(\.dismiss) private var dismiss
+    @AppStorage("userName") private var userName = ""
 
     let onRetriggerTooltip: () -> Void
     let onRestartOnboarding: () -> Void
@@ -14,6 +15,19 @@ struct DebugMenuView: View {
                         onRetriggerTooltip()
                     } label: {
                         Label("Retrigger demo button tooltip", systemImage: "arrow.counterclockwise")
+                    }
+                }
+
+                Section("Profile") {
+                    Button(role: .destructive) {
+                        userName = ""
+                    } label: {
+                        Label {
+                            Text("Reset name")
+                        } icon: {
+                            Image(systemName: "person.crop.circle.badge.minus")
+                                .foregroundStyle(.red)
+                        }
                     }
                 }
 
@@ -40,5 +54,6 @@ struct DebugMenuView: View {
         }
         .presentationDetents([.medium])
         .presentationDragIndicator(.visible)
+        .presentationBackground(.regularMaterial)
     }
 }
