@@ -9,6 +9,7 @@ import PackageDescription
 
 let package = Package(
     name: "CycleHop",
+    defaultLocalization: "en",
     platforms: [
         .iOS("18.1")
     ],
@@ -33,7 +34,9 @@ let package = Package(
             ],
             capabilities: [
                 .locationWhenInUse(
-                    purposeString: "CycleHop uses your location to find nearby docking stations")
+                    purposeString:
+                        "CycleHop uses your location to find nearby docking stations and unlock souvenir stamps"
+                )
             ],
             appCategory: .travel
         )

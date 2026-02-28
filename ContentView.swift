@@ -111,6 +111,15 @@ struct ContentView: View {
         .onChange(of: stampStore.claimedStamps) { _, _ in
             updateNearbyStamps(location: locationManager.userLocation)
         }
+        .onChange(of: hasSeenDebugTooltip) { _, newValue in
+            if !newValue && !showDebugTooltip {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+                    withAnimation(.spring(duration: 0.4)) {
+                        showDebugTooltip = true
+                    }
+                }
+            }
+        }
         .onAppear {
             updateNearbyStamps(location: locationManager.userLocation)
         }
@@ -320,20 +329,12 @@ struct ContentView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 10))
                 .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
                 .sheet(isPresented: $showDebugMenu) {
-                    DebugMenuView(
-                        onRetriggerTooltip: {
-                            hasSeenDebugTooltip = false
-                            showDebugMenu = false
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
-                                withAnimation(.spring(duration: 0.4)) {
-                                    showDebugTooltip = true
-                                }
-                            }
-                        },
-                        onRestartOnboarding: {
-                            hasCompletedOnboarding = false
-                        }
-                    )
+                    NavigationStack {
+                        DebugMenuView()
+                    }
+                    .presentationDetents([.medium, .large])
+                    .presentationDragIndicator(.visible)
+                    .presentationBackground(.regularMaterial)
                 }
             }
             .padding(.top, 8)

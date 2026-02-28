@@ -5,11 +5,12 @@ struct ProfileView: View {
     @Environment(\.colorScheme) private var colorScheme
     @EnvironmentObject private var stampStore: StampStore
     @AppStorage("userName") private var userName = ""
+    @AppStorage("showUnownedStamps") private var showUnownedStamps = false
 
     @State private var isEditingName = false
     @State private var editingText = ""
     @State private var selectedFilter = "All Time"
-    @State private var showMissing = false
+    @State private var showSettings = false
     @State private var stampImage: UIImage?
 
     private var filterOptions: [String] {
@@ -34,7 +35,7 @@ struct ProfileView: View {
             header
             Divider()
             filterBar
-            if showMissing {
+            if showUnownedStamps {
                 if stampStore.allDefinitions.isEmpty { emptyState } else { stampSections }
             } else {
                 if filteredClaimedStamps.isEmpty { emptyState } else { stampSections }
@@ -43,6 +44,9 @@ struct ProfileView: View {
         .presentationDetents([.medium, .large])
         .presentationDragIndicator(.visible)
         .presentationBackground(.regularMaterial)
+        .sheet(isPresented: $showSettings) {
+            SettingsView()
+        }
         .alert("Your Name", isPresented: $isEditingName) {
             TextField("Enter your name", text: $editingText)
             Button("Save") { saveName() }
@@ -77,11 +81,11 @@ struct ProfileView: View {
             Spacer()
 
             Button {
-                showMissing.toggle()
+                showSettings = true
             } label: {
-                Image(systemName: showMissing ? "eye.fill" : "eye")
+                Image(systemName: "gearshape")
                     .fontWeight(.semibold)
-                    .foregroundStyle(showMissing ? .primary : .secondary)
+                    .foregroundStyle(.secondary)
             }
 
             Button {
@@ -153,10 +157,9 @@ struct ProfileView: View {
         .frame(maxWidth: .infinity)
     }
 
-    private func sectionHasContent(for type: StampType) -> Bool {
-        let defs = stampStore.allDefinitions.filter { $0.type == type }
-        if showMissing { return !defs.isEmpty }
-        return defs.contains { def in filteredClaimedStamps.contains { $0.id == def.id } }
+    private func sectionHasContent(_ definitions: [StampDefinition]) -> Bool {
+        if showUnownedStamps { return !definitions.isEmpty }
+        return definitions.contains { def in filteredClaimedStamps.contains { $0.id == def.id } }
     }
 
     private var stampSections: some View {
@@ -165,10 +168,10 @@ struct ProfileView: View {
                 let cityDefs = stampStore.allDefinitions.filter { $0.type == .city }
                 let attractionDefs = stampStore.allDefinitions.filter { $0.type == .attraction }
 
-                if sectionHasContent(for: .city) {
+                if sectionHasContent(cityDefs) {
                     stampSection(title: "Cities", definitions: cityDefs)
                 }
-                if sectionHasContent(for: .attraction) {
+                if sectionHasContent(attractionDefs) {
                     stampSection(title: "Attractions", definitions: attractionDefs)
                 }
             }
@@ -182,7 +185,7 @@ struct ProfileView: View {
             HStack(spacing: 8) {
                 Text(title)
                     .font(.headline)
-                if showMissing {
+                if showUnownedStamps {
                     Text("\(claimedCount)/\(definitions.count)")
                         .font(.caption)
                         .fontWeight(.medium)
@@ -199,7 +202,7 @@ struct ProfileView: View {
                 ForEach(definitions) { definition in
                     if let claimed = filteredClaimedStamps.first(where: { $0.id == definition.id }) {
                         stampCell(definition: definition, claimed: claimed)
-                    } else if !stampStore.isAlreadyClaimed(definition) && showMissing {
+                    } else if showUnownedStamps && !stampStore.isAlreadyClaimed(definition) {
                         teaserCell(definition: definition)
                     }
                 }

@@ -4,49 +4,78 @@ struct DebugMenuView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var stampStore: StampStore
     @AppStorage("userName") private var userName = ""
-
-    let onRetriggerTooltip: () -> Void
-    let onRestartOnboarding: () -> Void
+    @AppStorage("hasSeenDebugTooltip") private var hasSeenDebugTooltip = false
+    @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
 
     @State private var selectedStampID = ""
 
+    private let iconWidth: CGFloat = 24
+    private let rowSpacing: CGFloat = 12
+    private var dividerInset: CGFloat { 16 + iconWidth + rowSpacing }
+
     var body: some View {
-        NavigationStack {
-            List {
-                Section("Tooltips") {
-                    Button {
-                        onRetriggerTooltip()
-                    } label: {
-                        Label("Retrigger demo button tooltip", systemImage: "arrow.counterclockwise")
-                    }
+        ScrollView {
+            VStack(alignment: .leading, spacing: 0) {
+                // --- Tooltips ---
+
+                Text("Tooltips")
+                    .font(.title3.bold())
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 8)
+
+                Divider()
+
+                Button {
+                    hasSeenDebugTooltip = false
+                } label: {
+                    debugRow(icon: "arrow.counterclockwise", title: "Retrigger demo button tooltip")
                 }
+                .buttonStyle(.plain)
 
-                Section("Profile") {
-                    Button(role: .destructive) {
-                        userName = ""
-                    } label: {
-                        Label {
-                            Text("Reset name")
-                        } icon: {
-                            Image(systemName: "person.crop.circle.badge.minus")
-                                .foregroundStyle(.red)
-                        }
-                    }
+                Divider()
+
+                // --- Profile ---
+
+                Text("Profile")
+                    .font(.title3.bold())
+                    .padding(.horizontal, 16)
+                    .padding(.top, 28)
+                    .padding(.bottom, 8)
+
+                Divider()
+
+                Button {
+                    userName = ""
+                } label: {
+                    debugRow(icon: "person.crop.circle.badge.minus", title: "Reset name", tint: .red)
                 }
+                .buttonStyle(.plain)
 
-                Section("Stamps") {
-                    Button(role: .destructive) {
-                        stampStore.resetAllStamps()
-                    } label: {
-                        Label {
-                            Text("Reset Stamps")
-                        } icon: {
-                            Image(systemName: "seal.fill")
-                                .foregroundStyle(.red)
-                        }
-                    }
+                Divider()
 
-                    if !stampStore.allDefinitions.isEmpty {
+                // --- Stamps ---
+
+                Text("Stamps")
+                    .font(.title3.bold())
+                    .padding(.horizontal, 16)
+                    .padding(.top, 28)
+                    .padding(.bottom, 8)
+
+                Divider()
+
+                Button {
+                    stampStore.resetAllStamps()
+                } label: {
+                    debugRow(icon: "seal.fill", title: "Reset Stamps", tint: .red)
+                }
+                .buttonStyle(.plain)
+
+                if !stampStore.allDefinitions.isEmpty {
+                    Divider().padding(.leading, dividerInset)
+
+                    HStack(spacing: rowSpacing) {
+                        Image(systemName: "plus.circle")
+                            .frame(width: iconWidth)
                         Picker("Add Stamp", selection: $selectedStampID) {
                             Text("Select…").tag("")
                             ForEach(stampStore.allDefinitions) { definition in
@@ -59,32 +88,55 @@ struct DebugMenuView: View {
                             stampStore.claimStamp(id: newValue)
                             selectedStampID = ""
                         }
+                        Spacer()
                     }
+                    .frame(minHeight: 44)
+                    .padding(.horizontal, 16)
                 }
 
-                Section("Onboarding") {
-                    Button(role: .destructive) {
-                        onRestartOnboarding()
-                    } label: {
-                        Label {
-                                Text("Restart onboarding")
-                            } icon: {
-                                Image(systemName: "arrow.uturn.backward")
-                                    .foregroundStyle(.red)
-                            }
-                    }
+                Divider()
+
+                // --- Onboarding ---
+
+                Text("Onboarding")
+                    .font(.title3.bold())
+                    .padding(.horizontal, 16)
+                    .padding(.top, 28)
+                    .padding(.bottom, 8)
+
+                Divider()
+
+                Button {
+                    hasCompletedOnboarding = false
+                } label: {
+                    debugRow(icon: "arrow.uturn.backward", title: "Restart onboarding", tint: .red)
                 }
+                .buttonStyle(.plain)
+
+                Divider()
             }
-            .navigationTitle("Debug")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Done") { dismiss() }
-                }
+            .padding(.top, 16)
+            .padding(.bottom, 32)
+        }
+        .navigationTitle("Debug")
+        .navigationBarTitleDisplayMode(.large)
+        .toolbar {
+            ToolbarItem(placement: .confirmationAction) {
+                Button("Done") { dismiss() }
             }
         }
-        .presentationDetents([.medium, .large])
-        .presentationDragIndicator(.visible)
-        .presentationBackground(.regularMaterial)
+    }
+
+    private func debugRow(icon: String, title: String, tint: Color? = nil) -> some View {
+        HStack(spacing: rowSpacing) {
+            Image(systemName: icon)
+                .foregroundStyle(tint ?? .primary)
+                .frame(width: iconWidth)
+            Text(title)
+            Spacer()
+        }
+        .frame(minHeight: 44)
+        .padding(.horizontal, 16)
+        .contentShape(Rectangle())
     }
 }
