@@ -348,3 +348,54 @@ public var brandForegroundColor: Color { .white }   // text/icon colour drawn on
 ```
 
 Choose `brandForegroundColor` (`.white` or `.black`) based on which passes WCAG AA contrast against `brandColor`.
+
+## 13. City Stamps
+
+Each city provider can supply a postage-stamp style SVG illustration. Stamps are shown above the "Collect City Stamps" heading on the onboarding about screen — left-aligned, at 72 pt tall, with 50% opacity. Unlike city art (which renders inside a `WKWebView` with CSS), stamps are snapshot-rendered via `SVGLoader` and therefore require both an SVG source and pre-rendered PNG fallbacks.
+
+### 13.1 File naming and location
+
+Place all three files in `Resources/`:
+
+```
+Resources/LondonStamp.svg
+Resources/LondonStampLight.png   ← rendered for light mode
+Resources/LondonStampDark.png    ← rendered for dark mode
+```
+
+The naming pattern is `{City}Stamp` where `{City}` matches the city name with no spaces (same convention as city art).
+
+Return the base name (without extension) from `OnboardingCityProvider.stampSVGName`:
+
+```swift
+public var stampSVGName: String? { "LondonStamp" }
+```
+
+Return `nil` (the default) if no stamp is available for a provider.
+
+### 13.2 SVG structure requirements
+
+Stamp SVGs use a simpler colouring model than city art — there is no CSS injection or `id` convention. The only requirement is that all drawn elements use `stroke="black"` and/or `fill="black"` so that the dark-mode inversion pass (see §13.4) can flip them to white:
+
+| Element | Required attribute | Purpose |
+|---|---|---|
+| All stroke lines | `stroke="black"` | Inverted to `white` in dark mode |
+| All filled shapes | `fill="black"` | Inverted to `white` in dark mode |
+
+Do **not** use hardcoded colours other than black on drawn elements. `fill="white"` may appear inside `<mask>` and `<clipPath>` definitions — these are not visible drawn shapes and are left unchanged by the inversion pass.
+
+### 13.3 PNG fallbacks
+
+Pre-render each stamp SVG at **2× its natural pixel dimensions** (or higher) and export two PNGs — one for each appearance mode. The light PNG uses black line art on a white background; the dark PNG uses white line art on a black background.
+
+Swift Playgrounds may not fire the `WKWebView` snapshot completion handler, so the PNG is always set first and the SVG render is treated as an optional upgrade. If the SVG render fails or never completes, the PNG remains visible.
+
+### 13.4 How dark/light rendering works
+
+`CitySelectScreen.loadStampImage()` applies the following steps at appear time and whenever `colorScheme` changes:
+
+1. **PNG fallback** — sets `stampImage` immediately from `{Name}Light.png` or `{Name}Dark.png`.
+2. **SVG load** — reads the SVG from the bundle and replaces the fixed `width`/`height` attributes with `100%`/`100%` so it fills the render viewport.
+3. **Background injection** — inserts `<rect width="100%" height="100%" fill="#FFFFFF"/>` (light) or `fill="#000000"` (dark) as the first child of `<svg>` to produce an opaque snapshot.
+4. **Colour inversion** (dark mode only) — replaces all `stroke="black"` with `stroke="white"` and all `fill="black"` with `fill="white"` so line art appears white on the black background.
+5. **SVG render** — passes the modified SVG to `SVGLoader` at 3× the natural pixel dimensions for sharp rendering at any display scale. If the render succeeds, `stampImage` is upgraded from the PNG to the crisp SVG snapshot.

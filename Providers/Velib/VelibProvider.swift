@@ -106,4 +106,6 @@ extension VelibProvider: OnboardingCityProvider {
     public var brandColor: Color { Color(hex: VelibConfig.brandColour) ?? .green }
     public var brandForegroundColor: Color { .white }
     public var cityArtSVGName: String? { "Paris" }
+    public var cityArtPNGBaseName: String? { "ParisLocation" }
+    public var stampSVGName: String? { "ParisStamp" }
 }

@@ -6,6 +6,8 @@ struct CityCard: View {
     let onSelect: () -> Void
 
     @State private var svgFailed = false
+    @State private var fallbackImage: UIImage?
+    @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
         Button(action: onSelect) {
@@ -26,17 +28,35 @@ struct CityCard: View {
                 .padding(12)
 
                 if let svgName = provider.cityArtSVGName, !svgFailed {
-                    SVGCityView(
-                        svgName: svgName,
-                        accentColor: isSelected ? provider.brandColor : nil,
-                        onFailure: { svgFailed = true }
-                    )
-                    .background(Color(.systemBackground))
+                    ZStack {
+                        // PNG set immediately — visible in Swift Playgrounds where
+                        // WKWebView renders blank without firing a failure callback
+                        if let img = fallbackImage {
+                            Image(uiImage: img)
+                                .resizable()
+                                .scaledToFill()
+                        } else {
+                            Color(.systemBackground)
+                        }
+                        // SVGCityView sits on top; renders crisply in Xcode, transparent in Playgrounds
+                        SVGCityView(
+                            svgName: svgName,
+                            accentColor: isSelected ? provider.brandColor : nil,
+                            onFailure: { svgFailed = true }
+                        )
+                    }
                     .aspectRatio(412.0 / 237.0, contentMode: .fit)
                     .frame(maxWidth: .infinity)
+                    .clipped()
                     .allowsHitTesting(false)
+                } else if let img = fallbackImage {
+                    Image(uiImage: img)
+                        .resizable()
+                        .aspectRatio(412.0 / 237.0, contentMode: .fit)
+                        .frame(maxWidth: .infinity)
+                        .allowsHitTesting(false)
                 } else {
-                    // Fallback gradient placeholder
+                    // Last-resort gradient placeholder
                     ZStack {
                         LinearGradient(
                             colors: [provider.brandColor, provider.brandColor.opacity(0.5)],
@@ -64,5 +84,17 @@ struct CityCard: View {
             )
         }
         .buttonStyle(.plain)
+        .onAppear { loadFallbackImage() }
+        .onChange(of: colorScheme) { loadFallbackImage() }
+        .onChange(of: isSelected) { loadFallbackImage() }
+    }
+
+    private func loadFallbackImage() {
+        // Set PNG immediately — works everywhere, including Swift Playgrounds where
+        // WKWebView may render blank without firing its failure callback
+        guard let base = provider.cityArtPNGBaseName else { return }
+        let scheme = colorScheme == .dark ? "Dark" : "Light"
+        let highlight = isSelected ? "Highlighted" : ""
+        fallbackImage = UIImage(named: "\(base)\(scheme)\(highlight)")
     }
 }

@@ -116,4 +116,6 @@ extension CitiBikeProvider: OnboardingCityProvider {
     public var brandColor: Color { Color(hex: CitiBikeConfig.brandColour) ?? .blue }
     public var brandForegroundColor: Color { .white }
     public var cityArtSVGName: String? { "NewYork" }
+    public var cityArtPNGBaseName: String? { "NewYorkLocation" }
+    public var stampSVGName: String? { "NewYorkStamp" }
 }

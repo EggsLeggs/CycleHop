@@ -149,4 +149,6 @@ extension SantanderCyclesProvider: OnboardingCityProvider {
     public var brandColor: Color { Color(hex: SantanderCyclesConfig.brandColour) ?? .red }
     public var brandForegroundColor: Color { .white }
     public var cityArtSVGName: String? { "London" }
+    public var cityArtPNGBaseName: String? { "LondonLocation" }
+    public var stampSVGName: String? { "LondonStamp" }
 }

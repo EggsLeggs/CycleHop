@@ -5,13 +5,18 @@ struct CitySelectScreen: View {
     @Binding var selectedProvider: (any OnboardingCityProvider)?
     let onContinue: () -> Void
 
+    @Environment(\.colorScheme) private var colorScheme
+    @State private var notFoundImage: UIImage?
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
-                Text("This is a demo. Data is an offline snapshot.")
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
-                    .padding(.horizontal)
+                Text(
+                    "This is a demo for the Apple Student Challenge. As the app is required to work offline, the data is an offline snapshot and location services are mocked. Online implementations are available on GitHub."
+                )
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+                .padding(.horizontal)
 
                 VStack(spacing: 16) {
                     ForEach(providers, id: \.id) { provider in
@@ -30,12 +35,37 @@ struct CitySelectScreen: View {
                 }
                 .padding(.horizontal)
 
-                Text("If your city is missing, add or contribute on GitHub.")
+                VStack(spacing: 8) {
+                    if let img = notFoundImage {
+                        Image(uiImage: img)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(height: 72)
+                            .opacity(0.5)
+                    }
+
+                    Text("Don't see your city?")
+                        .font(.footnote.bold())
+                        .foregroundStyle(.secondary)
+
+                    Text(
+                        "CycleHop is open-source - anyone can request a new city or help add one, no coding skills needed."
+                    )
                     .font(.footnote)
                     .foregroundStyle(.secondary)
-                    .padding(.horizontal)
-                    .padding(.top, 8)
-                    .padding(.bottom, 32)
+                    .multilineTextAlignment(.center)
+
+                    Link(
+                        "EggsLeggs/CycleHop on GitHub →",
+                        destination: URL(string: "https://github.com/EggsLeggs/CycleHop")!
+                    )
+                    .font(.footnote.bold())
+                    .tint(.blue)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.horizontal)
+                .padding(.top, 16)
+                .padding(.bottom, 32)
             }
             .padding(.top, 16)
         }
@@ -53,5 +83,50 @@ struct CitySelectScreen: View {
             }
             .background(.regularMaterial)
         }
+        .onAppear { loadNotFoundImage() }
+        .onChange(of: colorScheme) { loadNotFoundImage() }
     }
+
+    private func loadNotFoundImage() {
+        // Set PNG immediately — works everywhere, including Swift Playgrounds where
+        // WKWebView may never fire its completion handler
+        let pngName = colorScheme == .dark ? "NotFoundDark" : "NotFoundLight"
+        notFoundImage = UIImage(named: pngName)
+
+        // Attempt to upgrade to a crisp SVG render (Xcode / full WebKit only)
+        guard let url = Bundle.main.url(forResource: "NotFound", withExtension: "svg"),
+            var svg = try? String(contentsOf: url, encoding: .utf8)
+        else { return }
+
+        svg = svg.replacingOccurrences(
+            of: "width=\"134\" height=\"96\"",
+            with: "width=\"100%\" height=\"100%\"")
+
+        // Inject a solid background rect as the first child so the snapshot is opaque
+        let bgHex = colorScheme == .dark ? "#000000" : "#FFFFFF"
+        if let insertAt = svg.range(of: ">")?.upperBound {
+            svg.insert(
+                contentsOf: "<rect width=\"100%\" height=\"100%\" fill=\"\(bgHex)\"/>",
+                at: insertAt)
+        }
+
+        // Invert line colours for dark mode
+        if colorScheme == .dark {
+            svg =
+                svg
+                .replacingOccurrences(of: "stroke=\"black\"", with: "stroke=\"white\"")
+                .replacingOccurrences(of: "fill=\"black\"", with: "fill=\"white\"")
+        }
+
+        guard let data = svg.data(using: .utf8) else { return }
+
+        // 3× the SVG's natural size for sharp rendering at any display scale
+        SVGLoader.load(data: data, url: nil, size: CGSize(width: 402, height: 288)) { image in
+            if let image {
+                notFoundImage = image  // upgrade to sharp SVG render
+            }
+            // if nil or never called, the PNG set above remains
+        }
+    }
+
 }
