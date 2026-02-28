@@ -25,6 +25,7 @@ class SVGLoader {
             super.init()
             webKitView = WKWebView(frame: frame)
             webKitView?.navigationDelegate = self
+            webKitView?.contentScaleFactor = UIScreen.main.scale
             webKitView?.isOpaque = false
             webKitView?.backgroundColor = .clear
             webKitView?.scrollView.backgroundColor = .clear

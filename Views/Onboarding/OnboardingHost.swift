@@ -33,6 +33,7 @@ struct OnboardingHost: View {
         }
         .task {
             registry.register(SantanderCyclesProvider())
+            registry.register(CitiBikeProvider())
         }
         .onAppear {
             #if DEBUG

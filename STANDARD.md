@@ -265,3 +265,86 @@ The standard is designed to handle diverse real-world systems:
 | No public API | Many municipal systems | Use `.bundledJSON` data source with a JSON snapshot |
 
 Providers with no public API should use `dataSource: .bundledJSON` and document their snapshot date in their config file.
+
+## 12. City Art & Brand Colours
+
+Each city provider can supply an SVG illustration shown on the onboarding city-select card and used as the branded splash art throughout the app. `CityArtView` renders the SVG inside a `WKWebView` using a small HTML wrapper that applies CSS to make the artwork adapt to light/dark mode and respond to the provider's brand colour automatically — no changes to `CityArtView.swift` are needed when adding a new city.
+
+### 12.1 File naming and location
+
+Place the SVG in `Resources/` and name it after the city with no spaces:
+
+```
+Resources/London.svg
+Resources/NewYork.svg
+```
+
+Return the filename (without extension) from `OnboardingCityProvider.cityArtSVGName`:
+
+```swift
+public var cityArtSVGName: String? { "NewYork" }
+```
+
+### 12.2 SVG structure requirements
+
+The SVG must follow these conventions so the `CityArtView` CSS rules apply correctly:
+
+| Element | Required attribute(s) | Purpose |
+|---|---|---|
+| Background rect | `fill="white"` | Becomes `Canvas` colour in dark mode |
+| City-skyline fill path | `fill="white" id="city-skyline"` | Receives the brand colour on selection; matches background when unselected |
+| All stroke paths | `stroke="black"` | Becomes `CanvasText` in dark mode |
+
+The critical requirement is the **city-skyline path**. This is the large filled shape that defines the city silhouette (buildings, skyline, land mass). It must carry both `fill="white"` **and** `id="city-skyline"`:
+
+```xml
+<!-- Correct -->
+<path d="M413 -6.5L..." fill="white" id="city-skyline"/>
+
+<!-- Wrong — hardcoded colour, will not adapt -->
+<path d="M413 -6.5L..." fill="#271A88"/>
+```
+
+If you receive an SVG from a designer with a hardcoded fill on the skyline path, replace just that attribute:
+
+```
+fill="#______"  →  fill="white" id="city-skyline"
+```
+
+Leave all other attributes (`d`, `stroke`, `stroke-width`, etc.) unchanged.
+
+### 12.3 How the CSS rules work
+
+`CityArtView.buildHTML` injects a `<style>` block with four rules:
+
+```css
+/* White fills → system Canvas (white in light, ~black in dark) */
+path[fill="white"]  { fill: Canvas; }
+rect[fill="white"]  { fill: Canvas; }
+
+/* Black strokes → system CanvasText (black in light, white in dark) */
+path[stroke="black"] { stroke: CanvasText; }
+
+/* Selected state: brand colour injected at runtime via JS */
+#city-skyline { fill: <brandHex>; }
+```
+
+The selected-state rule is applied by JavaScript only when the card is in the selected state, so the unselected card shows the skyline blending into the card background (both `Canvas`), and the selected card shows the skyline filled with the provider's `brandColour`.
+
+### 12.4 Brand colour
+
+Set `brandColour` in the provider's config file as a `#RRGGBB` hex string. Use the operator's official primary colour:
+
+```swift
+static let brandColour = "#003B70"   // Citi Bike navy
+static let brandColour = "#E5362C"   // Santander red
+```
+
+Return it from `OnboardingCityProvider.brandColor` as a SwiftUI `Color`, with a safe fallback:
+
+```swift
+public var brandColor: Color { Color(hex: CitiBikeConfig.brandColour) ?? .blue }
+public var brandForegroundColor: Color { .white }   // text/icon colour drawn on top of brandColor
+```
+
+Choose `brandForegroundColor` (`.white` or `.black`) based on which passes WCAG AA contrast against `brandColor`.
