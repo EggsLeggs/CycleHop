@@ -1,0 +1,134 @@
+/* CycleHop – Français */
+
+/* Welcome & onboarding */
+"CycleHop" = "CycleHop";
+"The open bike-share network." = "Le réseau de vélos en libre-service.";
+"Get Started" = "C'est parti";
+"Choose Your City" = "Choisissez votre ville";
+"Continue" = "Continuer";
+"This is a demo for the Apple Student Challenge. As the app is required to work offline, the data is an offline snapshot and location services are mocked. Online implementations are available on GitHub." = "Démo pour l'Apple Student Challenge. L'app fonctionne hors ligne avec des données figées et une localisation simulée. Les versions en ligne sont sur GitHub.";
+"Don't see your city?" = "Votre ville n'apparaît pas ?";
+"CycleHop is open-source - anyone can request a new city or help add one, no coding skills needed." = "CycleHop est open-source — tout le monde peut proposer une ville ou aider à en ajouter une, aucune compétence technique requise.";
+"EggsLeggs/CycleHop on GitHub →" = "EggsLeggs/CycleHop sur GitHub →";
+
+/* About / Mission */
+"The Mission" = "Notre mission";
+"Find bikes, wherever you go." = "Trouvez un vélo, où que vous soyez.";
+"Find bikes and docks wherever you are. CycleHop connects to bike-share systems worldwide to get you moving - whether you're commuting, exploring, or running errands." = "Vélos et bornes à portée de main. CycleHop se connecte aux systèmes de vélos en libre-service du monde entier pour vous faire rouler — trajet, balade ou courses.";
+"Bikes Across Your City" = "Des vélos partout en ville";
+"See stations and availability on a map. Tap any dock to check bikes and free slots in real time, so you always know where to go." = "Visualisez les stations et les disponibilités sur la carte. Touchez une borne pour connaître en temps réel le nombre de vélos et de places libres.";
+"Collect City Stamps" = "Collectionnez les tampons";
+"Use bike share in a city and collect a stamp. Build your collection as you explore - each city you ride in leaves its mark." = "Utilisez un vélo en libre-service et gagnez un tampon. Chaque ville parcourue enrichit votre collection.";
+"Open Protocol" = "Protocole ouvert";
+"CycleHop is built on open standards. Anyone can contribute a new city or provider." = "CycleHop repose sur des standards ouverts. Tout le monde peut contribuer en ajoutant une ville ou un opérateur.";
+"View on GitHub →" = "Voir sur GitHub →";
+
+/* Profile & stamp book */
+"Your Name" = "Votre nom";
+"Enter your name" = "Saisissez votre nom";
+"Save" = "Enregistrer";
+"Cancel" = "Annuler";
+"Add your name" = "Ajouter votre nom";
+"My Stamp Book" = "Mon carnet de tampons";
+"All Time" = "Tout";
+"Start Your Journey" = "Lancez-vous";
+"When you visit new towns, cities, or attractions, you'll collect stamps to remember every adventure." = "En explorant de nouvelles villes ou de nouveaux lieux, vous collecterez des tampons pour garder une trace de chaque aventure.";
+"Cities" = "Villes";
+"Attractions" = "Lieux";
+"Visit to collect" = "Visitez pour débloquer";
+
+/* Stamp claim & promo */
+"Add All" = "Tout ajouter";
+"Add stamp" = "Ajouter le tampon";
+"Stamp Available" = "Tampon disponible";
+"New Stamp Available" = "Nouveau tampon disponible";
+"stamps_available_format" = "%d tampons disponibles";
+
+/* Bottom sheet & map */
+"Search for a destination" = "Rechercher une destination";
+"Stations near" = "Stations près de";
+"Location" = "Position";
+"Destination" = "Destination";
+"Recommended" = "Recommandé";
+"Nearby" = "À proximité";
+"Return to onboarding" = "Revenir à l'accueil";
+
+/* Station badges */
+"Best Overall" = "Meilleur choix";
+"Nearest" = "La plus proche";
+"Most Bikes" = "Plus de vélos";
+"Most E-Bikes" = "Plus de VAE";
+
+/* Bike point detail */
+"Standard" = "Classiques";
+"E-Bikes" = "VAE";
+"Empty" = "Libres";
+"Capacity" = "Capacité";
+"docks_occupied_format" = "%d sur %d bornes occupées";
+"Calculating routes..." = "Calcul de l'itinéraire…";
+"Walking" = "À pied";
+"Cycling" = "À vélo";
+
+/* Debug */
+"Tooltips" = "Infobulles";
+"Retrigger demo button tooltip" = "Réafficher l'infobulle de démo";
+"Profile" = "Profil";
+"Reset name" = "Réinitialiser le nom";
+"Stamps" = "Tampons";
+"Reset Stamps" = "Réinitialiser les tampons";
+"Add Stamp" = "Ajouter un tampon";
+"Select…" = "Choisir…";
+"Onboarding" = "Accueil";
+"Restart onboarding" = "Recommencer l'accueil";
+"Debug" = "Debug";
+"Done" = "OK";
+
+/* ContentView */
+"Try out demo features!" = "Essayez les fonctions démo !";
+
+/* Stamp & city display names */
+"Paris" = "Paris";
+"Eiffel Tower" = "Tour Eiffel";
+"Arc de Triomphe" = "Arc de Triomphe";
+"New York" = "New York";
+"London" = "Londres";
+"Tower Bridge" = "Tower Bridge";
+
+/* Settings */
+"Settings" = "Réglages";
+"Change Location" = "Changer de ville";
+"Changes city theming and map centre" = "Modifie le thème et le centre de la carte";
+"Manage" = "Gestion";
+"Debug Menu" = "Menu debug";
+"Online / Offline Maps" = "Cartes en ligne / hors ligne";
+"Customise" = "Personnaliser";
+"Souvenir Stamps" = "Tampons souvenir";
+"Locales" = "Langue et région";
+"Units" = "Unités";
+
+/* Locale settings */
+"App Language" = "Langue de l'app";
+"Choose which language CycleHop uses. Picking \"System Default\" follows your device language." = "Choisissez la langue de CycleHop. « Réglage système » suit la langue de votre appareil.";
+"System Default" = "Réglage système";
+"System Locale" = "Locale système";
+"Dates, numbers and measurements are formatted based on these system settings." = "Les dates, nombres et mesures sont mis en forme selon ces réglages système.";
+"Identifier" = "Identifiant";
+"Language" = "Langue";
+"Region" = "Région";
+
+/* Souvenir stamps settings */
+"Souvenir stamps are collectible markers you earn by visiting real-world locations. Each city and attraction has its own unique stamp design — explore new places to grow your collection." = "Les tampons souvenir sont des marqueurs à collectionner en visitant des lieux réels. Chaque ville et attraction possède son propre tampon — explorez pour enrichir votre collection.";
+"Show Unowned Stamps" = "Afficher les tampons non collectés";
+"When enabled, stamps you haven't collected yet will appear in your stamp book as greyed-out placeholders." = "Les tampons que vous n'avez pas encore obtenus apparaîtront en grisé dans votre carnet.";
+
+/* Units settings */
+"Distance Unit" = "Unité de distance";
+"Distance" = "Distance";
+"Kilometres" = "Kilomètres";
+"Miles" = "Miles";
+"Controls how distances to stations are displayed throughout the app." = "Définit le format d'affichage des distances aux stations dans l'app.";
+
+/* Provider open-app buttons */
+"Open Vélib' Métropole" = "Ouvrir Vélib' Métropole";
+"Open in Citi Bike" = "Ouvrir dans Citi Bike";
+"Open in Santander Cycles" = "Ouvrir dans Santander Cycles";

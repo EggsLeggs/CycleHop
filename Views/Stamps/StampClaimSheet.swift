@@ -120,7 +120,7 @@ struct StampClaimSheet: View {
                 )
 
             VStack(spacing: 4) {
-                Text(stamp.displayName)
+                Text(LocalizedStringKey(stamp.displayName))
                     .font(.title2)
                     .fontWeight(.bold)
 

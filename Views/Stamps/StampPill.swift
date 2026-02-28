@@ -5,7 +5,9 @@ struct StampPill: View {
     let onTap: () -> Void
 
     private var label: String {
-        nearbyStamps.count == 1 ? "New Stamp Available" : "\(nearbyStamps.count) Stamps Available"
+        nearbyStamps.count == 1
+            ? NSLocalizedString("New Stamp Available", bundle: .localized, comment: "")
+            : String(format: NSLocalizedString("stamps_available_format", bundle: .localized, comment: ""), nearbyStamps.count)
     }
 
     var body: some View {

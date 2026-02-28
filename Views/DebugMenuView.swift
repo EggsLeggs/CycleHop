@@ -76,21 +76,23 @@ struct DebugMenuView: View {
                     HStack(spacing: rowSpacing) {
                         Image(systemName: "plus.circle")
                             .frame(width: iconWidth)
+                        Text("Add Stamp")
+                        Spacer()
                         Picker("Add Stamp", selection: $selectedStampID) {
                             Text("Select…").tag("")
                             ForEach(stampStore.allDefinitions) { definition in
-                                Text(definition.displayName).tag(definition.id)
+                                Text(LocalizedStringKey(definition.displayName)).tag(definition.id)
                             }
                         }
+                        .labelsHidden()
                         .pickerStyle(.menu)
                         .onChange(of: selectedStampID) { _, newValue in
                             guard !newValue.isEmpty else { return }
                             stampStore.claimStamp(id: newValue)
                             selectedStampID = ""
                         }
-                        Spacer()
                     }
-                    .frame(minHeight: 44)
+                    .frame(minHeight: 54)
                     .padding(.horizontal, 16)
                 }
 
@@ -127,7 +129,7 @@ struct DebugMenuView: View {
         }
     }
 
-    private func debugRow(icon: String, title: String, tint: Color? = nil) -> some View {
+    private func debugRow(icon: String, title: LocalizedStringKey, tint: Color? = nil) -> some View {
         HStack(spacing: rowSpacing) {
             Image(systemName: icon)
                 .foregroundStyle(tint ?? .primary)
@@ -135,7 +137,7 @@ struct DebugMenuView: View {
             Text(title)
             Spacer()
         }
-        .frame(minHeight: 44)
+        .frame(minHeight: 54)
         .padding(.horizontal, 16)
         .contentShape(Rectangle())
     }

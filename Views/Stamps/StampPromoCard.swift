@@ -13,7 +13,7 @@ struct StampPromoCard: View {
                 Text("Stamp Available")
                     .font(.caption)
                     .foregroundStyle(.secondary)
-                Text(stamp.displayName)
+                Text(LocalizedStringKey(stamp.displayName))
                     .font(.subheadline)
                     .fontWeight(.semibold)
                 Text(Date(), style: .date)

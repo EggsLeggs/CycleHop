@@ -59,7 +59,7 @@ struct SheetHeader: View {
                     Text("Stations near")
                         .font(.caption)
                         .foregroundStyle(.secondary)
-                    Text(destinationName ?? "Location")
+                    Text(LocalizedStringKey(destinationName ?? NSLocalizedString("Location", bundle: .localized, comment: "")))
                         .font(.subheadline)
                         .fontWeight(.semibold)
                         .lineLimit(1)

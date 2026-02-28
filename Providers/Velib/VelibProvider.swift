@@ -68,7 +68,7 @@ public final class VelibProvider: BikeShareProvider, @unchecked Sendable {
         BookingIntent(
             stationId: station.id,
             method: .webOnly(url: VelibConfig.webBookingURL),
-            displayName: "Open Vélib' Métropole"
+            displayName: NSLocalizedString("Open Vélib' Métropole", bundle: .localized, comment: "")
         )
     }
 

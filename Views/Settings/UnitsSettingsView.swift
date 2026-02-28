@@ -9,15 +9,15 @@ struct UnitsSettingsView: View {
                 Text("Distance Unit")
                     .font(.title3.bold())
 
+                Text("Controls how distances to stations are displayed throughout the app.")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+
                 Picker("Distance", selection: $distanceUnit) {
                     Text("Kilometres").tag("metric")
                     Text("Miles").tag("imperial")
                 }
                 .pickerStyle(.segmented)
-
-                Text("Controls how distances to stations are displayed throughout the app.")
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
             }
             .padding(.horizontal)
             .padding(.top, 16)

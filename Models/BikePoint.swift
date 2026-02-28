@@ -22,3 +22,21 @@ struct AdditionalProperty: Codable, Equatable {
     let value: String
     let modified: String?
 }
+
+extension CycleStation {
+    func toBikePoint() -> BikePoint {
+        BikePoint(
+            id: id,
+            commonName: name,
+            lat: coordinate.latitude,
+            lon: coordinate.longitude,
+            additionalProperties: [
+                AdditionalProperty(key: "NbBikes", value: "\(availability.totalBikes)", modified: nil),
+                AdditionalProperty(key: "NbStandardBikes", value: "\(availability.standardBikes)", modified: nil),
+                AdditionalProperty(key: "NbEBikes", value: "\(availability.eBikes)", modified: nil),
+                AdditionalProperty(key: "NbDocks", value: "\(availability.totalDocks ?? 0)", modified: nil),
+                AdditionalProperty(key: "NbEmptyDocks", value: "\(availability.emptyDocks ?? 0)", modified: nil)
+            ]
+        )
+    }
+}

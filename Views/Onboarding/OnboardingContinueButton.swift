@@ -1,13 +1,13 @@
 import SwiftUI
 
 struct OnboardingContinueButton: View {
-    let title: String
+    let title: LocalizedStringKey
     let isEnabled: Bool
     let action: () -> Void
 
     @Environment(\.colorScheme) private var colorScheme
 
-    init(_ title: String = "Continue", isEnabled: Bool = true, action: @escaping () -> Void) {
+    init(_ title: LocalizedStringKey = "Continue", isEnabled: Bool = true, action: @escaping () -> Void) {
         self.title = title
         self.isEnabled = isEnabled
         self.action = action

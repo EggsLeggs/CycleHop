@@ -34,7 +34,7 @@ struct BikePointCard: View {
                         .lineLimit(1)
 
                     if let badge {
-                        Text(badge.text)
+                        Text(LocalizedStringKey(badge.text))
                             .font(.caption2)
                             .fontWeight(.bold)
                             .padding(.horizontal, 6)

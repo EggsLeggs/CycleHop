@@ -14,7 +14,7 @@ struct CityCard: View {
             VStack(alignment: .leading, spacing: 0) {
                 HStack(alignment: .top) {
                     VStack(alignment: .leading, spacing: 2) {
-                        Text(provider.cityDisplayName)
+                        Text(LocalizedStringKey(provider.cityDisplayName))
                             .font(.headline)
                             .foregroundStyle(isSelected ? provider.brandForegroundColor : .primary)
 

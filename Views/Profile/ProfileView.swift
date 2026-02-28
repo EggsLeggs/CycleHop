@@ -67,7 +67,7 @@ struct ProfileView: View {
                     editingText = userName
                     isEditingName = true
                 } label: {
-                    Text(userName.isEmpty ? "Add your name" : userName)
+                    Text(userName.isEmpty ? NSLocalizedString("Add your name", bundle: .localized, comment: "") : userName)
                         .font(.headline)
                         .foregroundStyle(userName.isEmpty ? .tertiary : .primary)
                 }
@@ -107,7 +107,7 @@ struct ProfileView: View {
                     Button {
                         selectedFilter = option
                     } label: {
-                        Text(option)
+                        Text(LocalizedStringKey(option))
                             .font(.subheadline)
                             .fontWeight(.medium)
                             .padding(.horizontal, 14)
@@ -179,7 +179,7 @@ struct ProfileView: View {
         }
     }
 
-    private func stampSection(title: String, definitions: [StampDefinition]) -> some View {
+    private func stampSection(title: LocalizedStringKey, definitions: [StampDefinition]) -> some View {
         let claimedCount = definitions.filter { stampStore.isAlreadyClaimed($0) }.count
         return VStack(alignment: .leading, spacing: 12) {
             HStack(spacing: 8) {
@@ -213,7 +213,7 @@ struct ProfileView: View {
     private func stampCell(definition: StampDefinition, claimed: ClaimedStamp) -> some View {
         VStack(spacing: 8) {
             StampImageView(stampPNGBaseName: definition.stampPNGBaseName, size: 100)
-            Text(definition.displayName)
+            Text(LocalizedStringKey(definition.displayName))
                 .font(.caption)
                 .fontWeight(.medium)
                 .multilineTextAlignment(.center)
@@ -253,7 +253,7 @@ struct ProfileView: View {
             }
             .frame(width: 100, height: 100)
 
-            Text(definition.displayName)
+            Text(LocalizedStringKey(definition.displayName))
                 .font(.caption)
                 .fontWeight(.medium)
                 .multilineTextAlignment(.center)

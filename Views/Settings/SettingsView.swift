@@ -36,11 +36,12 @@ struct SettingsView: View {
                                 .foregroundStyle(.tertiary)
                                 .font(.system(size: 13, weight: .semibold))
                         }
-                        .frame(minHeight: 44)
+                        .frame(minHeight: 54)
                         .padding(.horizontal, 16)
                         .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
+                    .padding(.top, 12)
 
                     // --- Manage ---
 
@@ -117,7 +118,7 @@ struct SettingsView: View {
         .presentationDragIndicator(.visible)
     }
 
-    private func settingsRow(icon: String, title: String) -> some View {
+    private func settingsRow(icon: String, title: LocalizedStringKey) -> some View {
         HStack(spacing: rowSpacing) {
             Image(systemName: icon)
                 .frame(width: iconWidth)
@@ -127,7 +128,7 @@ struct SettingsView: View {
                 .foregroundStyle(.tertiary)
                 .font(.system(size: 13, weight: .semibold))
         }
-        .frame(minHeight: 44)
+        .frame(minHeight: 54)
         .padding(.horizontal, 16)
         .contentShape(Rectangle())
     }

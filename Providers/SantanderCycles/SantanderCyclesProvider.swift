@@ -91,7 +91,7 @@ public final class SantanderCyclesProvider: BikeShareProvider, @unchecked Sendab
         return BookingIntent(
             stationId: station.id,
             method: method,
-            displayName: "Open in Santander Cycles"
+            displayName: NSLocalizedString("Open in Santander Cycles", bundle: .localized, comment: "")
         )
     }
 

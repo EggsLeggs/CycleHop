@@ -1,0 +1,134 @@
+/* CycleHop – English (base) */
+
+/* Welcome & onboarding */
+"CycleHop" = "CycleHop";
+"The open bike-share network." = "The open bike-share network.";
+"Get Started" = "Get Started";
+"Choose Your City" = "Choose Your City";
+"Continue" = "Continue";
+"This is a demo for the Apple Student Challenge. As the app is required to work offline, the data is an offline snapshot and location services are mocked. Online implementations are available on GitHub." = "This is a demo for the Apple Student Challenge. As the app is required to work offline, the data is an offline snapshot and location services are mocked. Online implementations are available on GitHub.";
+"Don't see your city?" = "Don't see your city?";
+"CycleHop is open-source - anyone can request a new city or help add one, no coding skills needed." = "CycleHop is open-source - anyone can request a new city or help add one, no coding skills needed.";
+"EggsLeggs/CycleHop on GitHub →" = "EggsLeggs/CycleHop on GitHub →";
+
+/* About / Mission */
+"The Mission" = "The Mission";
+"Find bikes, wherever you go." = "Find bikes, wherever you go.";
+"Find bikes and docks wherever you are. CycleHop connects to bike-share systems worldwide to get you moving - whether you're commuting, exploring, or running errands." = "Find bikes and docks wherever you are. CycleHop connects to bike-share systems worldwide to get you moving - whether you're commuting, exploring, or running errands.";
+"Bikes Across Your City" = "Bikes Across Your City";
+"See stations and availability on a map. Tap any dock to check bikes and free slots in real time, so you always know where to go." = "See stations and availability on a map. Tap any dock to check bikes and free slots in real time, so you always know where to go.";
+"Collect City Stamps" = "Collect City Stamps";
+"Use bike share in a city and collect a stamp. Build your collection as you explore - each city you ride in leaves its mark." = "Use bike share in a city and collect a stamp. Build your collection as you explore - each city you ride in leaves its mark.";
+"Open Protocol" = "Open Protocol";
+"CycleHop is built on open standards. Anyone can contribute a new city or provider." = "CycleHop is built on open standards. Anyone can contribute a new city or provider.";
+"View on GitHub →" = "View on GitHub →";
+
+/* Profile & stamp book */
+"Your Name" = "Your Name";
+"Enter your name" = "Enter your name";
+"Save" = "Save";
+"Cancel" = "Cancel";
+"Add your name" = "Add your name";
+"My Stamp Book" = "My Stamp Book";
+"All Time" = "All Time";
+"Start Your Journey" = "Start Your Journey";
+"When you visit new towns, cities, or attractions, you'll collect stamps to remember every adventure." = "When you visit new towns, cities, or attractions, you'll collect stamps to remember every adventure.";
+"Cities" = "Cities";
+"Attractions" = "Attractions";
+"Visit to collect" = "Visit to collect";
+
+/* Stamp claim & promo */
+"Add All" = "Add All";
+"Add stamp" = "Add stamp";
+"Stamp Available" = "Stamp Available";
+"New Stamp Available" = "New Stamp Available";
+"stamps_available_format" = "%d Stamps Available";
+
+/* Bottom sheet & map */
+"Search for a destination" = "Search for a destination";
+"Stations near" = "Stations near";
+"Location" = "Location";
+"Destination" = "Destination";
+"Recommended" = "Recommended";
+"Nearby" = "Nearby";
+"Return to onboarding" = "Return to onboarding";
+
+/* Station badges */
+"Best Overall" = "Best Overall";
+"Nearest" = "Nearest";
+"Most Bikes" = "Most Bikes";
+"Most E-Bikes" = "Most E-Bikes";
+
+/* Bike point detail */
+"Standard" = "Standard";
+"E-Bikes" = "E-Bikes";
+"Empty" = "Empty";
+"Capacity" = "Capacity";
+"docks_occupied_format" = "%d of %d docks occupied";
+"Calculating routes..." = "Calculating routes...";
+"Walking" = "Walking";
+"Cycling" = "Cycling";
+
+/* Debug */
+"Tooltips" = "Tooltips";
+"Retrigger demo button tooltip" = "Retrigger demo button tooltip";
+"Profile" = "Profile";
+"Reset name" = "Reset name";
+"Stamps" = "Stamps";
+"Reset Stamps" = "Reset Stamps";
+"Add Stamp" = "Add Stamp";
+"Select…" = "Select…";
+"Onboarding" = "Onboarding";
+"Restart onboarding" = "Restart onboarding";
+"Debug" = "Debug";
+"Done" = "Done";
+
+/* ContentView */
+"Try out demo features!" = "Try out demo features!";
+
+/* Stamp & city display names */
+"Paris" = "Paris";
+"Eiffel Tower" = "Eiffel Tower";
+"Arc de Triomphe" = "Arc de Triomphe";
+"New York" = "New York";
+"London" = "London";
+"Tower Bridge" = "Tower Bridge";
+
+/* Settings */
+"Settings" = "Settings";
+"Change Location" = "Change Location";
+"Changes city theming and map centre" = "Changes city theming and map centre";
+"Manage" = "Manage";
+"Debug Menu" = "Debug Menu";
+"Online / Offline Maps" = "Online / Offline Maps";
+"Customise" = "Customise";
+"Souvenir Stamps" = "Souvenir Stamps";
+"Locales" = "Locales";
+"Units" = "Units";
+
+/* Locale settings */
+"App Language" = "App Language";
+"Choose which language CycleHop uses. Picking \"System Default\" follows your device language." = "Choose which language CycleHop uses. Picking \"System Default\" follows your device language.";
+"System Default" = "System Default";
+"System Locale" = "System Locale";
+"Dates, numbers and measurements are formatted based on these system settings." = "Dates, numbers and measurements are formatted based on these system settings.";
+"Identifier" = "Identifier";
+"Language" = "Language";
+"Region" = "Region";
+
+/* Souvenir stamps settings */
+"Souvenir stamps are collectible markers you earn by visiting real-world locations. Each city and attraction has its own unique stamp design — explore new places to grow your collection." = "Souvenir stamps are collectible markers you earn by visiting real-world locations. Each city and attraction has its own unique stamp design — explore new places to grow your collection.";
+"Show Unowned Stamps" = "Show Unowned Stamps";
+"When enabled, stamps you haven't collected yet will appear in your stamp book as greyed-out placeholders." = "When enabled, stamps you haven't collected yet will appear in your stamp book as greyed-out placeholders.";
+
+/* Units settings */
+"Distance Unit" = "Distance Unit";
+"Distance" = "Distance";
+"Kilometres" = "Kilometres";
+"Miles" = "Miles";
+"Controls how distances to stations are displayed throughout the app." = "Controls how distances to stations are displayed throughout the app.";
+
+/* Provider open-app buttons */
+"Open Vélib' Métropole" = "Open Vélib' Métropole";
+"Open in Citi Bike" = "Open in Citi Bike";
+"Open in Santander Cycles" = "Open in Santander Cycles";

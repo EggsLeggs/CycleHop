@@ -5,7 +5,7 @@ struct ContentView: View {
     let selectedProviderID: String?
 
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
-    @StateObject private var bikePointService = BikePointService()
+    @StateObject private var bikePointService: BikePointService
     @StateObject private var locationManager = LocationManager()
     @StateObject private var searchCompleter = SearchCompleter()
 
@@ -31,6 +31,7 @@ struct ContentView: View {
 
     init(selectedProviderID: String? = nil) {
         self.selectedProviderID = selectedProviderID
+        _bikePointService = StateObject(wrappedValue: BikePointService(providerID: selectedProviderID))
 
         let center: CLLocationCoordinate2D
         if let id = selectedProviderID,

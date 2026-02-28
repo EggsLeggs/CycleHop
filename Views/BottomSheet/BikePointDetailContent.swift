@@ -52,7 +52,7 @@ struct BikePointDetailContent: View {
                     }
                     .frame(height: 8)
 
-                    Text("\(bikePoint.nbBikes ?? 0) of \(bikePoint.nbDocks ?? 0) docks occupied")
+                    Text(String(format: NSLocalizedString("docks_occupied_format", bundle: .localized, comment: ""), bikePoint.nbBikes ?? 0, bikePoint.nbDocks ?? 0))
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
@@ -119,7 +119,7 @@ struct BikePointDetailContent: View {
 }
 
 struct StatBox: View {
-    let title: String
+    let title: LocalizedStringKey
     let value: String
     let icon: String
     let color: Color
@@ -145,7 +145,7 @@ struct StatBox: View {
 
 struct RouteRow: View {
     let icon: String
-    let title: String
+    let title: LocalizedStringKey
     let distance: String
     let time: String
 

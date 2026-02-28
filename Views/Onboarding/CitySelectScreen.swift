@@ -102,14 +102,6 @@ struct CitySelectScreen: View {
             of: "width=\"134\" height=\"96\"",
             with: "width=\"100%\" height=\"100%\"")
 
-        // Inject a solid background rect as the first child so the snapshot is opaque
-        let bgHex = colorScheme == .dark ? "#000000" : "#FFFFFF"
-        if let insertAt = svg.range(of: ">")?.upperBound {
-            svg.insert(
-                contentsOf: "<rect width=\"100%\" height=\"100%\" fill=\"\(bgHex)\"/>",
-                at: insertAt)
-        }
-
         // Invert line colours for dark mode
         if colorScheme == .dark {
             svg =

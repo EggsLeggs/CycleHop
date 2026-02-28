@@ -4,11 +4,20 @@ struct OnboardingHost: View {
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
     @AppStorage("selectedProviderID") private var selectedProviderID = ""
+    @AppStorage("appLanguage") private var appLanguage = "system"
     @EnvironmentObject private var registry: ProviderRegistry
     @EnvironmentObject private var stampStore: StampStore
 
     private var isCompact: Bool {
         horizontalSizeClass == .compact
+    }
+
+    private var overrideLocale: Locale? {
+        switch appLanguage {
+        case "en": Locale(identifier: "en")
+        case "fr": Locale(identifier: "fr")
+        default: nil
+        }
     }
 
     private var providerAccentColor: Color? {
@@ -37,6 +46,7 @@ struct OnboardingHost: View {
                     }
             }
         }
+        .environment(\.locale, overrideLocale ?? .current)
         .tint(providerAccentColor)
         .task {
             registry.register(SantanderCyclesProvider())

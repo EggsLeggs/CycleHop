@@ -78,7 +78,7 @@ public final class CitiBikeProvider: BikeShareProvider, @unchecked Sendable {
         return BookingIntent(
             stationId: station.id,
             method: method,
-            displayName: "Open in Citi Bike"
+            displayName: NSLocalizedString("Open in Citi Bike", bundle: .localized, comment: "")
         )
     }
 

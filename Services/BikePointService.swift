@@ -9,7 +9,10 @@ class BikePointService: ObservableObject {
     @Published var error: String? = nil
     @Published var lastUpdated: Date? = nil
 
-    init() {
+    private let providerID: String?
+
+    init(providerID: String? = nil) {
+        self.providerID = providerID
         Task { await fetchBikePoints() }
     }
 
@@ -17,17 +20,22 @@ class BikePointService: ObservableObject {
         isLoading = true
         defer { isLoading = false }
 
-        guard let url = Bundle.main.url(forResource: "stations", withExtension: "json"),
-              let data = try? Data(contentsOf: url),
-              let decoded = try? JSONDecoder().decode([BikePoint].self, from: data)
-        else {
-            error = "Could not load station data."
-            return
+        do {
+            let stations: [CycleStation]
+            switch providerID {
+            case CitiBikeConfig.providerID:
+                stations = try await CitiBikeProvider().fetchStations()
+            case VelibConfig.providerID:
+                stations = try await VelibProvider().fetchStations()
+            default:
+                stations = try await SantanderCyclesProvider().fetchStations()
+            }
+            bikePoints = stations.map { $0.toBikePoint() }
+            error = nil
+            lastUpdated = Date()
+        } catch {
+            self.error = "Could not load station data."
         }
-
-        bikePoints = decoded
-        error = nil
-        lastUpdated = Date()
     }
 
     func distance(from location: CLLocationCoordinate2D, to bikePoint: BikePoint) -> CLLocationDistance {

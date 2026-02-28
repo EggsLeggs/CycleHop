@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct LocaleSettingsView: View {
+    @AppStorage("appLanguage") private var appLanguage = "system"
+
     private var localeIdentifier: String {
         Locale.current.identifier
     }
@@ -15,15 +17,37 @@ struct LocaleSettingsView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
+            VStack(alignment: .leading, spacing: 20) {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("App Language")
+                        .font(.title3.bold())
+
+                    Text("Choose which language CycleHop uses. Picking \"System Default\" follows your device language.")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                }
+
+                Picker("App Language", selection: $appLanguage) {
+                    Text("System Default").tag("system")
+                    Text("English").tag("en")
+                    Text("Français").tag("fr")
+                }
+                .pickerStyle(.segmented)
+
+                Divider()
+
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("System Locale")
+                        .font(.title3.bold())
+
+                    Text("Dates, numbers and measurements are formatted based on these system settings.")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                }
+
                 localeRow(label: "Identifier", value: localeIdentifier)
                 localeRow(label: "Language", value: languageDisplay)
                 localeRow(label: "Region", value: regionDisplay)
-
-                Text("The app uses your system locale for formatting dates, numbers and units.")
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
-                    .padding(.top, 8)
             }
             .padding(.horizontal)
             .padding(.top, 16)
@@ -33,7 +57,7 @@ struct LocaleSettingsView: View {
         .navigationBarTitleDisplayMode(.large)
     }
 
-    private func localeRow(label: String, value: String) -> some View {
+    private func localeRow(label: LocalizedStringKey, value: String) -> some View {
         HStack {
             Text(label)
                 .foregroundStyle(.secondary)
