@@ -5,6 +5,7 @@ struct MapStyleScreen: View {
     let onComplete: (String) -> Void
 
     @AppStorage("useOfflineMap") private var useOfflineMap = true
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var showOnlineWarning = false
     @State private var previewImage: UIImage?
 
@@ -24,7 +25,7 @@ struct MapStyleScreen: View {
                     }
                     .clipShape(RoundedRectangle(cornerRadius: 12))
                     .padding(.horizontal)
-                    .animation(.easeInOut(duration: 0.25), value: useOfflineMap)
+                    .animation(reduceMotion ? nil : .easeInOut(duration: 0.25), value: useOfflineMap)
 
                 // Style cards
                 HStack(spacing: 16) {
@@ -63,7 +64,7 @@ struct MapStyleScreen: View {
                 .font(.footnote)
                 .foregroundStyle(.secondary)
                 .padding(.horizontal)
-                .animation(.default, value: useOfflineMap)
+                .animation(reduceMotion ? nil : .default, value: useOfflineMap)
             }
             .padding(.top, 16)
             .padding(.bottom, 32)
@@ -107,12 +108,16 @@ private struct MapStyleCard: View {
     let accentColor: Color
     let action: () -> Void
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @ScaledMetric(relativeTo: .title) private var cardIconSize: CGFloat = 36
+    @ScaledMetric(relativeTo: .body) private var checkmarkSize: CGFloat = 20
+
     var body: some View {
         Button(action: action) {
             VStack(spacing: 12) {
                 ZStack(alignment: .topTrailing) {
                     Image(systemName: icon)
-                        .font(.system(size: 36, weight: .medium))
+                        .font(.system(size: cardIconSize, weight: .medium))
                         .foregroundStyle(isSelected ? accentColor : .secondary)
                         .frame(maxWidth: .infinity)
                         .padding(.top, 4)
@@ -120,7 +125,7 @@ private struct MapStyleCard: View {
                     if isSelected {
                         Image(systemName: "checkmark.circle.fill")
                             .foregroundStyle(accentColor)
-                            .font(.system(size: 20))
+                            .font(.system(size: checkmarkSize))
                     }
                 }
 
@@ -150,6 +155,8 @@ private struct MapStyleCard: View {
             )
         }
         .buttonStyle(.plain)
-        .animation(.spring(response: 0.3), value: isSelected)
+        .accessibilityElement(children: .combine)
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
+        .animation(reduceMotion ? nil : .spring(response: 0.3), value: isSelected)
     }
 }

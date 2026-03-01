@@ -3,6 +3,7 @@ import SwiftUI
 struct StampImageView: View {
     let stampPNGBaseName: String
     var size: CGFloat = 160
+    var isDecorative: Bool = false
 
     @Environment(\.colorScheme) private var colorScheme
     @State private var stampImage: UIImage?
@@ -19,6 +20,7 @@ struct StampImageView: View {
                     .frame(width: size, height: size)
             }
         }
+        .accessibilityHidden(isDecorative)
         .onAppear { loadImage() }
         .onChange(of: colorScheme) { _, _ in loadImage() }
     }

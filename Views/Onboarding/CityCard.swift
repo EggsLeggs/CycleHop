@@ -49,14 +49,15 @@ struct CityCard: View {
                     .frame(maxWidth: .infinity)
                     .clipped()
                     .allowsHitTesting(false)
+                    .accessibilityHidden(true)
                 } else if let img = fallbackImage {
                     Image(uiImage: img)
                         .resizable()
                         .aspectRatio(412.0 / 237.0, contentMode: .fit)
                         .frame(maxWidth: .infinity)
                         .allowsHitTesting(false)
+                        .accessibilityHidden(true)
                 } else {
-                    // Last-resort gradient placeholder
                     ZStack {
                         LinearGradient(
                             colors: [provider.brandColor, provider.brandColor.opacity(0.5)],
@@ -70,6 +71,7 @@ struct CityCard: View {
                     }
                     .aspectRatio(412.0 / 237.0, contentMode: .fit)
                     .frame(maxWidth: .infinity)
+                    .accessibilityHidden(true)
                 }
             }
             .background(isSelected ? provider.brandColor : Color(.systemBackground))
@@ -84,6 +86,8 @@ struct CityCard: View {
             )
         }
         .buttonStyle(.plain)
+        .accessibilityElement(children: .combine)
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
         .onAppear { loadFallbackImage() }
         .onChange(of: colorScheme) { loadFallbackImage() }
         .onChange(of: isSelected) { loadFallbackImage() }

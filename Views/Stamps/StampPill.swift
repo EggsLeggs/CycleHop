@@ -14,9 +14,9 @@ struct StampPill: View {
         Button(action: onTap) {
             HStack(spacing: 6) {
                 Image(systemName: "seal.fill")
-                    .font(.system(size: 14, weight: .semibold))
+                    .font(.subheadline.weight(.semibold))
                 Text(label)
-                    .font(.system(size: 14, weight: .semibold))
+                    .font(.subheadline.weight(.semibold))
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 10)

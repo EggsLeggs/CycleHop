@@ -4,6 +4,7 @@ struct StampClaimSheet: View {
     let stamps: [StampDefinition]
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @EnvironmentObject private var stampStore: StampStore
     @StateObject private var motionManager = MotionManager()
     @State private var currentPage = 0
@@ -25,6 +26,7 @@ struct StampClaimSheet: View {
                         .font(.title2)
                         .foregroundStyle(.secondary)
                 }
+                .accessibilityLabel(NSLocalizedString("a11y_close", bundle: .localized, comment: ""))
                 .padding(.trailing, 20)
                 .padding(.top, 20)
             }
@@ -88,8 +90,7 @@ struct StampClaimSheet: View {
         .presentationDetents([.medium])
         .presentationDragIndicator(.visible)
         .onAppear {
-            motionManager.start()
-            // If all stamps already claimed, dismiss immediately
+            if !reduceMotion { motionManager.start() }
             let allClaimed = stamps.allSatisfy { stampStore.isAlreadyClaimed($0) }
             if allClaimed { dismiss() }
         }
@@ -103,20 +104,20 @@ struct StampClaimSheet: View {
         VStack(spacing: 16) {
             Spacer()
 
-            StampImageView(stampPNGBaseName: stamp.stampPNGBaseName, size: 200)
+            StampImageView(stampPNGBaseName: stamp.stampPNGBaseName, size: 200, isDecorative: true)
                 .rotation3DEffect(
-                    Angle(radians: motionManager.roll * 0.3),
+                    Angle(radians: reduceMotion ? 0 : motionManager.roll * 0.3),
                     axis: (x: 0, y: 1, z: 0)
                 )
                 .rotation3DEffect(
-                    Angle(radians: -motionManager.pitch * 0.2),
+                    Angle(radians: reduceMotion ? 0 : -motionManager.pitch * 0.2),
                     axis: (x: 1, y: 0, z: 0)
                 )
                 .shadow(
                     color: .black.opacity(0.2),
                     radius: 12,
-                    x: CGFloat(motionManager.roll * 8),
-                    y: CGFloat(motionManager.pitch * 8) + 4
+                    x: reduceMotion ? 0 : CGFloat(motionManager.roll * 8),
+                    y: reduceMotion ? 4 : CGFloat(motionManager.pitch * 8) + 4
                 )
 
             VStack(spacing: 4) {

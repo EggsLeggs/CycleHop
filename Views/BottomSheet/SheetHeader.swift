@@ -31,6 +31,7 @@ struct SheetHeader: View {
                             Image(systemName: "xmark.circle.fill")
                                 .foregroundStyle(.secondary)
                         }
+                        .accessibilityLabel(NSLocalizedString("a11y_clear_search", bundle: .localized, comment: ""))
                     }
                 }
                 .padding(.horizontal, 10)
@@ -42,9 +43,10 @@ struct SheetHeader: View {
                     showProfilePanel = true
                 } label: {
                     Image(systemName: "person.crop.circle")
-                        .font(.system(size: 26))
+                        .font(.title2)
                         .foregroundStyle(.secondary)
                 }
+                .accessibilityLabel(NSLocalizedString("a11y_profile", bundle: .localized, comment: ""))
 
             case .searchResults:
                 Button {
@@ -54,6 +56,7 @@ struct SheetHeader: View {
                     Image(systemName: "chevron.left")
                         .fontWeight(.semibold)
                 }
+                .accessibilityLabel(NSLocalizedString("a11y_back", bundle: .localized, comment: ""))
 
                 VStack(alignment: .leading, spacing: 1) {
                     Text("Stations near")
@@ -81,6 +84,7 @@ struct SheetHeader: View {
                     Image(systemName: "chevron.left")
                         .fontWeight(.semibold)
                 }
+                .accessibilityLabel(NSLocalizedString("a11y_back", bundle: .localized, comment: ""))
 
                 if let bikePoint = selectedBikePoint {
                     let parts = bikePoint.commonName.splitBikePointName()
@@ -107,6 +111,7 @@ struct SheetHeader: View {
                             .font(.title2)
                             .foregroundStyle(.blue)
                     }
+                    .accessibilityLabel(NSLocalizedString("a11y_get_directions", bundle: .localized, comment: ""))
                 }
             }
         }

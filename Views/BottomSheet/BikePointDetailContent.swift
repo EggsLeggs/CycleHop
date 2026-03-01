@@ -49,6 +49,7 @@ struct BikePointDetailContent: View {
                             Rectangle().fill(Color.gray.opacity(0.3))
                         }
                         .clipShape(Capsule())
+                        .accessibilityHidden(true)
                     }
                     .frame(height: 8)
 
@@ -140,6 +141,7 @@ struct StatBox: View {
         .padding(.vertical, 12)
         .background(color.opacity(0.08))
         .clipShape(RoundedRectangle(cornerRadius: 12))
+        .accessibilityElement(children: .combine)
     }
 }
 
@@ -164,5 +166,6 @@ struct RouteRow: View {
                 .font(.subheadline)
                 .fontWeight(.medium)
         }
+        .accessibilityElement(children: .combine)
     }
 }

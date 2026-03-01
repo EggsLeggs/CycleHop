@@ -34,11 +34,11 @@ import urllib.request
 # ---------------------------------------------------------------------------
 
 # Bounding boxes: (min_lat, max_lat, min_lon, max_lon)
-# Each box is 2× the original radius so coverage extends further from city centre.
+# Each edge is inset by 8% of the range (≈25% fewer tiles than the original boxes).
 CITIES = {
-    "london":   (51.435, 51.575, -0.225, -0.005),
-    "paris":    (48.800, 48.920,  2.225,  2.485),
-    "new_york": (40.660, 40.820, -74.060, -73.900),
+    "london":   (51.4462, 51.5638, -0.2074, -0.0226),
+    "paris":    (48.8096, 48.9104,  2.2458,  2.4642),
+    "new_york": (40.6728, 40.8072, -74.0472, -73.9128),
 }
 
 ZOOM_LEVELS = [12, 13, 14]

@@ -33,6 +33,7 @@ struct WelcomeScreen: View {
                         .aspectRatio(contentMode: .fit)
                         .frame(maxWidth: .infinity)
                         .padding(.horizontal, 24)
+                        .accessibilityHidden(true)
                 }
 
                 Spacer()

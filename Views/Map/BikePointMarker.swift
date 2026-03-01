@@ -4,6 +4,8 @@ struct BikePointMarker: View {
     let bikePoint: BikePoint
     let isSelected: Bool
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
     private var standardBikes: Int { bikePoint.nbStandardBikes ?? 0 }
     private var eBikes: Int { bikePoint.nbEBikes ?? 0 }
     private var emptyDocks: Int { bikePoint.nbEmptyDocks ?? 0 }
@@ -27,7 +29,7 @@ struct BikePointMarker: View {
                     .shadow(color: .black.opacity(0.15), radius: 1, y: 1)
             }
         }
-        .animation(.spring(response: 0.3), value: isSelected)
+        .animation(reduceMotion ? nil : .spring(response: 0.3), value: isSelected)
     }
 }
 

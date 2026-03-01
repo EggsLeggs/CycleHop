@@ -41,6 +41,8 @@ final class BikePointAnnotationView: MKAnnotationView {
             addSubview(vc.view)
             hostingVC = vc
         }
+        isAccessibilityElement = true
+        accessibilityLabel = String(format: NSLocalizedString("a11y_bikes_available_format", bundle: .localized, comment: ""), bikePoint.commonName, bikePoint.nbBikes ?? 0)
     }
 }
 
@@ -185,13 +187,56 @@ struct OfflineMapView: UIViewRepresentable {
             return MKOverlayRenderer(overlay: overlay)
         }
 
-        // MARK: Region change → update binding
+        // MARK: Tile coverage bounds (must match download_tiles.py CITIES bboxes)
+        // Each tuple: (minLat, maxLat, minLon, maxLon)
+        static let tileBounds: [(Double, Double, Double, Double)] = [
+            (51.4462, 51.5638, -0.2074, -0.0226),   // london
+            (48.8096, 48.9104,  2.2458,  2.4642),   // paris
+            (40.6728, 40.8072, -74.0472, -73.9128), // new_york
+        ]
+
+        /// Returns the coordinate clamped to the nearest tile-coverage bbox, or
+        /// nil if the coordinate is already inside one of them.
+        static func clampedCoordinate(
+            _ coord: CLLocationCoordinate2D
+        ) -> CLLocationCoordinate2D? {
+            for (minLat, maxLat, minLon, maxLon) in tileBounds {
+                if coord.latitude  >= minLat && coord.latitude  <= maxLat &&
+                   coord.longitude >= minLon && coord.longitude <= maxLon {
+                    return nil  // already inside a covered area
+                }
+            }
+            // Outside all bboxes — clamp to the nearest one
+            func squaredDist(_ coord: CLLocationCoordinate2D,
+                             _ b: (Double, Double, Double, Double)) -> Double {
+                let (minLat, maxLat, minLon, maxLon) = b
+                let dLat = coord.latitude  - min(max(coord.latitude,  minLat), maxLat)
+                let dLon = coord.longitude - min(max(coord.longitude, minLon), maxLon)
+                return dLat * dLat + dLon * dLon
+            }
+            let nearest = tileBounds.min { squaredDist(coord, $0) < squaredDist(coord, $1) }!
+            let (minLat, maxLat, minLon, maxLon) = nearest
+            return CLLocationCoordinate2D(
+                latitude:  min(max(coord.latitude,  minLat), maxLat),
+                longitude: min(max(coord.longitude, minLon), maxLon)
+            )
+        }
+
+        // MARK: Region change → clamp + update binding
         func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
             guard !isSettingRegion else {
                 isSettingRegion = false
                 return
             }
-            parent.mapCameraCenter = mapView.region.center
+            let center = mapView.region.center
+            if let clamped = Coordinator.clampedCoordinate(center) {
+                isSettingRegion = true
+                var snapped = mapView.region
+                snapped.center = clamped
+                mapView.setRegion(snapped, animated: true)
+                return
+            }
+            parent.mapCameraCenter = center
         }
 
         // MARK: Annotation views

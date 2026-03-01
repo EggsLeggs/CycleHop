@@ -67,5 +67,7 @@ struct BikePointMiniChart: View {
                 .foregroundStyle(.primary)
         }
         .frame(width: size, height: size)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(String(format: NSLocalizedString("a11y_chart_format", bundle: .localized, comment: ""), standardBikes, eBikes, emptyDocks))
     }
 }

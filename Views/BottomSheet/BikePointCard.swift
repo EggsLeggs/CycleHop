@@ -31,7 +31,8 @@ struct BikePointCard: View {
                     Text(nameParts.primary)
                         .font(.subheadline)
                         .fontWeight(.semibold)
-                        .lineLimit(1)
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.8)
 
                     if let badge {
                         Text(LocalizedStringKey(badge.text))
@@ -49,21 +50,25 @@ struct BikePointCard: View {
                     Text(secondary)
                         .font(.caption)
                         .foregroundStyle(.secondary)
-                        .lineLimit(1)
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.8)
                 }
 
                 HStack(spacing: 12) {
                     Label("\(bikePoint.nbStandardBikes ?? 0)", systemImage: "bicycle")
                         .font(.caption)
                         .foregroundStyle(.red)
+                        .accessibilityLabel(String(format: NSLocalizedString("a11y_standard_bikes_format", bundle: .localized, comment: ""), bikePoint.nbStandardBikes ?? 0))
 
                     Label("\(bikePoint.nbEBikes ?? 0)", systemImage: "bolt.fill")
                         .font(.caption)
                         .foregroundStyle(.blue)
+                        .accessibilityLabel(String(format: NSLocalizedString("a11y_ebikes_format", bundle: .localized, comment: ""), bikePoint.nbEBikes ?? 0))
 
                     Label("\(bikePoint.nbEmptyDocks ?? 0)", systemImage: "square.dashed")
                         .font(.caption)
                         .foregroundStyle(.gray)
+                        .accessibilityLabel(String(format: NSLocalizedString("a11y_empty_docks_format", bundle: .localized, comment: ""), bikePoint.nbEmptyDocks ?? 0))
 
                     if let distanceText {
                         Spacer()
@@ -80,5 +85,6 @@ struct BikePointCard: View {
         .padding(.horizontal, 12)
         .background(.ultraThinMaterial)
         .clipShape(RoundedRectangle(cornerRadius: 12))
+        .accessibilityElement(children: .combine)
     }
 }

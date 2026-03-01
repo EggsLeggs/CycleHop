@@ -42,6 +42,7 @@ struct CitySelectScreen: View {
                             .aspectRatio(contentMode: .fit)
                             .frame(height: 84)
                             .opacity(0.5)
+                            .accessibilityHidden(true)
                     }
 
                     Text("Don't see your city?")

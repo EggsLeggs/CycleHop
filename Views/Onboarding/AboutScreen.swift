@@ -5,6 +5,7 @@ struct AboutScreen: View {
 
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var splashImage: UIImage?
     @State private var bikeMapImage: UIImage?
     @State private var stampImage: UIImage?
@@ -40,6 +41,7 @@ struct AboutScreen: View {
                         .stroke(Color(.separator), lineWidth: 0.5)
                 )
                 .padding(.horizontal)
+                .accessibilityHidden(true)
 
                 VStack(alignment: .leading, spacing: 12) {
                     Text("Find bikes, wherever you go.")
@@ -57,6 +59,7 @@ struct AboutScreen: View {
                             .aspectRatio(contentMode: .fit)
                             .frame(height: sectionImageHeight * 1.6)
                             .opacity(0.5)
+                            .accessibilityHidden(true)
                     }
 
                     Text("Bikes Across Your City")
@@ -75,17 +78,23 @@ struct AboutScreen: View {
                             .frame(height: sectionImageHeight)
                             .opacity(0.5 * stampOpacity)
                             .padding(.top, 8)
+                            .accessibilityHidden(true)
                             .onTapGesture {
-                                withAnimation(.easeOut(duration: 0.15)) {
-                                    stampOpacity = 0
-                                }
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
-                                    let others = stampNames.filter { $0 != currentStampName }
-                                    guard let next = others.randomElement() else { return }
+                                let others = stampNames.filter { $0 != currentStampName }
+                                guard let next = others.randomElement() else { return }
+                                if reduceMotion {
                                     currentStampName = next
                                     loadStampImage()
-                                    withAnimation(.easeIn(duration: 0.2)) {
-                                        stampOpacity = 1.0
+                                } else {
+                                    withAnimation(.easeOut(duration: 0.15)) {
+                                        stampOpacity = 0
+                                    }
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+                                        currentStampName = next
+                                        loadStampImage()
+                                        withAnimation(.easeIn(duration: 0.2)) {
+                                            stampOpacity = 1.0
+                                        }
                                     }
                                 }
                             }
@@ -106,6 +115,7 @@ struct AboutScreen: View {
                             .aspectRatio(contentMode: .fit)
                             .frame(height: sectionImageHeight * 1.6)
                             .opacity(0.5)
+                            .accessibilityHidden(true)
                     }
 
                     Text("Open Protocol")

@@ -87,6 +87,7 @@ struct ProfileView: View {
                     .fontWeight(.semibold)
                     .foregroundStyle(.secondary)
             }
+            .accessibilityLabel(NSLocalizedString("a11y_settings", bundle: .localized, comment: ""))
 
             Button {
                 dismiss()
@@ -94,6 +95,7 @@ struct ProfileView: View {
                 Image(systemName: "xmark")
                     .fontWeight(.semibold)
             }
+            .accessibilityLabel(NSLocalizedString("a11y_close", bundle: .localized, comment: ""))
         }
         .padding(.horizontal, 20)
         .padding(.top, 24)
@@ -121,6 +123,7 @@ struct ProfileView: View {
                             .clipShape(Capsule())
                     }
                     .buttonStyle(.plain)
+                    .accessibilityAddTraits(selectedFilter == option ? .isSelected : [])
                 }
             }
             .padding(.horizontal, 20)

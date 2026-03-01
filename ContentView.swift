@@ -5,6 +5,7 @@ struct ContentView: View {
     let selectedProviderID: String?
 
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @StateObject private var bikePointService: BikePointService
     @StateObject private var locationManager = LocationManager()
     @StateObject private var searchCompleter = SearchCompleter()
@@ -27,6 +28,7 @@ struct ContentView: View {
     @AppStorage("useOfflineMap") private var useOfflineMap = true
     @State private var showDebugTooltip = false
     @State private var showDebugMenu = false
+    @ScaledMetric(relativeTo: .body) private var toolbarIconSize: CGFloat = 16
 
     private let initialCenter: CLLocationCoordinate2D
 
@@ -149,7 +151,7 @@ struct ContentView: View {
                     }
                 }
                 .padding(.bottom, 90)
-                .animation(.spring(response: 0.35, dampingFraction: 0.8), value: nearbyStamps.isEmpty)
+                .animation(reduceMotion ? nil : .spring(response: 0.35, dampingFraction: 0.8), value: nearbyStamps.isEmpty)
             }
             .onAppear {
                 midDetentHeight = min(350 + geometry.safeAreaInsets.bottom, geometry.size.height)
@@ -311,9 +313,10 @@ struct ContentView: View {
                         Task { await bikePointService.fetchBikePoints() }
                     } label: {
                         Image(systemName: "arrow.clockwise")
-                            .font(.system(size: 16, weight: .medium))
+                            .font(.system(size: toolbarIconSize, weight: .medium))
                             .frame(width: 44, height: 44)
                     }
+                    .accessibilityLabel(NSLocalizedString("a11y_refresh_stations", bundle: .localized, comment: ""))
 
                     Divider()
                         .frame(width: 30)
@@ -329,9 +332,10 @@ struct ContentView: View {
                         }
                     } label: {
                         Image(systemName: "location.fill")
-                            .font(.system(size: 16, weight: .medium))
+                            .font(.system(size: toolbarIconSize, weight: .medium))
                             .frame(width: 44, height: 44)
                     }
+                    .accessibilityLabel(NSLocalizedString("a11y_centre_on_location", bundle: .localized, comment: ""))
                 }
                 .background(.regularMaterial)
                 .clipShape(RoundedRectangle(cornerRadius: 10))
@@ -346,10 +350,10 @@ struct ContentView: View {
                 if showDebugTooltip {
                     HStack(spacing: 6) {
                         Text("Try out demo features!")
-                            .font(.system(size: 13, weight: .medium))
+                            .font(.caption.weight(.medium))
                             .foregroundStyle(.primary)
                         Image(systemName: "arrow.right")
-                            .font(.system(size: 11, weight: .semibold))
+                            .font(.caption2.weight(.semibold))
                             .foregroundStyle(.secondary)
                     }
                     .padding(.horizontal, 12)
@@ -362,24 +366,23 @@ struct ContentView: View {
                         removal: .opacity.combined(with: .offset(x: 8))
                     ))
                     .onTapGesture {
-                        withAnimation(.spring(duration: 0.3)) {
-                            showDebugTooltip = false
-                        }
+                        if reduceMotion { showDebugTooltip = false }
+                        else { withAnimation(.spring(duration: 0.3)) { showDebugTooltip = false } }
                         hasSeenDebugTooltip = true
                     }
                 }
 
                 Button {
-                    withAnimation(.spring(duration: 0.3)) {
-                        showDebugTooltip = false
-                    }
+                    if reduceMotion { showDebugTooltip = false }
+                    else { withAnimation(.spring(duration: 0.3)) { showDebugTooltip = false } }
                     hasSeenDebugTooltip = true
                     showDebugMenu = true
                 } label: {
                     Image(systemName: "ladybug")
-                        .font(.system(size: 16, weight: .medium))
+                        .font(.system(size: toolbarIconSize, weight: .medium))
                         .frame(width: 44, height: 44)
                 }
+                .accessibilityLabel(NSLocalizedString("a11y_debug_menu", bundle: .localized, comment: ""))
                 .background(.regularMaterial)
                 .clipShape(RoundedRectangle(cornerRadius: 10))
                 .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
@@ -396,9 +399,8 @@ struct ContentView: View {
             .padding(.trailing, 12)
             .onAppear {
                 if !hasSeenDebugTooltip {
-                    withAnimation(.spring(duration: 0.4).delay(0.8)) {
-                        showDebugTooltip = true
-                    }
+                    if reduceMotion { showDebugTooltip = true }
+                    else { withAnimation(.spring(duration: 0.4).delay(0.8)) { showDebugTooltip = true } }
                 }
             }
 

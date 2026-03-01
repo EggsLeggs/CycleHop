@@ -18,7 +18,7 @@ struct SettingsView: View {
                     } label: {
                         HStack(spacing: 16) {
                             Image(systemName: "mappin.and.ellipse")
-                                .font(.system(size: 30))
+                                .font(.title2)
                                 .foregroundStyle(.secondary)
                                 .frame(width: 44, height: 44)
 
@@ -34,7 +34,7 @@ struct SettingsView: View {
 
                             Image(systemName: "chevron.right")
                                 .foregroundStyle(.tertiary)
-                                .font(.system(size: 13, weight: .semibold))
+                                .font(.caption.weight(.semibold))
                         }
                         .frame(minHeight: 54)
                         .padding(.horizontal, 16)
@@ -130,7 +130,7 @@ struct SettingsView: View {
             Spacer()
             Image(systemName: "chevron.right")
                 .foregroundStyle(.tertiary)
-                .font(.system(size: 13, weight: .semibold))
+                .font(.caption.weight(.semibold))
         }
         .frame(minHeight: 54)
         .padding(.horizontal, 16)

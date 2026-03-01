@@ -145,6 +145,23 @@
 "Offline Map works without an internet connection using locally bundled tiles." = "La carte hors ligne fonctionne sans connexion internet grâce aux tuiles intégrées.";
 "Apple Maps shows live map data but requires an internet connection." = "Plans Apple affiche des données cartographiques en direct, mais nécessite une connexion internet.";
 
+/* Accessibility labels */
+"a11y_refresh_stations" = "Actualiser les stations";
+"a11y_centre_on_location" = "Centrer sur ma position";
+"a11y_debug_menu" = "Menu debug";
+"a11y_clear_search" = "Effacer la recherche";
+"a11y_profile" = "Profil";
+"a11y_back" = "Retour";
+"a11y_get_directions" = "Obtenir l'itinéraire";
+"a11y_close" = "Fermer";
+"a11y_dismiss" = "Ignorer";
+"a11y_settings" = "Réglages";
+"a11y_bikes_available_format" = "%@, %d vélos disponibles";
+"a11y_standard_bikes_format" = "%d vélos classiques";
+"a11y_ebikes_format" = "%d VAE";
+"a11y_empty_docks_format" = "%d bornes libres";
+"a11y_chart_format" = "%d vélos classiques, %d VAE, %d bornes libres";
+
 /* Provider open-app buttons */
 "Open Vélib' Métropole" = "Ouvrir Vélib' Métropole";
 "Open in Citi Bike" = "Ouvrir dans Citi Bike";
