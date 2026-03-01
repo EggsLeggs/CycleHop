@@ -1,5 +1,6 @@
 import Foundation
 
+/// Counts of bikes and docks at a station (standard, e-bike, cargo, etc.).
 public struct VehicleAvailability: Codable, Sendable, Equatable {
     public let totalBikes: Int
     public let standardBikes: Int
@@ -38,6 +39,7 @@ public struct VehicleAvailability: Codable, Sendable, Equatable {
     )
 }
 
+/// A single dock station: id, name, coordinate, address, availability, operational status.
 public struct CycleStation: Identifiable, Codable, Sendable {
     public let id: String
     public let systemId: String

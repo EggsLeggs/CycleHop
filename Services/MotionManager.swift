@@ -1,5 +1,6 @@
 import CoreMotion
 
+/// Provides device pitch and roll for tilt-based UI (e.g. parallax).
 final class MotionManager: ObservableObject {
     @Published var pitch: Double = 0
     @Published var roll: Double = 0

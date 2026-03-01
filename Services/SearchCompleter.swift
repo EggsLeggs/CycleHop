@@ -2,6 +2,7 @@ import Foundation
 import MapKit
 import Combine
 
+/// Wraps MKLocalSearchCompleter to provide address/POI suggestions and resolve coordinates.
 class SearchCompleter: NSObject, ObservableObject, MKLocalSearchCompleterDelegate {
     @Published var completions: [MKLocalSearchCompletion] = []
     @Published var searchQuery: String = "" {

@@ -1,6 +1,7 @@
 import SwiftUI
 import MapKit
 
+/// Bottom sheet content: header plus search, search results, or bike point detail.
 struct BottomSheetView: View {
     @Binding var sheetMode: SheetMode
     @Binding var searchText: String

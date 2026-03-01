@@ -1,6 +1,7 @@
 import SwiftUI
 import MapKit
 
+/// Single row for a search completion (icon, title, subtitle).
 struct SearchCompletionRow: View {
     let completion: MKLocalSearchCompletion
 

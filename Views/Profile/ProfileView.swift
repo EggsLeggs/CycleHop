@@ -1,6 +1,7 @@
 import SwiftUI
 import PhotosUI
 
+/// Profile sheet: photo, name, stamp collection (filter by year), settings, debug link.
 struct ProfileView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) private var colorScheme

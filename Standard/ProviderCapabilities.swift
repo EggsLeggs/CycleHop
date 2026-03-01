@@ -1,5 +1,6 @@
 import Foundation
 
+/// Flags describing what a provider supports (docking, e-bikes, booking, etc.).
 public struct ProviderCapabilities: Sendable, Codable {
     public let hasDocking: Bool
     public let hasFreeFloating: Bool

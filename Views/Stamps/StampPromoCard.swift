@@ -1,5 +1,6 @@
 import SwiftUI
 
+/// Promo card for a nearby stamp with image, name, date, tap to claim, dismiss button.
 struct StampPromoCard: View {
     let stamp: StampDefinition
     let onTap: () -> Void

@@ -1,6 +1,7 @@
 import SwiftUI
 import UIKit
 
+/// Presents the system camera to capture a profile photo.
 struct CameraView: UIViewControllerRepresentable {
     @Binding var selectedImage: UIImage?
     @Environment(\.dismiss) private var dismiss

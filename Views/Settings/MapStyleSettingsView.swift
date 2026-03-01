@@ -1,5 +1,6 @@
 import SwiftUI
 
+/// Settings screen for offline vs Apple Maps with explanation and toggle.
 struct MapStyleSettingsView: View {
     @AppStorage("useOfflineMap") private var useOfflineMap = true
     @State private var previewImage: UIImage?

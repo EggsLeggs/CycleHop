@@ -1,5 +1,6 @@
 import SwiftUI
 
+/// Settings screen for distance unit (metric/imperial).
 struct UnitsSettingsView: View {
     @AppStorage("distanceUnit") private var distanceUnit = "metric"
 

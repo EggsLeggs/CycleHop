@@ -1,5 +1,6 @@
 import SwiftUI
 
+/// Wraps CitySelectScreen to change the selected city and trigger map refresh.
 struct ChangeLocationView: View {
     @Environment(\.dismiss) private var dismiss
     @AppStorage("selectedProviderID") private var selectedProviderID = ""

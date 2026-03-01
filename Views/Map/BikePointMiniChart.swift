@@ -1,5 +1,6 @@
 import SwiftUI
 
+/// A wedge of a circle for pie chart segments.
 struct PieSegment: Shape {
     var startAngle: Double
     var endAngle: Double
@@ -21,6 +22,7 @@ struct PieSegment: Shape {
     }
 }
 
+/// Pie chart showing standard bikes (red), e-bikes (blue), empty docks (grey ring).
 struct BikePointMiniChart: View {
     let standardBikes: Int
     let eBikes: Int

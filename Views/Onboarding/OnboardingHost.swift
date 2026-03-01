@@ -1,6 +1,7 @@
 import SwiftUI
 import UIKit
 
+/// Root container: shows onboarding flow or ContentView, applies locale and provider accent.
 struct OnboardingHost: View {
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(\.colorScheme) private var colorScheme

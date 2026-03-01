@@ -1,5 +1,6 @@
 import SwiftUI
 
+/// First onboarding screen: app name, tagline, splash image, Get Started button.
 struct WelcomeScreen: View {
     let onContinue: () -> Void
 
@@ -51,7 +52,7 @@ struct WelcomeScreen: View {
     }
 
     private func loadSplash() {
-        // Set PNG immediately — works everywhere, including Swift Playgrounds where
+        // Set PNG immediately: works everywhere, including Swift Playgrounds where
         // WKWebView may never fire its completion handler
         let pngName = colorScheme == .dark ? "MainSplashDark" : "MainSplashLight"
         splashImage = UIImage(named: pngName)
@@ -63,7 +64,7 @@ struct WelcomeScreen: View {
         svg = svg.replacingOccurrences(of: "width=\"403\" height=\"570\"",
                                        with: "width=\"100%\" height=\"100%\"")
 
-        // Invert line colours for dark mode — no background rect so the view's
+        // Invert line colours for dark mode: no background rect so the view's
         // grey background shows through the transparent SVG canvas
         if colorScheme == .dark {
             svg = svg
@@ -73,7 +74,7 @@ struct WelcomeScreen: View {
 
         guard let data = svg.data(using: .utf8) else { return }
 
-        // Use the SVG's natural size — WKWebView captures at UIScreen.main.scale
+        // Use the SVG's natural size: WKWebView captures at UIScreen.main.scale
         // so the resulting UIImage is already Retina-resolution
         SVGLoader.load(data: data, url: nil, size: CGSize(width: 403, height: 570)) { image in
             if let image {

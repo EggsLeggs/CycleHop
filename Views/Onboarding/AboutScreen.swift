@@ -1,5 +1,6 @@
 import SwiftUI
 
+/// About screen: splash, feature copy, map/stamp previews, GitHub link, Continue.
 struct AboutScreen: View {
     let onContinue: () -> Void
 
@@ -166,7 +167,7 @@ struct AboutScreen: View {
     }
 
     private func loadSplash() {
-        // Set PNG immediately — works everywhere, including Swift Playgrounds where
+        // Set PNG immediately: works everywhere, including Swift Playgrounds where
         // WKWebView may never fire its completion handler
         let pngName =
             useLong
@@ -215,7 +216,7 @@ struct AboutScreen: View {
     }
 
     private func loadBikeMapImage() {
-        // Set PNG immediately — works everywhere, including Swift Playgrounds where
+        // Set PNG immediately: works everywhere, including Swift Playgrounds where
         // WKWebView may never fire its completion handler
         let pngName = colorScheme == .dark ? "BikeMapDark" : "BikeMapLight"
         bikeMapImage = UIImage(named: pngName)
@@ -264,7 +265,7 @@ struct AboutScreen: View {
     }
 
     private func loadGithubImage() {
-        // Set PNG immediately — works everywhere, including Swift Playgrounds where
+        // Set PNG immediately: works everywhere, including Swift Playgrounds where
         // WKWebView may never fire its completion handler
         let pngName = colorScheme == .dark ? "GithubIllustrationDark" : "GithubIllustrationLight"
         githubImage = UIImage(named: pngName)

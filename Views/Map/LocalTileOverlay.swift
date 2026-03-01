@@ -5,13 +5,13 @@ import UIKit
 /// Resources/tile_{z}_{x}_{y}.png, enabling fully offline map rendering.
 ///
 /// Zoom strategy:
-/// - z 12–14  → serve the exact bundled tile
-/// - z > 14   → overzoom: crop the z=14 ancestor tile to the sub-region
-///              that corresponds to the requested tile, then scale back to
-///              256×256 (slightly soft when very close, but correct geography)
-/// - z < 12   → return nil → MKMapView shows the background colour
+/// - z 12 to 14: serve the exact bundled tile
+/// - z > 14: overzoom by cropping the z=14 ancestor tile to the sub-region
+///   that corresponds to the requested tile, then scale back to 256x256
+///   (slightly soft when very close, but correct geography)
+/// - z < 12: return nil so MKMapView shows the background colour
 ///
-/// minimumZ/maximumZ span 0–21 so canReplaceMapContent suppresses Apple Maps
+/// minimumZ/maximumZ span 0 to 21 so canReplaceMapContent suppresses Apple Maps
 /// at every zoom level.
 class LocalTileOverlay: MKTileOverlay {
 
@@ -38,7 +38,7 @@ class LocalTileOverlay: MKTileOverlay {
         }
 
         if requestedZ <= maxTileZ {
-            // Exact tile — serve directly.
+            // Exact tile: serve directly.
             let url = Bundle.main.url(
                 forResource: "tile_\(requestedZ)_\(path.x)_\(path.y)",
                 withExtension: "png"
@@ -80,9 +80,9 @@ class LocalTileOverlay: MKTileOverlay {
         result(crop(parentData, to: cropRect), nil)
     }
 
-    // MARK: - Image helpers
+    // MARK: Image helpers
 
-    /// Crops `data` (a PNG) to `rect` and scales the result back to 256×256.
+    /// Crops `data` (a PNG) to `rect` and scales the result back to 256x256.
     private func crop(_ data: Data, to rect: CGRect) -> Data? {
         guard
             let provider = CGDataProvider(data: data as CFData),

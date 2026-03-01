@@ -8,13 +8,13 @@ public final class CitiBikeProvider: BikeShareProvider, @unchecked Sendable {
     public let id = CitiBikeConfig.providerID
     public let capabilities = CitiBikeConfig.capabilities
 
-    // Simple in-memory cache
+    // In-memory cache for stations
     private var cachedStations: [CycleStation] = []
     private var cacheTimestamp: Date?
 
     public init() {}
 
-    // MARK: - BikeShareProvider
+    // MARK: BikeShareProvider
 
     public func fetchSystem() async throws -> CycleSystem {
         CycleSystem(
@@ -82,7 +82,7 @@ public final class CitiBikeProvider: BikeShareProvider, @unchecked Sendable {
         )
     }
 
-    // MARK: - Private helpers
+    // MARK: Private helpers
 
     private func loadBundledJSON() throws -> Data {
         guard let url = Bundle.main.url(
@@ -107,7 +107,7 @@ public final class CitiBikeProvider: BikeShareProvider, @unchecked Sendable {
     }
 }
 
-// MARK: - OnboardingCityProvider
+// MARK: OnboardingCityProvider
 
 extension CitiBikeProvider: OnboardingCityProvider {
     public var cityDisplayName: String { CitiBikeConfig.city }

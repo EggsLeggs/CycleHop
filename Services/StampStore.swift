@@ -1,5 +1,6 @@
 import Foundation
 
+/// Persists and exposes claimed stamps and dismissed promos; provides nearby unclaimed definitions.
 @MainActor
 final class StampStore: ObservableObject {
     @Published private(set) var claimedStamps: [ClaimedStamp] = []
@@ -59,7 +60,7 @@ final class StampStore: ObservableObject {
         claimedStamps.contains { $0.id == definition.id }
     }
 
-    // MARK: - Private
+    // MARK: Private
 
     private func loadFromDefaults() {
         if let data = UserDefaults.standard.data(forKey: claimedKey),

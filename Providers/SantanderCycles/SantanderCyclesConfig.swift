@@ -1,5 +1,6 @@
 import Foundation
 
+/// Static configuration for Santander Cycles (London) provider.
 enum SantanderCyclesConfig {
     static let providerID = "com.tfl.santander-cycles"
     static let systemName = "Santander Cycles"

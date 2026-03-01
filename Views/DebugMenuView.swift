@@ -1,5 +1,6 @@
 import SwiftUI
 
+/// Debug menu: tooltips, profile reset, onboarding reset, stamp injection, location.
 struct DebugMenuView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var stampStore: StampStore
@@ -16,7 +17,7 @@ struct DebugMenuView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
-                // --- Tooltips ---
+                // Tooltips
 
                 Text("Tooltips")
                     .font(.title3.bold())
@@ -34,7 +35,7 @@ struct DebugMenuView: View {
 
                 Divider()
 
-                // --- Profile ---
+                // Profile
 
                 Text("Profile")
                     .font(.title3.bold())
@@ -64,7 +65,7 @@ struct DebugMenuView: View {
 
                 Divider()
 
-                // --- Stamps ---
+                // Stamps
 
                 Text("Stamps")
                     .font(.title3.bold())
@@ -118,7 +119,7 @@ struct DebugMenuView: View {
 
                 Divider()
 
-                // --- Onboarding ---
+                // Onboarding
 
                 Text("Onboarding")
                     .font(.title3.bold())

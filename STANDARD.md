@@ -107,7 +107,7 @@ CycleAlert(
     systemId: "com.tfl.santander-cycles",
     severity: .warning,
     title: "Planned maintenance",
-    body: "Station closed 2–4pm Sunday.",
+    body: "Station closed 2-4pm Sunday.",
     affectedStationIds: ["com.tfl.santander-cycles.BikePoints_1"],
     startsAt: Date(),
     endsAt: Date().addingTimeInterval(7200)

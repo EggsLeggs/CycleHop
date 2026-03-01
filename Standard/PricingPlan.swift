@@ -1,5 +1,6 @@
 import Foundation
 
+/// A pricing plan for a bike share system (price, currency, description, surge).
 public struct PricingPlan: Identifiable, Codable, Sendable {
     public enum Currency: String, Codable, Sendable {
         case gbp

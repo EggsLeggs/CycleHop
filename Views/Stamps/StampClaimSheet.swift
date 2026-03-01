@@ -1,5 +1,6 @@
 import SwiftUI
 
+/// Sheet to view and claim nearby stamps (paged, with motion and claim button).
 struct StampClaimSheet: View {
     let stamps: [StampDefinition]
 
@@ -16,7 +17,7 @@ struct StampClaimSheet: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            // Close button
+            // Close
             HStack {
                 Spacer()
                 Button {

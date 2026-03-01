@@ -10,7 +10,7 @@ public final class ProviderRegistry: ObservableObject {
 
     private init() {}
 
-    // MARK: - Registration
+    // MARK: Registration
 
     /// Adds a provider. If a provider with the same `id` is already registered, it is replaced.
     public func register(_ provider: any BikeShareProvider) {
@@ -31,7 +31,7 @@ public final class ProviderRegistry: ObservableObject {
         providers.first { $0.id == id }
     }
 
-    // MARK: - Aggregation
+    // MARK: Aggregation
 
     /// Fetches stations from all registered providers concurrently and merges results.
     public func fetchAllStations() async -> [CycleStation] {

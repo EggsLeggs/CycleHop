@@ -11,7 +11,7 @@ public final class SantanderCyclesProvider: BikeShareProvider, @unchecked Sendab
 
     private let useLocalJSON: Bool
 
-    // Simple in-memory cache
+    // In-memory cache for stations
     private var cachedStations: [CycleStation] = []
     private var cacheTimestamp: Date?
 
@@ -19,7 +19,7 @@ public final class SantanderCyclesProvider: BikeShareProvider, @unchecked Sendab
         self.useLocalJSON = useLocalJSON
     }
 
-    // MARK: - BikeShareProvider
+    // MARK: BikeShareProvider
 
     public func fetchSystem() async throws -> CycleSystem {
         CycleSystem(
@@ -95,7 +95,7 @@ public final class SantanderCyclesProvider: BikeShareProvider, @unchecked Sendab
         )
     }
 
-    // MARK: - Private helpers
+    // MARK: Private helpers
 
     private func loadBundledJSON() throws -> Data {
         guard let url = Bundle.main.url(
@@ -140,7 +140,7 @@ public final class SantanderCyclesProvider: BikeShareProvider, @unchecked Sendab
     }
 }
 
-// MARK: - OnboardingCityProvider
+// MARK: OnboardingCityProvider
 
 extension SantanderCyclesProvider: OnboardingCityProvider {
     public var cityDisplayName: String { SantanderCyclesConfig.city }

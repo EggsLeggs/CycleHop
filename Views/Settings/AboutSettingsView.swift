@@ -1,5 +1,6 @@
 import SwiftUI
 
+/// About screen: app description, GitHub link, acknowledgements (OSM, etc.).
 struct AboutSettingsView: View {
     var body: some View {
         ScrollView {
@@ -15,7 +16,7 @@ struct AboutSettingsView: View {
                 .font(.body.bold())
                 .tint(.blue)
 
-                // MARK: - Acknowledgements
+                // MARK: Acknowledgements
 
                 Text("Acknowledgements")
                     .font(.title3.bold())
@@ -43,7 +44,7 @@ struct AboutSettingsView: View {
         .navigationBarTitleDisplayMode(.large)
     }
 
-    // MARK: - Credit row
+    // MARK: Credit row
 
     private func creditSection(
         title: String,

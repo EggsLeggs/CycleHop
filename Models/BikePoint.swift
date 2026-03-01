@@ -1,6 +1,7 @@
 import Foundation
 import CoreLocation
 
+/// A bike share station or dock with location and availability from a provider.
 struct BikePoint: Codable, Identifiable, Equatable {
     let id: String
     let commonName: String
@@ -17,6 +18,7 @@ struct BikePoint: Codable, Identifiable, Equatable {
     var coordinate: CLLocationCoordinate2D { CLLocationCoordinate2D(latitude: lat, longitude: lon) }
 }
 
+/// Key-value pair for TfL-style station metadata (e.g. NbBikes, NbDocks).
 struct AdditionalProperty: Codable, Equatable {
     let key: String
     let value: String

@@ -1,5 +1,6 @@
 import Foundation
 
+/// Latitude/longitude pair used across the Standard layer.
 public struct Coordinate: Codable, Sendable, Equatable {
     public let latitude: Double
     public let longitude: Double
@@ -10,6 +11,7 @@ public struct Coordinate: Codable, Sendable, Equatable {
     }
 }
 
+/// Axis-aligned rectangle in lat/lon for filtering stations.
 public struct BoundingBox: Codable, Sendable {
     public let minLat: Double
     public let maxLat: Double
@@ -31,6 +33,7 @@ public struct BoundingBox: Codable, Sendable {
     }
 }
 
+/// Service area as polygon and bounding box.
 public struct ServiceArea: Codable, Sendable {
     public let polygonCoordinates: [Coordinate]
     public let boundingBox: BoundingBox

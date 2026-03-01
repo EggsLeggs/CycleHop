@@ -2,6 +2,7 @@ import SwiftUI
 import MapKit
 import CoreLocation
 
+/// Full station detail: stats, capacity bar, routes, address, booking.
 struct BikePointDetailContent: View {
     let bikePoint: BikePoint
     let userLocation: CLLocationCoordinate2D?
@@ -21,7 +22,7 @@ struct BikePointDetailContent: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
-                // Stats grid
+                // Stats grid (standard, e-bikes, empty)
                 LazyVGrid(columns: [
                     GridItem(.flexible()),
                     GridItem(.flexible()),
@@ -32,7 +33,7 @@ struct BikePointDetailContent: View {
                     StatBox(title: "Empty", value: "\(bikePoint.nbEmptyDocks ?? 0)", icon: "square.dashed", color: .gray)
                 }
 
-                // Capacity bar
+                // Capacity bar (red/blue/grey)
                 VStack(alignment: .leading, spacing: 6) {
                     Text("Capacity")
                         .font(.caption)
@@ -119,6 +120,7 @@ struct BikePointDetailContent: View {
     }
 }
 
+/// Small stat block: icon, value, title (e.g. Standard bikes count).
 struct StatBox: View {
     let title: LocalizedStringKey
     let value: String
@@ -145,6 +147,7 @@ struct StatBox: View {
     }
 }
 
+/// Single row for walking or cycling route (icon, title, distance, time).
 struct RouteRow: View {
     let icon: String
     let title: LocalizedStringKey

@@ -1,5 +1,6 @@
 import SwiftUI
 
+/// Loads and displays a stamp image by base name (Light/Dark variant from color scheme).
 struct StampImageView: View {
     let stampPNGBaseName: String
     var size: CGFloat = 160

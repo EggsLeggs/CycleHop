@@ -1,5 +1,6 @@
 import Foundation
 
+/// A free-floating vehicle: type, coordinate, battery, range, last updated.
 public struct CycleVehicle: Identifiable, Codable, Sendable {
     public enum VehicleType: String, Codable, Sendable {
         case standard

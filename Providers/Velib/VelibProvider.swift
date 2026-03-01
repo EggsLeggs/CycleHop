@@ -8,13 +8,13 @@ public final class VelibProvider: BikeShareProvider, @unchecked Sendable {
     public let id = VelibConfig.providerID
     public let capabilities = VelibConfig.capabilities
 
-    // Simple in-memory cache
+    // In-memory cache for stations
     private var cachedStations: [CycleStation] = []
     private var cacheTimestamp: Date?
 
     public init() {}
 
-    // MARK: - BikeShareProvider
+    // MARK: BikeShareProvider
 
     public func fetchSystem() async throws -> CycleSystem {
         CycleSystem(
@@ -72,7 +72,7 @@ public final class VelibProvider: BikeShareProvider, @unchecked Sendable {
         )
     }
 
-    // MARK: - Private helpers
+    // MARK: Private helpers
 
     private func loadBundledJSON() throws -> Data {
         guard let url = Bundle.main.url(
@@ -97,7 +97,7 @@ public final class VelibProvider: BikeShareProvider, @unchecked Sendable {
     }
 }
 
-// MARK: - OnboardingCityProvider
+// MARK: OnboardingCityProvider
 
 extension VelibProvider: OnboardingCityProvider {
     public var cityDisplayName: String { VelibConfig.city }

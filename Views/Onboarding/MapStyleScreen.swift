@@ -1,5 +1,6 @@
 import SwiftUI
 
+/// Map style choice: Offline Map vs Apple Maps, preview, then Start Browsing.
 struct MapStyleScreen: View {
     let providerID: String
     let onComplete: (String) -> Void
@@ -13,7 +14,7 @@ struct MapStyleScreen: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
 
-                // Map preview image
+                // Map preview
                 Color(.secondarySystemBackground)
                     .frame(height: 200)
                     .overlay {
@@ -27,7 +28,7 @@ struct MapStyleScreen: View {
                     .padding(.horizontal)
                     .animation(reduceMotion ? nil : .easeInOut(duration: 0.25), value: useOfflineMap)
 
-                // Style cards
+                // Style options
                 HStack(spacing: 16) {
                     MapStyleCard(
                         icon: "map",
@@ -98,8 +99,9 @@ struct MapStyleScreen: View {
     }
 }
 
-// MARK: - Card component
+// MARK: Card component
 
+/// Selectable card for map style (Offline / Apple Maps) with icon, title, subtitle.
 private struct MapStyleCard: View {
     let icon: String
     let title: LocalizedStringKey

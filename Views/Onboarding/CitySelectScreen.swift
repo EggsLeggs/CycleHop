@@ -1,5 +1,6 @@
 import SwiftUI
 
+/// City picker: list of CityCards, "Don't see your city?" fallback, Continue.
 struct CitySelectScreen: View {
     let providers: [any OnboardingCityProvider]
     @Binding var selectedProvider: (any OnboardingCityProvider)?
@@ -89,7 +90,7 @@ struct CitySelectScreen: View {
     }
 
     private func loadNotFoundImage() {
-        // Set PNG immediately — works everywhere, including Swift Playgrounds where
+        // Set PNG immediately: works everywhere, including Swift Playgrounds where
         // WKWebView may never fire its completion handler
         let pngName = colorScheme == .dark ? "NotFoundDark" : "NotFoundLight"
         notFoundImage = UIImage(named: pngName)

@@ -1,7 +1,7 @@
 import SwiftUI
 import WebKit
 
-// MARK: - WebKit process warmer
+// MARK: WebKit process warmer
 
 /// Keeps a pre-loaded WKWebView alive so the WebKit content process is already running
 /// by the time CitySelectScreen creates its cards. Call prewarm() from OnboardingFlow.
@@ -21,7 +21,7 @@ final class SVGWebViewWarmer {
     }
 }
 
-// MARK: - SVGCityView
+// MARK: SVGCityView
 
 struct SVGCityView: UIViewRepresentable {
     let svgName: String
@@ -62,7 +62,7 @@ struct SVGCityView: UIViewRepresentable {
         svg { width: 100%; height: auto; display: block; }
         /* Adapt SVG colours to the system colour scheme.
            Canvas/CanvasText are CSS system colours that flip automatically
-           when the device switches between light and dark mode — no reload needed. */
+           when the device switches between light and dark mode; no reload needed. */
         path[fill="white"] { fill: Canvas; }
         rect[fill="white"] { fill: Canvas; }
         path[stroke="black"] { stroke: CanvasText; }
@@ -75,7 +75,7 @@ struct SVGCityView: UIViewRepresentable {
         """
     }
 
-    // MARK: Coordinator — tracks last-loaded state to skip redundant reloads
+    // MARK: Coordinator (tracks last-loaded state to skip redundant reloads)
 
     final class Coordinator: NSObject, WKNavigationDelegate {
         var lastSVGName: String?

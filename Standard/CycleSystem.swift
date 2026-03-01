@@ -1,5 +1,6 @@
 import Foundation
 
+/// Metadata for a bike share system: name, city, branding, URLs, capabilities.
 public struct CycleSystem: Identifiable, Codable, Sendable {
     public let id: String
     public let name: String

@@ -1,6 +1,7 @@
 import Foundation
 import WebKit
 
+/// Loads SVG data via WKWebView and returns a rasterized UIImage via callback.
 class SVGLoader {
     typealias wkType = (data: Data, complition: ((UIImage?) -> Void)?, url: String?)
     static var wkContainer = [wkType]()

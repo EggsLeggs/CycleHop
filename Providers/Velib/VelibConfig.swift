@@ -1,5 +1,6 @@
 import Foundation
 
+/// Static configuration for Velib (Paris) provider.
 enum VelibConfig {
     static let providerID        = "com.velib-metropole.velib"
     static let systemName        = "Vélib' Métropole"

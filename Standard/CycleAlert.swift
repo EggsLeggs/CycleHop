@@ -1,5 +1,6 @@
 import Foundation
 
+/// A service alert: severity, title, body, affected stations, time range.
 public struct CycleAlert: Identifiable, Codable, Sendable {
     public enum Severity: String, Codable, Sendable {
         case info

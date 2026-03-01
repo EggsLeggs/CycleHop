@@ -1,5 +1,6 @@
 import SwiftUI
 
+/// Settings list: Change Location, Language, Units, Map style, Stamps, About.
 struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var registry: ProviderRegistry
@@ -43,7 +44,7 @@ struct SettingsView: View {
                     .buttonStyle(.plain)
                     .padding(.top, 12)
 
-                    // --- Manage ---
+                    // Manage
 
                     Text("Manage")
                         .font(.title3.bold())
@@ -71,7 +72,7 @@ struct SettingsView: View {
 
                     Divider()
 
-                    // --- Customise ---
+                    // Customise
 
                     Text("Customise")
                         .font(.title3.bold())
@@ -108,7 +109,7 @@ struct SettingsView: View {
 
                     Divider()
 
-                    // --- Misc ---
+                    // Misc
 
                     Text("Misc")
                         .font(.title3.bold())

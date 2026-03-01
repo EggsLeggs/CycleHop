@@ -1,7 +1,7 @@
 import MapKit
 import SwiftUI
 
-// MARK: - Annotation model
+// MARK: Annotation model
 
 final class BikePointAnnotation: NSObject, MKAnnotation {
     let bikePoint: BikePoint
@@ -14,7 +14,7 @@ final class BikePointAnnotation: NSObject, MKAnnotation {
     }
 }
 
-// MARK: - Annotation view
+// MARK: Annotation view
 
 final class BikePointAnnotationView: MKAnnotationView {
     private var hostingVC: UIHostingController<AnyView>?
@@ -23,7 +23,7 @@ final class BikePointAnnotationView: MKAnnotationView {
         super.init(annotation: annotation, reuseIdentifier: reuseIdentifier)
         backgroundColor = .clear
         frame = CGRect(x: 0, y: 0, width: 50, height: 56)
-        // Anchor the bottom-centre of the view on the coordinate
+        // Anchor bottom center of the view on the coordinate
         centerOffset = CGPoint(x: 0, y: -28)
         isEnabled = true
     }
@@ -46,8 +46,9 @@ final class BikePointAnnotationView: MKAnnotationView {
     }
 }
 
-// MARK: - OfflineMapView
+// MARK: OfflineMapView
 
+/// Map view using bundled OSM tiles, bike point annotations, and optional destination pin.
 struct OfflineMapView: UIViewRepresentable {
     let initialCenter: CLLocationCoordinate2D
     @Binding var cameraPosition: MapCameraPosition
@@ -167,7 +168,7 @@ struct OfflineMapView: UIViewRepresentable {
         mapView.layoutMargins.bottom = isCompact ? 100 : 0
     }
 
-    // MARK: - Coordinator
+    // MARK: Coordinator
 
     final class Coordinator: NSObject, MKMapViewDelegate, UIGestureRecognizerDelegate {
         var parent: OfflineMapView
@@ -206,7 +207,7 @@ struct OfflineMapView: UIViewRepresentable {
                     return nil  // already inside a covered area
                 }
             }
-            // Outside all bboxes — clamp to the nearest one
+            // Outside all bboxes: clamp to the nearest one
             func squaredDist(_ coord: CLLocationCoordinate2D,
                              _ b: (Double, Double, Double, Double)) -> Double {
                 let (minLat, maxLat, minLon, maxLon) = b
@@ -284,7 +285,7 @@ struct OfflineMapView: UIViewRepresentable {
             guard let mapView, gesture.state == .recognized else { return }
             let location = gesture.location(in: mapView)
 
-            // Walk up from the hit view — if we pass through an annotation view,
+            // Walk up from the hit view: if we pass through an annotation view,
             // this tap is on a pin and should not deselect.
             var hitView: UIView? = mapView.hitTest(location, with: nil)
             while let v = hitView {

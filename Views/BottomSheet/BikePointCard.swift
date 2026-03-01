@@ -1,6 +1,7 @@
 import SwiftUI
 import CoreLocation
 
+/// Compact card: mini chart, name, bike/dock counts, optional badge and distance.
 struct BikePointCard: View {
     let bikePoint: BikePoint
     let userLocation: CLLocationCoordinate2D?

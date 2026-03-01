@@ -1,5 +1,6 @@
 import SwiftUI
 
+/// Selectable city card: name, system, SVG/PNG art, optional stamp preview.
 struct CityCard: View {
     let provider: any OnboardingCityProvider
     let isSelected: Bool
@@ -29,7 +30,7 @@ struct CityCard: View {
 
                 if let svgName = provider.cityArtSVGName, !svgFailed {
                     ZStack {
-                        // PNG set immediately — visible in Swift Playgrounds where
+                        // PNG set immediately: visible in Swift Playgrounds where
                         // WKWebView renders blank without firing a failure callback
                         if let img = fallbackImage {
                             Image(uiImage: img)
@@ -94,7 +95,7 @@ struct CityCard: View {
     }
 
     private func loadFallbackImage() {
-        // Set PNG immediately — works everywhere, including Swift Playgrounds where
+        // Set PNG immediately: works everywhere, including Swift Playgrounds where
         // WKWebView may render blank without firing its failure callback
         guard let base = provider.cityArtPNGBaseName else { return }
         let scheme = colorScheme == .dark ? "Dark" : "Light"

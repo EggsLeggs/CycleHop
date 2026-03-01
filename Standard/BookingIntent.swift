@@ -1,5 +1,6 @@
 import Foundation
 
+/// Describes how to open booking for a station (deep link, web, or unavailable).
 public struct BookingIntent: Sendable {
     public enum Method: Sendable {
         case appDeepLink(url: URL, webFallback: URL?)

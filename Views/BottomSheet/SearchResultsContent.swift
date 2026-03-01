@@ -2,6 +2,7 @@ import SwiftUI
 import MapKit
 import CoreLocation
 
+/// List of stations near the search destination, scored by direction and availability.
 struct SearchResultsContent: View {
     let destinationCoordinate: CLLocationCoordinate2D
     let bikePoints: [BikePoint]
@@ -27,7 +28,7 @@ struct SearchResultsContent: View {
 
         let userLoc = CLLocation(latitude: userLocation.latitude, longitude: userLocation.longitude)
 
-        // Direction vector: user → destination
+        // Direction vector from user to destination
         let destDx = destinationCoordinate.longitude - userLocation.longitude
         let destDy = destinationCoordinate.latitude - userLocation.latitude
 

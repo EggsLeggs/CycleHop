@@ -1,5 +1,6 @@
 import SwiftUI
 
+/// Map annotation: mini chart (bikes/docks) and optional pin stem when selected.
 struct BikePointMarker: View {
     let bikePoint: BikePoint
     let isSelected: Bool
@@ -21,7 +22,7 @@ struct BikePointMarker: View {
             )
             .shadow(color: .black.opacity(isSelected ? 0.3 : 0.15), radius: isSelected ? 4 : 2, y: isSelected ? 2 : 1)
 
-            // Pin stem
+            // Pin stem when selected
             if isSelected {
                 Triangle()
                     .fill(.white)
@@ -33,6 +34,7 @@ struct BikePointMarker: View {
     }
 }
 
+/// Downward-pointing triangle shape for the pin stem.
 struct Triangle: Shape {
     func path(in rect: CGRect) -> Path {
         var path = Path()

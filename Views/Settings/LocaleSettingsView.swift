@@ -1,5 +1,6 @@
 import SwiftUI
 
+/// Settings screen for app language (system, en, fr).
 struct LocaleSettingsView: View {
     @AppStorage("appLanguage") private var appLanguage = "system"
 

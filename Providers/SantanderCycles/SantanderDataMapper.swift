@@ -4,7 +4,7 @@ import Foundation
 /// the CycleHop standard `CycleStation` model.
 enum SantanderDataMapper {
 
-    // MARK: - Raw TfL types (mirror of BikePoint for decoding purposes)
+    // MARK: Raw TfL types (mirror of BikePoint for decoding)
 
     struct TfLStation: Decodable {
         let id: String
@@ -20,7 +20,7 @@ enum SantanderDataMapper {
         let modified: String?
     }
 
-    // MARK: - Mapping
+    // MARK: Mapping
 
     static func map(_ raw: TfLStation, systemId: String) -> CycleStation {
         let props = raw.additionalProperties

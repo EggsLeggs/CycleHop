@@ -1,14 +1,14 @@
 import Foundation
 
 // =============================================================================
-// CycleHop Standard — Assertion-based Test Runner
-// No XCTest — Swift Playground targets don't support .testTarget.
+// CycleHop Standard: Assertion-based Test Runner
+// No XCTest: Swift Playground targets don't support .testTarget.
 // Run via: Task { await TestSuite.run() } in a #if DEBUG block.
 // =============================================================================
 
 #if DEBUG
 
-// MARK: - Lightweight assertion helpers
+// MARK: Lightweight assertion helpers
 
 private var testsPassed = 0
 private var testsFailed = 0
@@ -34,10 +34,10 @@ func assertEqual<T: Equatable>(
     file: String = #fileID,
     line: Int = #line
 ) {
-    assert(a == b, "\(message) — expected \(b), got \(a)", file: file, line: line)
+    assert(a == b, "\(message): expected \(b), got \(a)", file: file, line: line)
 }
 
-// MARK: - Test infrastructure
+// MARK: Test infrastructure
 
 struct TestCase {
     let name: String
@@ -49,7 +49,7 @@ struct TestGroup {
     let cases: [TestCase]
 }
 
-// MARK: - TestSuite
+// MARK: TestSuite
 
 enum TestSuite {
     static func run() async {
@@ -73,7 +73,7 @@ enum TestSuite {
                     print("  PASS: \(tc.name)")
                 } catch {
                     testsFailed += 1
-                    print("  FAIL: \(tc.name) — threw \(error)")
+                    print("  FAIL: \(tc.name): threw \(error)")
                 }
             }
         }
@@ -88,7 +88,7 @@ enum TestSuite {
     }
 }
 
-// MARK: - 1. SantanderDataMapper tests
+// MARK: 1. SantanderDataMapper tests
 
 private func santanderDataMapperTests() -> TestGroup {
     TestGroup(name: "SantanderDataMapper", cases: [
@@ -125,7 +125,7 @@ private func santanderDataMapperTests() -> TestGroup {
     ])
 }
 
-// MARK: - 2. Geo-query tests
+// MARK: 2. Geo-query tests
 
 private func geoQueryTests() -> TestGroup {
     TestGroup(name: "Geo-queries", cases: [
@@ -166,7 +166,7 @@ private func geoQueryTests() -> TestGroup {
     ])
 }
 
-// MARK: - 3. ProviderRegistry tests
+// MARK: 3. ProviderRegistry tests
 
 private func providerRegistryTests() -> TestGroup {
     TestGroup(name: "ProviderRegistry", cases: [
@@ -209,7 +209,7 @@ private func providerRegistryTests() -> TestGroup {
     ])
 }
 
-// MARK: - 4. Edge cases
+// MARK: 4. Edge cases
 
 private func edgeCaseTests() -> TestGroup {
     TestGroup(name: "Edge cases", cases: [
@@ -245,7 +245,7 @@ private func edgeCaseTests() -> TestGroup {
     ])
 }
 
-// MARK: - 5. BookingIntent tests
+// MARK: 5. BookingIntent tests
 
 private func bookingIntentTests() -> TestGroup {
     TestGroup(name: "BookingIntent", cases: [
@@ -280,7 +280,7 @@ private func bookingIntentTests() -> TestGroup {
     ])
 }
 
-// MARK: - JSON factory helper
+// MARK: JSON factory helper
 
 private func makeTfLJSON(
     id: String,

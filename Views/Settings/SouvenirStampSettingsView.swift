@@ -1,5 +1,6 @@
 import SwiftUI
 
+/// Settings screen for souvenir stamps (show unowned toggle and description).
 struct SouvenirStampSettingsView: View {
     @Environment(\.colorScheme) private var colorScheme
     @AppStorage("showUnownedStamps") private var showUnownedStamps = false
@@ -33,7 +34,7 @@ struct SouvenirStampSettingsView: View {
                         .stroke(Color(.separator), lineWidth: 0.5)
                 )
 
-                Text("Souvenir stamps are collectible markers you earn by visiting real-world locations. Each city and attraction has its own unique stamp design — explore new places to grow your collection.")
+                Text("Souvenir stamps are collectible markers you earn by visiting real-world locations. Each city and attraction has its own unique stamp design. Explore new places to grow your collection.")
                     .font(.body)
                     .foregroundStyle(.secondary)
 

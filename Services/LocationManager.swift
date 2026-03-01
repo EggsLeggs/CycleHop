@@ -1,6 +1,7 @@
 import Foundation
 import CoreLocation
 
+/// Exposes user location and authorization status via CLLocationManager.
 class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     @Published var userLocation: CLLocationCoordinate2D?
     @Published var authorizationStatus: CLAuthorizationStatus = .notDetermined

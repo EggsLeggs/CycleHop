@@ -3,7 +3,7 @@ import Foundation
 /// Maps the merged Citi Bike GBFS snapshot JSON to the CycleHop standard `CycleStation` model.
 enum CitiBikeDataMapper {
 
-    // MARK: - Raw snapshot type
+    // MARK: Raw snapshot type
 
     struct RawStation: Decodable {
         let station_id: String
@@ -23,7 +23,7 @@ enum CitiBikeDataMapper {
         let stations: [RawStation]
     }
 
-    // MARK: - Mapping
+    // MARK: Mapping
 
     static func map(_ raw: RawStation, systemId: String) -> CycleStation {
         let totalBikes    = raw.num_bikes_available

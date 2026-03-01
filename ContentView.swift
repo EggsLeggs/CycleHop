@@ -1,6 +1,7 @@
 import SwiftUI
 import MapKit
 
+/// Root map and bottom sheet UI. Shows bike points, search, and stamp discovery for the selected provider.
 struct ContentView: View {
     let selectedProviderID: String?
 
@@ -161,7 +162,7 @@ struct ContentView: View {
 
                 floatingToolbar
 
-                // Stamp pill floats above the collapsed sheet, only when panel is at minimum height
+                // Stamp pill above collapsed sheet when panel is at minimum height
                 VStack {
                     Spacer()
                     if !nearbyStamps.isEmpty && selectedDetent == collapsedDetent {
@@ -282,7 +283,7 @@ struct ContentView: View {
                     }
                 }
 
-                // Destination pin
+                // Destination pin when search result is selected
                 if let dest = destinationCoordinate {
                     Marker("Destination", coordinate: dest)
                         .tint(.orange)

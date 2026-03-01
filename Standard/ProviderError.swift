@@ -1,5 +1,6 @@
 import Foundation
 
+/// Errors from bike share providers (network, decoding, auth, rate limit, unsupported).
 public enum ProviderError: Error, @unchecked Sendable {
     case networkUnavailable
     case dataNotFound

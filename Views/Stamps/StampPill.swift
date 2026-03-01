@@ -1,5 +1,6 @@
 import SwiftUI
 
+/// Floating pill showing "New Stamp Available" or "N stamps available"; tap opens claim sheet.
 struct StampPill: View {
     let nearbyStamps: [StampDefinition]
     let onTap: () -> Void

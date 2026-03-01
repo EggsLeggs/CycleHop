@@ -2,6 +2,7 @@ import Foundation
 import CoreLocation
 import MapKit
 
+/// Fetches and exposes bike points for the current provider; supports routes and reverse geocoding.
 @MainActor
 class BikePointService: ObservableObject {
     @Published var bikePoints: [BikePoint] = []

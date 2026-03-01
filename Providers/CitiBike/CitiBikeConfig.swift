@@ -1,5 +1,6 @@
 import Foundation
 
+/// Static configuration for Citi Bike (New York) provider.
 enum CitiBikeConfig {
     static let providerID        = "com.citibikenyc.citi-bike"
     static let systemName        = "Citi Bike"

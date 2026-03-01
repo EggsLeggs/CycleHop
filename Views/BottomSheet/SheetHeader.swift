@@ -1,6 +1,7 @@
 import SwiftUI
 import MapKit
 
+/// Header for the bottom sheet: search field, back, destination/station title, profile, directions.
 struct SheetHeader: View {
     @Binding var sheetMode: SheetMode
     @Binding var searchText: String

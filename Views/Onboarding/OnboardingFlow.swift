@@ -1,5 +1,6 @@
 import SwiftUI
 
+/// Navigation flow: welcome, about, city select, map style, then completion.
 struct OnboardingFlow: View {
     let onComplete: (String) -> Void
 
@@ -44,7 +45,7 @@ struct OnboardingFlow: View {
             }
         }
         .onAppear {
-            // Spawn the WebKit content process early so city card SVGs load instantly
+            // Prewarm WebKit so city card SVGs load quickly
             for provider in cityProviders {
                 if let svgName = provider.cityArtSVGName {
                     SVGWebViewWarmer.shared.prewarm(svgName: svgName)

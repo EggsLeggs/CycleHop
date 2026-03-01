@@ -9,7 +9,7 @@ public protocol BikeShareProvider: AnyObject, Sendable {
     /// Describes what this provider supports.
     var capabilities: ProviderCapabilities { get }
 
-    // MARK: - Required
+    // MARK: Required
 
     /// Returns metadata about the bike share system (name, city, branding, etc.)
     func fetchSystem() async throws -> CycleSystem
@@ -23,7 +23,7 @@ public protocol BikeShareProvider: AnyObject, Sendable {
     /// Returns all stations whose coordinates fall within the given bounding box.
     func stations(in bounds: BoundingBox) async throws -> [CycleStation]
 
-    // MARK: - Optional (default implementations provided)
+    // MARK: Optional (default implementations provided)
 
     /// Returns free-floating vehicles. Throws `.unsupportedOperation` for docked-only systems.
     func fetchVehicles() async throws -> [CycleVehicle]
@@ -38,7 +38,7 @@ public protocol BikeShareProvider: AnyObject, Sendable {
     func bookingIntent(for station: CycleStation) async throws -> BookingIntent?
 }
 
-// MARK: - Default implementations
+// MARK: Default implementations
 
 public extension BikeShareProvider {
     func fetchVehicles() async throws -> [CycleVehicle] {
@@ -74,7 +74,7 @@ public extension BikeShareProvider {
     }
 }
 
-// MARK: - Shared Haversine (no CoreLocation dependency in Standard layer)
+// MARK: Shared Haversine (no CoreLocation dependency in Standard layer)
 
 func haversineMetres(from a: Coordinate, to b: Coordinate) -> Double {
     let earthRadiusM = 6_371_000.0

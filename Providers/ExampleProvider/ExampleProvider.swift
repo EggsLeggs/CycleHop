@@ -1,12 +1,12 @@
 import Foundation
 
 // =============================================================================
-// EXAMPLE PROVIDER TEMPLATE — "Riverton Bikes"
+// EXAMPLE PROVIDER TEMPLATE: "Riverton Bikes"
 // This fictional provider shows you how to integrate any bike share system.
 // Follow the STEP comments to adapt it for a real operator.
 // =============================================================================
 
-// MARK: - STEP 1: Replace all "Riverton" references with your system's name
+// MARK: STEP 1: Replace all "Riverton" references with your system's name
 //         and fill in the config constants below.
 
 private enum RivertonBikesConfig {
@@ -43,7 +43,7 @@ private enum RivertonBikesConfig {
     static let liveAPIURL = URL(string: "https://api.example.com/stations")!
 }
 
-// MARK: - STEP 7: Implement the provider class
+// MARK: STEP 7: Implement the provider class
 
 public final class RivertonBikesProvider: BikeShareProvider, @unchecked Sendable {
 
@@ -53,7 +53,7 @@ public final class RivertonBikesProvider: BikeShareProvider, @unchecked Sendable
     public init() {}
 
     // -------------------------------------------------------------------------
-    // fetchSystem() — return static metadata about your bike share system.
+    // fetchSystem(): return static metadata about your bike share system.
     // -------------------------------------------------------------------------
     public func fetchSystem() async throws -> CycleSystem {
         CycleSystem(
@@ -72,7 +72,7 @@ public final class RivertonBikesProvider: BikeShareProvider, @unchecked Sendable
     }
 
     // -------------------------------------------------------------------------
-    // fetchStations() — load from bundled JSON.
+    // fetchStations(): load from bundled JSON.
     // STEP 7: If your API returns a different schema, write a mapper similar
     // to SantanderDataMapper and call it here instead of using JSONDecoder directly.
     // -------------------------------------------------------------------------
@@ -98,18 +98,18 @@ public final class RivertonBikesProvider: BikeShareProvider, @unchecked Sendable
     }
 
     // -------------------------------------------------------------------------
-    // bookingIntent() — show how to return both patterns.
+    // bookingIntent(): show how to return both patterns.
     // STEP 7: Pick the pattern that matches your app / website.
     // -------------------------------------------------------------------------
     public func bookingIntent(for station: CycleStation) async throws -> BookingIntent? {
-        // Pattern A — deep link with web fallback (preferred):
+        // Pattern A: deep link with web fallback (preferred):
         // if let deepURL = URL(string: "rivertonbikes://station/\(station.id)") {
         //     return BookingIntent(stationId: station.id,
         //                         method: .appDeepLink(url: deepURL, webFallback: RivertonBikesConfig.webURL),
         //                         displayName: "Open in Riverton Bikes")
         // }
 
-        // Pattern B — web only:
+        // Pattern B: web only:
         return BookingIntent(
             stationId: station.id,
             method: .webOnly(url: RivertonBikesConfig.webURL),

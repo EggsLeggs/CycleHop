@@ -1,5 +1,6 @@
 import SwiftUI
 
+/// Full-width primary button for onboarding steps (Continue, Get Started, etc.).
 struct OnboardingContinueButton: View {
     let title: LocalizedStringKey
     let isEnabled: Bool
