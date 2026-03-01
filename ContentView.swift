@@ -393,6 +393,7 @@ struct ContentView: View {
                     }
                 }
             }
+            .ignoresSafeArea(edges: .top)
         } else {
             Map(position: $cameraPosition) {
                 if mockLocationMode == "live" {
@@ -447,6 +448,7 @@ struct ContentView: View {
             }
             .mapStyle(.standard(pointsOfInterest: .excludingAll))
             .safeAreaPadding(.bottom, isCompact ? 100 : 0)
+            .ignoresSafeArea(edges: .top)
             .mapControls {
                 MapScaleView()
             }
