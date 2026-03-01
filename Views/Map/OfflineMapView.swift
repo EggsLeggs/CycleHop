@@ -95,6 +95,8 @@ final class MockUserLocationAnnotationView: MKAnnotationView {
 /// Map view using bundled OSM tiles, bike point annotations, and optional destination pin.
 struct OfflineMapView: UIViewRepresentable {
     let initialCenter: CLLocationCoordinate2D
+    /// Top safe area inset so the map centers the region in the visible area (below notch/camera).
+    var topSafeAreaInset: CGFloat = 0
     @Binding var cameraPosition: MapCameraPosition
     @Binding var mapCameraCenter: CLLocationCoordinate2D?
     let filteredBikePoints: [BikePoint]
@@ -245,6 +247,8 @@ struct OfflineMapView: UIViewRepresentable {
             mapView.showsUserLocation = showsLiveUserLocation
         }
 
+        // Center the map region in the visible area (below top safe area / camera).
+        mapView.layoutMargins.top = topSafeAreaInset
         // Push MapKit's built-in controls (scale, compass) above the bottom sheet
         mapView.layoutMargins.bottom = isCompact ? 100 : 0
     }

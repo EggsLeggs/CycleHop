@@ -274,10 +274,19 @@ struct ContentView: View {
         }
     }
 
+    /// Latitude offset so the map region center places a bike point at the visual center (above the bottom sheet).
+    /// When the map uses full frame but has bottom padding for the sheet, the visual center is (height - bottomPadding)/2;
+    /// the map still centers at height/2, so we shift the region north to move the point up by bottomPadding/2.
+    private func bikePointCenterLatitudeOffset(size: CGSize, bottomSheetPadding: CGFloat) -> Double {
+        guard size.height > 0, bottomSheetPadding > 0 else { return 0 }
+        let movePointUpByPoints = bottomSheetPadding / 2
+        return Double(movePointUpByPoints / size.height) * 0.005
+    }
+
     private var compactLayout: some View {
         GeometryReader { geometry in
             ZStack {
-                mapView
+                mapView(safeAreaInsets: geometry.safeAreaInsets, size: geometry.size)
                     .sheet(isPresented: $showStampClaimSheet) {
                         StampClaimSheet(stamps: nearbyStamps)
                             .environmentObject(stampStore)
@@ -331,18 +340,21 @@ struct ContentView: View {
             .frame(width: showProfilePanel ? 420 : 360)
             .animation(.easeInOut(duration: 0.25), value: showProfilePanel)
 
-            ZStack {
-                mapView
-                floatingToolbar
+            GeometryReader { geometry in
+                ZStack {
+                    mapView(safeAreaInsets: geometry.safeAreaInsets, size: geometry.size)
+                    floatingToolbar
+                }
             }
         }
     }
 
     @ViewBuilder
-    private var mapView: some View {
+    private func mapView(safeAreaInsets: EdgeInsets, size: CGSize) -> some View {
         if useOfflineMap {
             OfflineMapView(
                 initialCenter: initialCenter,
+                topSafeAreaInset: safeAreaInsets.top,
                 cameraPosition: $cameraPosition,
                 mapCameraCenter: $mapCameraCenter,
                 filteredBikePoints: filteredBikePoints,
@@ -428,9 +440,10 @@ struct ContentView: View {
                                 if isCompact {
                                     selectedDetent = midDetent
                                 }
+                                let latOffset = bikePointCenterLatitudeOffset(size: size, bottomSheetPadding: isCompact ? 100 : 0)
                                 cameraPosition = .region(MKCoordinateRegion(
                                     center: CLLocationCoordinate2D(
-                                        latitude: bikePoint.coordinate.latitude - (isCompact ? 0.001 : 0),
+                                        latitude: bikePoint.coordinate.latitude - (isCompact ? 0.001 : 0) + latOffset,
                                         longitude: bikePoint.coordinate.longitude
                                     ),
                                     span: MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005)
@@ -667,4 +680,20 @@ struct ContentView: View {
         suggestedSystemName = provider.systemDisplayName
         showCitySwitchAlert = true
     }
+}
+
+// MARK: - Previews
+
+#Preview("Map with stamp prompt") {
+    let stampStore = StampStore()
+    let registry = ProviderRegistry.shared
+    if registry.providers.isEmpty {
+        registry.register(SantanderCyclesProvider())
+        registry.register(CitiBikeProvider())
+        registry.register(VelibProvider())
+        stampStore.loadDefinitions(from: registry)
+    }
+    return ContentView(selectedProviderID: "com.tfl.santander-cycles")
+        .environmentObject(registry)
+        .environmentObject(stampStore)
 }
