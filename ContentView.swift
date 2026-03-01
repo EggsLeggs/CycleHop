@@ -24,6 +24,7 @@ struct ContentView: View {
     @State private var midDetentHeight: CGFloat = 384
     @State private var hasMovedCamera = false
     @AppStorage("hasSeenDebugTooltip") private var hasSeenDebugTooltip = false
+    @AppStorage("locationChangeTrigger") private var locationChangeTrigger = 0
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
     @AppStorage("useOfflineMap") private var useOfflineMap = true
     @State private var showDebugTooltip = false
@@ -108,12 +109,30 @@ struct ContentView: View {
         }
         .onChange(of: locationManager.userLocation) { _, newLocation in
             updateNearbyStamps(location: newLocation)
+            searchCompleter.updateRegion(cityCenter: initialCenter,
+                                         userLocation: newLocation)
         }
         .onChange(of: stampStore.allDefinitions) { _, _ in
             updateNearbyStamps(location: locationManager.userLocation)
         }
         .onChange(of: stampStore.claimedStamps) { _, _ in
             updateNearbyStamps(location: locationManager.userLocation)
+        }
+        .onChange(of: locationChangeTrigger) { _, _ in
+            guard let id = selectedProviderID,
+                  let provider = ProviderRegistry.shared.provider(id: id) as? any OnboardingCityProvider else { return }
+            let center = CLLocationCoordinate2D(
+                latitude: provider.defaultCenter.latitude,
+                longitude: provider.defaultCenter.longitude
+            )
+            withAnimation {
+                cameraPosition = .region(MKCoordinateRegion(
+                    center: center,
+                    span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
+                ))
+            }
+            searchCompleter.updateRegion(cityCenter: center,
+                                         userLocation: locationManager.userLocation)
         }
         .onChange(of: hasSeenDebugTooltip) { _, newValue in
             if !newValue && !showDebugTooltip {
@@ -126,6 +145,8 @@ struct ContentView: View {
         }
         .onAppear {
             updateNearbyStamps(location: locationManager.userLocation)
+            searchCompleter.updateRegion(cityCenter: initialCenter,
+                                         userLocation: locationManager.userLocation)
         }
     }
 
@@ -140,10 +161,10 @@ struct ContentView: View {
 
                 floatingToolbar
 
-                // Stamp pill floats above the collapsed sheet
+                // Stamp pill floats above the collapsed sheet, only when panel is at minimum height
                 VStack {
                     Spacer()
-                    if !nearbyStamps.isEmpty {
+                    if !nearbyStamps.isEmpty && selectedDetent == collapsedDetent {
                         StampPill(nearbyStamps: nearbyStamps) {
                             showStampClaimSheet = true
                         }
@@ -151,7 +172,7 @@ struct ContentView: View {
                     }
                 }
                 .padding(.bottom, 90)
-                .animation(reduceMotion ? nil : .spring(response: 0.35, dampingFraction: 0.8), value: nearbyStamps.isEmpty)
+                .animation(reduceMotion ? nil : .spring(response: 0.35, dampingFraction: 0.8), value: !nearbyStamps.isEmpty && selectedDetent == collapsedDetent)
             }
             .onAppear {
                 midDetentHeight = min(350 + geometry.safeAreaInsets.bottom, geometry.size.height)

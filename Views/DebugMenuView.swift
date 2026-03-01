@@ -51,6 +51,17 @@ struct DebugMenuView: View {
                 }
                 .buttonStyle(.plain)
 
+                Divider().padding(.leading, dividerInset)
+
+                Button {
+                    let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+                        .appendingPathComponent("profile_image.jpg")
+                    try? FileManager.default.removeItem(at: url)
+                } label: {
+                    debugRow(icon: "person.crop.circle.badge.minus", title: "Remove profile photo", tint: .red)
+                }
+                .buttonStyle(.plain)
+
                 Divider()
 
                 // --- Stamps ---
@@ -67,6 +78,15 @@ struct DebugMenuView: View {
                     stampStore.resetAllStamps()
                 } label: {
                     debugRow(icon: "seal.fill", title: "Reset Stamps", tint: .red)
+                }
+                .buttonStyle(.plain)
+
+                Divider().padding(.leading, dividerInset)
+
+                Button {
+                    stampStore.claimAll(stampStore.allDefinitions)
+                } label: {
+                    debugRow(icon: "seal.fill", title: "Add all stamps")
                 }
                 .buttonStyle(.plain)
 
@@ -107,6 +127,16 @@ struct DebugMenuView: View {
                     .padding(.bottom, 8)
 
                 Divider()
+
+                NavigationLink {
+                    ChangeLocationView()
+                        .environmentObject(ProviderRegistry.shared)
+                } label: {
+                    debugRow(icon: "mappin.and.ellipse", title: "Change Location")
+                }
+                .buttonStyle(.plain)
+
+                Divider().padding(.leading, dividerInset)
 
                 Button {
                     hasCompletedOnboarding = false

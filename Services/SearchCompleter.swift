@@ -16,10 +16,27 @@ class SearchCompleter: NSObject, ObservableObject, MKLocalSearchCompleterDelegat
         completer = MKLocalSearchCompleter()
         super.init()
         completer.delegate = self
-        completer.resultTypes = .address
+        completer.resultTypes = [.address, .pointOfInterest]
+    }
+
+    /// Bias search suggestions toward the selected city, shifting slightly
+    /// toward the user when they are within 50 km of the city centre.
+    func updateRegion(cityCenter: CLLocationCoordinate2D,
+                      userLocation: CLLocationCoordinate2D?) {
+        var center = cityCenter
+        if let user = userLocation {
+            let cityLoc = CLLocation(latitude: cityCenter.latitude, longitude: cityCenter.longitude)
+            let userLoc = CLLocation(latitude: user.latitude, longitude: user.longitude)
+            if userLoc.distance(from: cityLoc) < 50_000 {
+                center = CLLocationCoordinate2D(
+                    latitude: (cityCenter.latitude + user.latitude) / 2,
+                    longitude: (cityCenter.longitude + user.longitude) / 2
+                )
+            }
+        }
         completer.region = MKCoordinateRegion(
-            center: CLLocationCoordinate2D(latitude: 51.509, longitude: -0.118),
-            span: MKCoordinateSpan(latitudeDelta: 0.2, longitudeDelta: 0.2)
+            center: center,
+            span: MKCoordinateSpan(latitudeDelta: 0.3, longitudeDelta: 0.3)
         )
     }
 

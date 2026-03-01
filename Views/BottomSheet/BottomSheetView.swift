@@ -65,7 +65,7 @@ struct BottomSheetView: View {
         }
         .frame(maxHeight: .infinity, alignment: .top)
         .sheet(isPresented: $showProfilePanel) {
-            ProfileView()
+            ProfileView(startingDetent: selectedDetent == .large ? .large : .medium)
         }
         .onChange(of: searchText) { _, newValue in
             searchCompleter.searchQuery = newValue

@@ -36,7 +36,8 @@ let package = Package(
                 .locationWhenInUse(
                     purposeString:
                         "CycleHop uses your location to find nearby docking stations and unlock souvenir stamps"
-                )
+                ),
+                .camera(purposeString: "CycleHop uses the camera to set your profile photo")
             ],
             appCategory: .travel
         )

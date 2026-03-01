@@ -1,7 +1,9 @@
 import SwiftUI
+import UIKit
 
 struct OnboardingHost: View {
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    @Environment(\.colorScheme) private var colorScheme
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
     @AppStorage("selectedProviderID") private var selectedProviderID = ""
     @AppStorage("appLanguage") private var appLanguage = "system"
@@ -22,7 +24,10 @@ struct OnboardingHost: View {
 
     private var providerAccentColor: Color? {
         guard hasCompletedOnboarding, !selectedProviderID.isEmpty else { return nil }
-        return (registry.provider(id: selectedProviderID) as? any OnboardingCityProvider)?.brandColor
+        guard let color = (registry.provider(id: selectedProviderID) as? any OnboardingCityProvider)?.brandColor else { return nil }
+        let traits = UITraitCollection(userInterfaceStyle: colorScheme == .dark ? .dark : .light)
+        let background = Color(uiColor: UIColor.systemBackground.resolvedColor(with: traits))
+        return color.withAdequateContrast(against: background)
     }
 
     var body: some View {

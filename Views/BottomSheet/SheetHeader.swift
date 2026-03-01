@@ -11,6 +11,21 @@ struct SheetHeader: View {
     let collapsedDetent: PresentationDetent
     let destinationName: String?
     @FocusState private var isSearchFocused: Bool
+    @State private var profileImage: UIImage?
+
+    private var profileImageURL: URL {
+        FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+            .appendingPathComponent("profile_image.jpg")
+    }
+
+    private func loadProfileImage() {
+        guard let data = try? Data(contentsOf: profileImageURL),
+              let image = UIImage(data: data) else {
+            profileImage = nil
+            return
+        }
+        profileImage = image
+    }
 
     var body: some View {
         HStack(spacing: 12) {
@@ -42,9 +57,17 @@ struct SheetHeader: View {
                 Button {
                     showProfilePanel = true
                 } label: {
-                    Image(systemName: "person.crop.circle")
-                        .font(.title2)
-                        .foregroundStyle(.secondary)
+                    if let profileImage {
+                        Image(uiImage: profileImage)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 32, height: 32)
+                            .clipShape(Circle())
+                    } else {
+                        Image(systemName: "person.crop.circle.fill")
+                            .font(.system(size: 32))
+                            .foregroundStyle(Color(.systemGray2))
+                    }
                 }
                 .accessibilityLabel(NSLocalizedString("a11y_profile", bundle: .localized, comment: ""))
 
@@ -118,6 +141,10 @@ struct SheetHeader: View {
         .padding(.horizontal)
         .padding(.top, 16)
         .padding(.bottom, 8)
+        .onAppear { loadProfileImage() }
+        .onChange(of: showProfilePanel) { _, isShowing in
+            if !isShowing { loadProfileImage() }
+        }
         .onChange(of: isSearchFocused) { _, focused in
             if focused {
                 withAnimation {

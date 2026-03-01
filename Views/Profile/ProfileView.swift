@@ -1,4 +1,5 @@
 import SwiftUI
+import PhotosUI
 
 struct ProfileView: View {
     @Environment(\.dismiss) private var dismiss
@@ -12,6 +13,16 @@ struct ProfileView: View {
     @State private var selectedFilter = "All Time"
     @State private var showSettings = false
     @State private var stampImage: UIImage?
+    @State private var presentationDetent: PresentationDetent
+    @State private var profileImage: UIImage?
+    @State private var selectedPhotoItem: PhotosPickerItem?
+    @State private var showImageSourceDialog = false
+    @State private var showCamera = false
+    @State private var showPhotoPicker = false
+
+    init(startingDetent: PresentationDetent = .medium) {
+        _presentationDetent = State(initialValue: startingDetent)
+    }
 
     private var filterOptions: [String] {
         let years = stampStore.claimedStamps
@@ -41,7 +52,7 @@ struct ProfileView: View {
                 if filteredClaimedStamps.isEmpty { emptyState } else { stampSections }
             }
         }
-        .presentationDetents([.medium, .large])
+        .presentationDetents([.medium, .large], selection: $presentationDetent)
         .presentationDragIndicator(.visible)
         .presentationBackground(.regularMaterial)
         .sheet(isPresented: $showSettings) {
@@ -52,50 +63,108 @@ struct ProfileView: View {
             Button("Save") { saveName() }
             Button("Cancel", role: .cancel) { editingText = userName }
         }
-        .onAppear { loadStampImage() }
+        .alert("Profile Photo", isPresented: $showImageSourceDialog) {
+            Button("Take Photo") { showCamera = true }
+            Button("Choose from Library") { showPhotoPicker = true }
+            if profileImage != nil {
+                Button("Remove Photo", role: .destructive) { removeProfileImage() }
+            }
+            Button("Cancel", role: .cancel) {}
+        }
+        .photosPicker(isPresented: $showPhotoPicker, selection: $selectedPhotoItem, matching: .images)
+        .sheet(isPresented: $showCamera) {
+            CameraView(selectedImage: $profileImage)
+                .ignoresSafeArea()
+                .onDisappear {
+                    if let img = profileImage { saveProfileImage(img) }
+                }
+        }
+        .onChange(of: selectedPhotoItem) { _, item in
+            Task {
+                if let data = try? await item?.loadTransferable(type: Data.self),
+                   let image = UIImage(data: data) {
+                    saveProfileImage(image)
+                }
+            }
+        }
+        .onAppear {
+            loadStampImage()
+            loadProfileImage()
+        }
         .onChange(of: colorScheme) { _, _ in loadStampImage() }
     }
 
     private var header: some View {
-        HStack(alignment: .center, spacing: 14) {
-            Image(systemName: "person.crop.circle")
-                .font(.system(size: 52))
-                .foregroundStyle(.secondary)
-
-            VStack(alignment: .leading, spacing: 3) {
+        VStack(spacing: 12) {
+            HStack(alignment: .center, spacing: 14) {
                 Button {
-                    editingText = userName
-                    isEditingName = true
+                    showImageSourceDialog = true
                 } label: {
-                    Text(userName.isEmpty ? NSLocalizedString("Add your name", bundle: .localized, comment: "") : userName)
-                        .font(.headline)
-                        .foregroundStyle(userName.isEmpty ? .tertiary : .primary)
+                    ZStack(alignment: .bottomTrailing) {
+                        if let profileImage {
+                            Image(uiImage: profileImage)
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: 52, height: 52)
+                                .clipShape(Circle())
+                        } else {
+                            Image(systemName: "person.crop.circle")
+                                .font(.system(size: 52))
+                                .foregroundStyle(.secondary)
+                        }
+
+                        Image(systemName: "pencil.circle.fill")
+                            .font(.system(size: 16))
+                            .foregroundStyle(.tint)
+                            .offset(x: 2, y: 2)
+                    }
                 }
                 .buttonStyle(.plain)
+                .accessibilityLabel("Profile photo")
 
-                Text("My Stamp Book")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                VStack(alignment: .leading, spacing: 3) {
+                    Button {
+                        editingText = userName
+                        isEditingName = true
+                    } label: {
+                        Text(userName.isEmpty ? NSLocalizedString("Add your name", bundle: .localized, comment: "") : userName)
+                            .font(.headline)
+                            .foregroundStyle(userName.isEmpty ? .tertiary : .primary)
+                    }
+                    .buttonStyle(.plain)
+
+                    Text("My Stamp Book")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
+
+                Spacer()
+
+                Button {
+                    dismiss()
+                } label: {
+                    Image(systemName: "xmark")
+                        .fontWeight(.semibold)
+                }
+                .accessibilityLabel(NSLocalizedString("a11y_close", bundle: .localized, comment: ""))
             }
-
-            Spacer()
 
             Button {
                 showSettings = true
             } label: {
-                Image(systemName: "gearshape")
-                    .fontWeight(.semibold)
-                    .foregroundStyle(.secondary)
+                HStack(spacing: 6) {
+                    Image(systemName: "gearshape")
+                        .font(.system(size: 13, weight: .semibold))
+                    Text("Settings")
+                        .font(.subheadline.weight(.medium))
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8)
+                .frame(maxWidth: .infinity)
+                .background(Color.secondary.opacity(0.12))
+                .clipShape(Capsule())
             }
             .accessibilityLabel(NSLocalizedString("a11y_settings", bundle: .localized, comment: ""))
-
-            Button {
-                dismiss()
-            } label: {
-                Image(systemName: "xmark")
-                    .fontWeight(.semibold)
-            }
-            .accessibilityLabel(NSLocalizedString("a11y_close", bundle: .localized, comment: ""))
         }
         .padding(.horizontal, 20)
         .padding(.top, 24)
@@ -279,5 +348,28 @@ struct ProfileView: View {
     private func loadStampImage() {
         let pngName = colorScheme == .dark ? "StampSplashDark" : "StampSplash"
         stampImage = UIImage(named: pngName)
+    }
+
+    private var profileImageURL: URL {
+        FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+            .appendingPathComponent("profile_image.jpg")
+    }
+
+    private func saveProfileImage(_ image: UIImage) {
+        if let data = image.jpegData(compressionQuality: 0.85) {
+            try? data.write(to: profileImageURL)
+        }
+        profileImage = image
+    }
+
+    private func loadProfileImage() {
+        guard let data = try? Data(contentsOf: profileImageURL),
+              let image = UIImage(data: data) else { return }
+        profileImage = image
+    }
+
+    private func removeProfileImage() {
+        try? FileManager.default.removeItem(at: profileImageURL)
+        profileImage = nil
     }
 }
