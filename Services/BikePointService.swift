@@ -10,11 +10,19 @@ class BikePointService: ObservableObject {
     @Published var error: String? = nil
     @Published var lastUpdated: Date? = nil
 
-    private let providerID: String?
+    private var providerID: String?
 
     init(providerID: String? = nil) {
         self.providerID = providerID
         Task { await fetchBikePoints() }
+    }
+
+    /// Switch to a different provider and reload. Clears existing points immediately
+    /// so the map doesn't briefly show stale data from the previous city.
+    func reload(for newProviderID: String?) async {
+        bikePoints = []
+        providerID = newProviderID
+        await fetchBikePoints()
     }
 
     func fetchBikePoints() async {

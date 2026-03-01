@@ -35,6 +35,14 @@ struct ContentView: View {
     @State private var showProfilePanel = false
     @ScaledMetric(relativeTo: .body) private var toolbarIconSize: CGFloat = 16
 
+    // City-switch suggestion (Issue 1)
+    @AppStorage("selectedProviderID") private var storedProviderID = ""
+    @State private var showCitySwitchAlert = false
+    @State private var suggestedProviderID: String? = nil
+    @State private var suggestedCityName: String? = nil
+    @State private var suggestedSystemName: String? = nil
+    @State private var hasSuggestedCitySwitch = false
+
     private let initialCenter: CLLocationCoordinate2D
 
     init(selectedProviderID: String? = nil) {
@@ -119,12 +127,41 @@ struct ContentView: View {
             updateNearbyStamps(location: newLocation)
             searchCompleter.updateRegion(cityCenter: initialCenter,
                                          userLocation: newLocation)
+            checkCitySuggestion(for: newLocation)
         }
         .onChange(of: stampStore.allDefinitions) { _, _ in
             updateNearbyStamps(location: locationManager.userLocation)
         }
         .onChange(of: stampStore.claimedStamps) { _, _ in
             updateNearbyStamps(location: locationManager.userLocation)
+        }
+        .onChange(of: storedProviderID) { _, newProviderID in
+            guard !newProviderID.isEmpty else { return }
+
+            // Reload bike data for the new city without recreating the view.
+            Task { await bikePointService.reload(for: newProviderID) }
+
+            // Move camera to new city centre and update filtering origin.
+            if let provider = ProviderRegistry.shared.provider(id: newProviderID) as? any OnboardingCityProvider {
+                let center = CLLocationCoordinate2D(
+                    latitude: provider.defaultCenter.latitude,
+                    longitude: provider.defaultCenter.longitude
+                )
+                mapCameraCenter = center
+                withAnimation {
+                    cameraPosition = .region(MKCoordinateRegion(
+                        center: center,
+                        span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
+                    ))
+                }
+                searchCompleter.updateRegion(cityCenter: center,
+                                             userLocation: locationManager.userLocation)
+            }
+
+            // Collapse the sheet back to search mode.
+            selectedBikePoint = nil
+            sheetMode = .search
+            selectedDetent = collapsedDetent
         }
         .onChange(of: locationChangeTrigger) { _, _ in
             guard let id = selectedProviderID,
@@ -349,6 +386,45 @@ struct ContentView: View {
     @ViewBuilder
     private var floatingToolbar: some View {
         VStack {
+            // City-switch suggestion banner — drawn inline in the map area so it
+            // doesn't conflict with the permanent bottom-sheet presentation.
+            if showCitySwitchAlert, let cityName = suggestedCityName, let systemName = suggestedSystemName {
+                HStack(spacing: 10) {
+                    Image(systemName: "mappin.circle.fill")
+                        .font(.title3)
+                        .foregroundStyle(.tint)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("You're near \(cityName)")
+                            .font(.subheadline.weight(.semibold))
+                        Text("Switch to \(systemName)?")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    Spacer()
+                    Button("Switch") {
+                        if let id = suggestedProviderID { storedProviderID = id }
+                        withAnimation { showCitySwitchAlert = false }
+                    }
+                    .font(.subheadline.weight(.semibold))
+                    .buttonStyle(.borderless)
+                    Button {
+                        withAnimation { showCitySwitchAlert = false }
+                    } label: {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundStyle(.secondary)
+                    }
+                    .buttonStyle(.borderless)
+                }
+                .padding(.horizontal, 14)
+                .padding(.vertical, 10)
+                .background(.regularMaterial)
+                .clipShape(RoundedRectangle(cornerRadius: 14))
+                .shadow(color: .black.opacity(0.15), radius: 6, y: 3)
+                .padding(.top, 16)
+                .padding(.horizontal, 12)
+                .transition(.move(edge: .top).combined(with: .opacity))
+            }
+
             HStack {
                 Spacer()
                 VStack(spacing: 0) {
@@ -365,16 +441,22 @@ struct ContentView: View {
                         .frame(width: 30)
 
                     Button {
-                        if let location = locationManager.userLocation {
-                            withAnimation {
+                        withAnimation {
+                            if let location = locationManager.userLocation {
                                 cameraPosition = .region(MKCoordinateRegion(
                                     center: location,
                                     span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
                                 ))
+                            } else {
+                                // Location not available — show selected city centre
+                                cameraPosition = .region(MKCoordinateRegion(
+                                    center: initialCenter,
+                                    span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
+                                ))
                             }
                         }
                     } label: {
-                        Image(systemName: "location.fill")
+                        Image(systemName: locationManager.userLocation != nil ? "location.fill" : "location.slash.fill")
                             .font(.system(size: toolbarIconSize, weight: .medium))
                             .frame(width: 44, height: 44)
                     }
@@ -431,8 +513,15 @@ struct ContentView: View {
                 .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
                 .sheet(isPresented: $showDebugMenu) {
                     NavigationStack {
-                        DebugMenuView()
-                            .environmentObject(searchHistoryStore)
+                        DebugMenuView(retriggerCitySuggestion: {
+                            // Reset suggestion state so the next location update re-runs the check.
+                            hasSuggestedCitySwitch = false
+                            showCitySwitchAlert = false
+                            suggestedProviderID = nil
+                            suggestedCityName = nil
+                            suggestedSystemName = nil
+                        })
+                        .environmentObject(searchHistoryStore)
                     }
                     .presentationDetents([.medium, .large])
                     .presentationDragIndicator(.visible)
@@ -450,6 +539,7 @@ struct ContentView: View {
 
             Spacer()
         }
+        .animation(reduceMotion ? nil : .spring(response: 0.4, dampingFraction: 0.85), value: showCitySwitchAlert)
     }
 
     private func updateNearbyStamps(location: CLLocationCoordinate2D?) {
@@ -459,5 +549,56 @@ struct ContentView: View {
         }
         let coord = Coordinate(latitude: location.latitude, longitude: location.longitude)
         withAnimation { nearbyStamps = stampStore.nearbyUnclaimed(at: coord) }
+    }
+
+    /// Once per session: if the user's GPS fix is far from the selected city
+    /// but close to another supported city, surface a banner to switch.
+    /// Called on every location update until the check succeeds — hasSuggestedCitySwitch
+    /// is only set to true once providers are confirmed registered, so a simulator's
+    /// immediate first-fix before OnboardingHost's .task runs can't silence the check.
+    private func checkCitySuggestion(for location: CLLocationCoordinate2D?) {
+        guard !hasSuggestedCitySwitch, let location else { return }
+
+        let userLoc = CLLocation(latitude: location.latitude, longitude: location.longitude)
+        let cityLoc = CLLocation(latitude: initialCenter.latitude, longitude: initialCenter.longitude)
+
+        // Already close to the selected city — lock out further checks and return.
+        if userLoc.distance(from: cityLoc) <= 30_000 {
+            hasSuggestedCitySwitch = true
+            return
+        }
+
+        // Providers may not be registered yet (race with OnboardingHost .task on
+        // fast devices/simulators). If the list is empty, skip this update and let
+        // the next location event retry — don't set hasSuggestedCitySwitch yet.
+        let providers = ProviderRegistry.shared.providers
+            .compactMap { $0 as? any OnboardingCityProvider }
+            .filter { $0.id != (selectedProviderID ?? "") }
+
+        guard !providers.isEmpty else { return }
+
+        // Providers are ready — this is our one check for the session.
+        hasSuggestedCitySwitch = true
+
+        var bestProvider: (any OnboardingCityProvider)? = nil
+        var bestDistance: CLLocationDistance = 50_000
+
+        for provider in providers {
+            let loc = CLLocation(
+                latitude: provider.defaultCenter.latitude,
+                longitude: provider.defaultCenter.longitude
+            )
+            let dist = userLoc.distance(from: loc)
+            if dist < bestDistance {
+                bestDistance = dist
+                bestProvider = provider
+            }
+        }
+
+        guard let provider = bestProvider else { return }
+        suggestedProviderID = provider.id
+        suggestedCityName = provider.cityDisplayName
+        suggestedSystemName = provider.systemDisplayName
+        showCitySwitchAlert = true
     }
 }

@@ -9,6 +9,9 @@ struct DebugMenuView: View {
     @AppStorage("hasSeenDebugTooltip") private var hasSeenDebugTooltip = false
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
 
+    /// Called when the user taps "Retrigger city suggestion". Provided by ContentView.
+    var retriggerCitySuggestion: (() -> Void)? = nil
+
     @State private var selectedStampID = ""
 
     private let iconWidth: CGFloat = 24
@@ -134,6 +137,26 @@ struct DebugMenuView: View {
                     searchHistoryStore.reset()
                 } label: {
                     debugRow(icon: "clock.arrow.circlepath", title: "Reset search history", tint: .red)
+                }
+                .buttonStyle(.plain)
+
+                Divider()
+
+                // Location
+
+                Text("Location")
+                    .font(.title3.bold())
+                    .padding(.horizontal, 16)
+                    .padding(.top, 28)
+                    .padding(.bottom, 8)
+
+                Divider()
+
+                Button {
+                    retriggerCitySuggestion?()
+                    dismiss()
+                } label: {
+                    debugRow(icon: "mappin.circle", title: "Retrigger city suggestion banner")
                 }
                 .buttonStyle(.plain)
 

@@ -61,7 +61,7 @@ struct BikePointMiniChart: View {
 
             // Inner circle with count
             Circle()
-                .fill(.white)
+                .fill(Color(uiColor: .systemBackground))
                 .frame(width: size * 0.55, height: size * 0.55)
 
             Text("\(standardBikes + eBikes)")
@@ -70,6 +70,9 @@ struct BikePointMiniChart: View {
         }
         .frame(width: size, height: size)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(String(format: NSLocalizedString("a11y_chart_format", bundle: .localized, comment: ""), standardBikes, eBikes, emptyDocks))
+        .accessibilityLabel(
+            String(
+                format: NSLocalizedString("a11y_chart_format", bundle: .localized, comment: ""),
+                standardBikes, eBikes, emptyDocks))
     }
 }

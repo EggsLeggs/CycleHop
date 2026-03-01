@@ -79,13 +79,15 @@ struct OfflineMapView: UIViewRepresentable {
         let overlay = LocalTileOverlay()
         mapView.addOverlay(overlay, level: .aboveLabels)
 
-        // Set initial camera
+        // Set initial camera — mark as programmatic so regionDidChangeAnimated
+        // doesn't immediately overwrite mapCameraCenter while bikePoints are loading.
         let region =
             cameraPosition.region
             ?? MKCoordinateRegion(
                 center: initialCenter,
                 span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
             )
+        context.coordinator.isSettingRegion = true
         mapView.setRegion(region, animated: false)
         context.coordinator.lastAppliedPosition = cameraPosition
 
@@ -138,6 +140,16 @@ struct OfflineMapView: UIViewRepresentable {
             .filter { !existingIDs.contains($0.id) }
             .map { BikePointAnnotation(bikePoint: $0) }
         mapView.addAnnotations(toAdd)
+
+        // MapKit sometimes won't call viewFor(annotation:) for freshly-added
+        // annotations until the next user-initiated region change. Force a
+        // layout pass so pins appear immediately after data loads.
+        if !toAdd.isEmpty {
+            DispatchQueue.main.async {
+                coordinator.isSettingRegion = true
+                mapView.setRegion(mapView.region, animated: false)
+            }
+        }
 
         // Update selection appearance on all visible annotation views
         for annotation in mapView.annotations.compactMap({ $0 as? BikePointAnnotation }) {
