@@ -29,6 +29,10 @@
 "Save" = "Save";
 "Cancel" = "Cancel";
 "Add your name" = "Add your name";
+"Profile Photo" = "Profile Photo";
+"Take Photo" = "Take Photo";
+"Choose from Library" = "Choose from Library";
+"Remove Photo" = "Remove Photo";
 "My Stamp Book" = "My Stamp Book";
 "All Time" = "All Time";
 "Start Your Journey" = "Start Your Journey";
@@ -74,8 +78,10 @@
 "Retrigger demo button tooltip" = "Retrigger demo button tooltip";
 "Profile" = "Profile";
 "Reset name" = "Reset name";
+"Remove profile photo" = "Remove profile photo";
 "Stamps" = "Stamps";
 "Reset Stamps" = "Reset Stamps";
+"Add all stamps" = "Add all stamps";
 "Add Stamp" = "Add Stamp";
 "Select…" = "Select…";
 "Onboarding" = "Onboarding";
@@ -146,6 +152,7 @@
 "Apple Maps shows live map data but requires an internet connection." = "Apple Maps shows live map data but requires an internet connection.";
 
 /* Accessibility labels */
+"a11y_profile_photo" = "Profile photo";
 "a11y_refresh_stations" = "Refresh stations";
 "a11y_centre_on_location" = "Centre on my location";
 "a11y_debug_menu" = "Debug menu";

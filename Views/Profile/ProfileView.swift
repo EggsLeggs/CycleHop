@@ -63,13 +63,13 @@ struct ProfileView: View {
             Button("Save") { saveName() }
             Button("Cancel", role: .cancel) { editingText = userName }
         }
-        .alert("Profile Photo", isPresented: $showImageSourceDialog) {
-            Button("Take Photo") { showCamera = true }
-            Button("Choose from Library") { showPhotoPicker = true }
+        .alert(NSLocalizedString("Profile Photo", bundle: .localized, comment: ""), isPresented: $showImageSourceDialog) {
+            Button(NSLocalizedString("Take Photo", bundle: .localized, comment: "")) { showCamera = true }
+            Button(NSLocalizedString("Choose from Library", bundle: .localized, comment: "")) { showPhotoPicker = true }
             if profileImage != nil {
-                Button("Remove Photo", role: .destructive) { removeProfileImage() }
+                Button(NSLocalizedString("Remove Photo", bundle: .localized, comment: ""), role: .destructive) { removeProfileImage() }
             }
-            Button("Cancel", role: .cancel) {}
+            Button(NSLocalizedString("Cancel", bundle: .localized, comment: ""), role: .cancel) {}
         }
         .photosPicker(isPresented: $showPhotoPicker, selection: $selectedPhotoItem, matching: .images)
         .sheet(isPresented: $showCamera) {
@@ -120,7 +120,7 @@ struct ProfileView: View {
                     }
                 }
                 .buttonStyle(.plain)
-                .accessibilityLabel("Profile photo")
+                .accessibilityLabel(NSLocalizedString("a11y_profile_photo", bundle: .localized, comment: ""))
 
                 VStack(alignment: .leading, spacing: 3) {
                     Button {

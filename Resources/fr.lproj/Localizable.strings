@@ -29,6 +29,10 @@
 "Save" = "Enregistrer";
 "Cancel" = "Annuler";
 "Add your name" = "Ajouter votre nom";
+"Profile Photo" = "Photo de profil";
+"Take Photo" = "Prendre une photo";
+"Choose from Library" = "Choisir dans la photothèque";
+"Remove Photo" = "Supprimer la photo";
 "My Stamp Book" = "Mon carnet de tampons";
 "All Time" = "Tout";
 "Start Your Journey" = "Lancez-vous";
@@ -74,8 +78,10 @@
 "Retrigger demo button tooltip" = "Réafficher l'infobulle de démo";
 "Profile" = "Profil";
 "Reset name" = "Réinitialiser le nom";
+"Remove profile photo" = "Supprimer la photo de profil";
 "Stamps" = "Tampons";
 "Reset Stamps" = "Réinitialiser les tampons";
+"Add all stamps" = "Ajouter tous les tampons";
 "Add Stamp" = "Ajouter un tampon";
 "Select…" = "Choisir…";
 "Onboarding" = "Accueil";
@@ -146,6 +152,7 @@
 "Apple Maps shows live map data but requires an internet connection." = "Plans Apple affiche des données cartographiques en direct, mais nécessite une connexion internet.";
 
 /* Accessibility labels */
+"a11y_profile_photo" = "Photo de profil";
 "a11y_refresh_stations" = "Actualiser les stations";
 "a11y_centre_on_location" = "Centrer sur ma position";
 "a11y_debug_menu" = "Menu debug";
