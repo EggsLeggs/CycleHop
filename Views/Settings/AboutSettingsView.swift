@@ -35,6 +35,31 @@ struct AboutSettingsView: View {
                     description: "A lightweight WKWebView-based SVG-to-UIImage renderer adapted from open-source Swift community code. Used to render crisp SVG illustrations at any display scale.",
                     link: nil
                 )
+
+                Text(NSLocalizedString("about_bike_share_section", bundle: .localized, comment: ""))
+                    .font(.title3.bold())
+                    .padding(.top, 8)
+
+                creditSection(
+                    title: NSLocalizedString("about_credit_citibike_title", bundle: .localized, comment: ""),
+                    license: NSLocalizedString("about_credit_citibike_license", bundle: .localized, comment: ""),
+                    description: NSLocalizedString("about_credit_citibike_description", bundle: .localized, comment: ""),
+                    link: (NSLocalizedString("about_credit_citibike_link", bundle: .localized, comment: ""), "https://citibikenyc.com")
+                )
+
+                creditSection(
+                    title: NSLocalizedString("about_credit_santander_title", bundle: .localized, comment: ""),
+                    license: NSLocalizedString("about_credit_santander_license", bundle: .localized, comment: ""),
+                    description: "BikePoint station data for Santander Cycles in London. © Transport for London. Used under TfL’s data terms.",
+                    link: ("tfl.gov.uk", "https://tfl.gov.uk")
+                )
+
+                creditSection(
+                    title: NSLocalizedString("about_credit_velib_title", bundle: .localized, comment: ""),
+                    license: NSLocalizedString("about_credit_velib_license", bundle: .localized, comment: ""),
+                    description: NSLocalizedString("about_credit_velib_description", bundle: .localized, comment: ""),
+                    link: (NSLocalizedString("about_credit_velib_link", bundle: .localized, comment: ""), "https://www.velib-metropole.fr")
+                )
             }
             .padding(.horizontal)
             .padding(.top, 16)

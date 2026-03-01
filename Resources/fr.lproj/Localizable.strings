@@ -161,6 +161,21 @@
 "Offline Map works without an internet connection using locally bundled tiles." = "La carte hors ligne fonctionne sans connexion internet grâce aux tuiles intégrées.";
 "Apple Maps shows live map data but requires an internet connection." = "Plans Apple affiche des données cartographiques en direct, mais nécessite une connexion internet.";
 
+/* Mock location & mismatch */
+"mock_location_explainer_title" = "Vous êtes à un monument";
+"mock_location_explainer_body" = "Cette démo vous place à un monument pour explorer les stations de vélos à proximité sans partager votre position réelle. Modifiez-la à tout moment dans le menu Debug.";
+"mock_location_explainer_cta" = "Compris";
+"location_mismatch_title" = "Vous semblez être à proximité";
+"location_mismatch_body" = "Vous semblez être près de %@. Passer pour voir les stations locales ?";
+"location_mismatch_action" = "Touchez pour changer de ville";
+
+/* Debug location mode */
+"debug_location_mode" = "Mode de localisation";
+"debug_location_mode_mock" = "Simulé";
+"debug_location_mode_none" = "Aucun";
+"debug_location_mode_live" = "GPS en direct";
+"debug_landmark_picker" = "Monument";
+
 /* Accessibility labels */
 "a11y_profile_photo" = "Photo de profil";
 "a11y_refresh_stations" = "Actualiser les stations";
@@ -181,8 +196,25 @@
 "a11y_search_history_section_format" = "Historique des recherches, %d entrées";
 "a11y_search_history_item_format" = "Recherche précédente : %@, %@";
 "a11y_search_history_hint" = "Double touche pour rechercher à nouveau";
+"a11y_location_mismatch_format" = "Vous semblez être près de %@";
+"a11y_location_mismatch_hint" = "Double touche pour passer à cette ville";
 
 /* Provider open-app buttons */
 "Open Vélib' Métropole" = "Ouvrir Vélib' Métropole";
 "Open in Citi Bike" = "Ouvrir dans Citi Bike";
 "Open in Santander Cycles" = "Ouvrir dans Santander Cycles";
+
+/* About – bike share API credits */
+"about_bike_share_section" = "Données vélos en libre-service";
+"about_credit_citibike_title" = "Citi Bike (New York)";
+"about_credit_citibike_license" = "GBFS / Citi Bike NYC";
+"about_credit_citibike_description" = "Données des stations et disponibilités Citi Bike dans la région de New York. Les données sont fournies pour une utilisation dans des applications tierces.";
+"about_credit_citibike_link" = "citibikenyc.com";
+"about_credit_santander_title" = "Santander Cycles (Londres)";
+"about_credit_santander_license" = "Transport for London (TfL)";
+"about_credit_santander_description" = "Données des points vélos Santander Cycles à Londres. © Transport for London. Utilisation conforme aux conditions d'utilisation des données TfL.";
+"about_credit_santander_link" = "tfl.gov.uk";
+"about_credit_velib_title" = "Vélib' Métropole (Paris)";
+"about_credit_velib_license" = "Données ouvertes";
+"about_credit_velib_description" = "Informations sur les stations Vélib' en région parisienne. Données issues de l'open data Vélib' Métropole.";
+"about_credit_velib_link" = "velib-metropole.fr";

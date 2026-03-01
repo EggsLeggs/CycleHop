@@ -203,3 +203,18 @@
 "Open Vélib' Métropole" = "Open Vélib' Métropole";
 "Open in Citi Bike" = "Open in Citi Bike";
 "Open in Santander Cycles" = "Open in Santander Cycles";
+
+/* About – bike share API credits */
+"about_bike_share_section" = "Bike share data";
+"about_credit_citibike_title" = "Citi Bike (New York)";
+"about_credit_citibike_license" = "GBFS / Citi Bike NYC";
+"about_credit_citibike_description" = "Station and availability data for Citi Bike in the New York City area. Data is provided for use in third‑party apps.";
+"about_credit_citibike_link" = "citibikenyc.com";
+"about_credit_santander_title" = "Santander Cycles (London)";
+"about_credit_santander_license" = "Transport for London (TfL)";
+"about_credit_santander_description" = "BikePoint station data for Santander Cycles in London. © Transport for London. Used under TfL's data terms.";
+"about_credit_santander_link" = "tfl.gov.uk";
+"about_credit_velib_title" = "Vélib' Métropole (Paris)";
+"about_credit_velib_license" = "Open data";
+"about_credit_velib_description" = "Station information for Vélib' in the Paris metropolitan area. Data from Vélib' Métropole open data.";
+"about_credit_velib_link" = "velib-metropole.fr";
