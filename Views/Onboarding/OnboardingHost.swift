@@ -47,7 +47,7 @@ struct OnboardingHost: View {
                             selectedProviderID = providerID
                             hasCompletedOnboarding = true
                         }
-                        .frame(minWidth: 500, minHeight: 700)
+                        .frame(minWidth: 700, idealWidth: 800, minHeight: 800, idealHeight: 900)
                         .interactiveDismissDisabled()
                     }
             }

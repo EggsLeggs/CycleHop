@@ -50,6 +50,13 @@
 
 /* Bottom sheet & map */
 "Search for a destination" = "Search for a destination";
+"Search history" = "Search history";
+"search_empty_headline" = "Search for a destination";
+"search_empty_body" = "Search for a place to see bike stations nearby.";
+"search_offline_headline" = "You're offline";
+"search_offline_body" = "You are currently offline so the search won't work.";
+"search_no_results_headline" = "No results found";
+"search_no_results_body" = "No results were found for your search.";
 "Stations near" = "Stations near";
 "Location" = "Location";
 "Destination" = "Destination";
@@ -86,6 +93,8 @@
 "Select…" = "Select…";
 "Onboarding" = "Onboarding";
 "Restart onboarding" = "Restart onboarding";
+"Search" = "Search";
+"Reset search history" = "Reset search history";
 "Debug" = "Debug";
 "Done" = "Done";
 
@@ -168,6 +177,9 @@
 "a11y_ebikes_format" = "%d e-bikes";
 "a11y_empty_docks_format" = "%d empty docks";
 "a11y_chart_format" = "%d standard bikes, %d e-bikes, %d empty docks";
+"a11y_search_history_section_format" = "Search history, %d items";
+"a11y_search_history_item_format" = "Previous search: %@, %@";
+"a11y_search_history_hint" = "Double tap to search again";
 
 /* Provider open-app buttons */
 "Open Vélib' Métropole" = "Open Vélib' Métropole";

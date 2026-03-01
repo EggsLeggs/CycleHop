@@ -10,6 +10,8 @@ struct ContentView: View {
     @StateObject private var bikePointService: BikePointService
     @StateObject private var locationManager = LocationManager()
     @StateObject private var searchCompleter = SearchCompleter()
+    @StateObject private var searchHistoryStore = SearchHistoryStore()
+    @StateObject private var networkMonitor = NetworkMonitor()
 
     @EnvironmentObject private var stampStore: StampStore
 
@@ -99,7 +101,9 @@ struct ContentView: View {
             bikePointService: bikePointService,
             locationManager: locationManager,
             searchCompleter: searchCompleter,
-            stampStore: stampStore
+            stampStore: stampStore,
+            searchHistoryStore: searchHistoryStore,
+            networkMonitor: networkMonitor
         )
     }
 
@@ -428,6 +432,7 @@ struct ContentView: View {
                 .sheet(isPresented: $showDebugMenu) {
                     NavigationStack {
                         DebugMenuView()
+                            .environmentObject(searchHistoryStore)
                     }
                     .presentationDetents([.medium, .large])
                     .presentationDragIndicator(.visible)

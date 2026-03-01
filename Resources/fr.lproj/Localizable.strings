@@ -50,6 +50,13 @@
 
 /* Bottom sheet & map */
 "Search for a destination" = "Rechercher une destination";
+"Search history" = "Historique des recherches";
+"search_empty_headline" = "Rechercher une destination";
+"search_empty_body" = "Recherchez un lieu pour voir les stations de vélos à proximité.";
+"search_offline_headline" = "Vous êtes hors ligne";
+"search_offline_body" = "Vous êtes actuellement hors ligne, la recherche ne fonctionnera pas.";
+"search_no_results_headline" = "Aucun résultat";
+"search_no_results_body" = "Aucun résultat trouvé pour votre recherche.";
 "Stations near" = "Stations près de";
 "Location" = "Position";
 "Destination" = "Destination";
@@ -86,6 +93,8 @@
 "Select…" = "Choisir…";
 "Onboarding" = "Accueil";
 "Restart onboarding" = "Recommencer l'accueil";
+"Search" = "Recherche";
+"Reset search history" = "Réinitialiser l'historique des recherches";
 "Debug" = "Debug";
 "Done" = "OK";
 
@@ -168,6 +177,9 @@
 "a11y_ebikes_format" = "%d VAE";
 "a11y_empty_docks_format" = "%d bornes libres";
 "a11y_chart_format" = "%d vélos classiques, %d VAE, %d bornes libres";
+"a11y_search_history_section_format" = "Historique des recherches, %d entrées";
+"a11y_search_history_item_format" = "Recherche précédente : %@, %@";
+"a11y_search_history_hint" = "Double touche pour rechercher à nouveau";
 
 /* Provider open-app buttons */
 "Open Vélib' Métropole" = "Ouvrir Vélib' Métropole";

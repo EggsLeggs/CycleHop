@@ -4,6 +4,7 @@ import SwiftUI
 struct DebugMenuView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var stampStore: StampStore
+    @EnvironmentObject private var searchHistoryStore: SearchHistoryStore
     @AppStorage("userName") private var userName = ""
     @AppStorage("hasSeenDebugTooltip") private var hasSeenDebugTooltip = false
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
@@ -116,6 +117,25 @@ struct DebugMenuView: View {
                     .frame(minHeight: 54)
                     .padding(.horizontal, 16)
                 }
+
+                Divider()
+
+                // Search
+
+                Text("Search")
+                    .font(.title3.bold())
+                    .padding(.horizontal, 16)
+                    .padding(.top, 28)
+                    .padding(.bottom, 8)
+
+                Divider()
+
+                Button {
+                    searchHistoryStore.reset()
+                } label: {
+                    debugRow(icon: "clock.arrow.circlepath", title: "Reset search history", tint: .red)
+                }
+                .buttonStyle(.plain)
 
                 Divider()
 

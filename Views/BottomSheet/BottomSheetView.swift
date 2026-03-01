@@ -39,6 +39,8 @@ struct BottomSheetView: View {
     @ObservedObject var locationManager: LocationManager
     @ObservedObject var searchCompleter: SearchCompleter
     @ObservedObject var stampStore: StampStore
+    @ObservedObject var searchHistoryStore: SearchHistoryStore
+    @ObservedObject var networkMonitor: NetworkMonitor
 
     @State private var destinationName: String?
 
@@ -105,41 +107,100 @@ struct BottomSheetView: View {
 
     @ViewBuilder
     private var searchContent: some View {
-        if !searchText.isEmpty {
-            ScrollView {
-                LazyVStack(spacing: 0) {
-                    ForEach(searchCompleter.completions, id: \.self) { completion in
-                        Button {
-                            selectCompletion(completion)
-                        } label: {
-                            SearchCompletionRow(completion: completion)
-                                .padding(.horizontal)
+        let hasSearchQuery = !searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        if hasSearchQuery {
+            if networkMonitor.isOffline {
+                SearchNotFoundView(
+                    headlineKey: "search_offline_headline",
+                    bodyKey: "search_offline_body"
+                )
+            } else if searchCompleter.completions.isEmpty {
+                SearchNotFoundView(
+                    headlineKey: "search_no_results_headline",
+                    bodyKey: "search_no_results_body"
+                )
+            } else {
+                ScrollView {
+                    LazyVStack(spacing: 0) {
+                        ForEach(searchCompleter.completions, id: \.self) { completion in
+                            Button {
+                                selectCompletion(completion)
+                            } label: {
+                                SearchCompletionRow(completion: completion)
+                                    .padding(.horizontal)
+                            }
+                            .buttonStyle(.plain)
+                            Divider().padding(.leading, 52)
                         }
-                        .buttonStyle(.plain)
-                        Divider().padding(.leading, 52)
                     }
                 }
             }
         } else {
-            let promoStamps = nearbyStamps.filter { !stampStore.dismissedPromoIDs.contains($0.id) }
-            if !promoStamps.isEmpty && selectedDetent != collapsedDetent {
-                VStack(spacing: 0) {
-                    ForEach(promoStamps) { stamp in
-                        StampPromoCard(
-                            stamp: stamp,
-                            onTap: { showStampClaimSheet = true },
-                            onDismiss: { stampStore.dismissPromo(id: stamp.id) }
-                        )
+            ScrollView {
+                VStack(alignment: .leading, spacing: 0) {
+                    let promoStamps = nearbyStamps.filter { !stampStore.dismissedPromoIDs.contains($0.id) }
+                    if !promoStamps.isEmpty && selectedDetent != collapsedDetent {
+                        ForEach(promoStamps) { stamp in
+                            StampPromoCard(
+                                stamp: stamp,
+                                onTap: { showStampClaimSheet = true },
+                                onDismiss: { stampStore.dismissPromo(id: stamp.id) }
+                            )
+                        }
+                        .padding(.top, 4)
+                    }
+
+                    if selectedDetent != collapsedDetent {
+                        if searchHistoryStore.recentSearches.isEmpty {
+                            SearchEmptyStateView()
+                        } else {
+                            Text(NSLocalizedString("Search history", bundle: .localized, comment: "Search history section title"))
+                                .font(.headline)
+                                .padding(.horizontal)
+                                .padding(.top, promoStamps.isEmpty ? 4 : 16)
+                                .padding(.bottom, 8)
+                                .accessibilityAddTraits(.isHeader)
+                                .accessibilityLabel(String(format: NSLocalizedString("a11y_search_history_section_format", bundle: .localized, comment: ""), searchHistoryStore.recentSearches.count))
+
+                            ForEach(searchHistoryStore.recentSearches) { item in
+                                Button {
+                                    selectHistoryItem(item)
+                                } label: {
+                                    SearchHistoryRow(title: item.title, subtitle: item.subtitle)
+                                        .padding(.horizontal)
+                                }
+                                .buttonStyle(.plain)
+                                .accessibilityLabel(String(format: NSLocalizedString("a11y_search_history_item_format", bundle: .localized, comment: ""), item.title, item.subtitle))
+                                .accessibilityHint(NSLocalizedString("a11y_search_history_hint", bundle: .localized, comment: ""))
+                                Divider().padding(.leading, 52)
+                            }
+                        }
                     }
                 }
-                .padding(.top, 4)
             }
         }
+    }
+
+    private func selectHistoryItem(_ item: SearchHistoryItem) {
+        destinationCoordinate = item.coordinate
+        destinationName = item.title
+        sheetMode = .searchResults
+        searchText = ""
+        cameraPosition = .region(MKCoordinateRegion(
+            center: item.coordinate,
+            span: MKCoordinateSpan(latitudeDelta: 0.015, longitudeDelta: 0.015)
+        ))
     }
 
     private func selectCompletion(_ completion: MKLocalSearchCompletion) {
         Task {
             if let coordinate = await searchCompleter.search(for: completion) {
+                searchHistoryStore.add(
+                    title: completion.title,
+                    subtitle: completion.subtitle,
+                    latitude: coordinate.latitude,
+                    longitude: coordinate.longitude
+                )
                 destinationCoordinate = coordinate
                 destinationName = completion.title
                 sheetMode = .searchResults

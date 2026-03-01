@@ -28,3 +28,32 @@ struct SearchCompletionRow: View {
         .padding(.vertical, 4)
     }
 }
+
+/// Single row for a search history item (same visual style as SearchCompletionRow).
+struct SearchHistoryRow: View {
+    let title: String
+    let subtitle: String
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Image(systemName: "mappin.circle.fill")
+                .font(.title2)
+                .foregroundStyle(.red)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+
+                if !subtitle.isEmpty {
+                    Text(subtitle)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+
+            Spacer()
+        }
+        .padding(.vertical, 4)
+    }
+}
