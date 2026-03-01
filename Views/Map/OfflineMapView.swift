@@ -46,6 +46,50 @@ final class BikePointAnnotationView: MKAnnotationView {
     }
 }
 
+// MARK: Mock user location annotation
+
+final class MockUserLocationAnnotation: NSObject, MKAnnotation {
+    @objc dynamic var coordinate: CLLocationCoordinate2D
+    var title: String? { nil }
+
+    init(coordinate: CLLocationCoordinate2D) {
+        self.coordinate = coordinate
+    }
+}
+
+final class MockUserLocationAnnotationView: MKAnnotationView {
+    private static let dotSize: CGFloat = 20
+
+    override init(annotation: MKAnnotation?, reuseIdentifier: String?) {
+        super.init(annotation: annotation, reuseIdentifier: reuseIdentifier)
+        let s = Self.dotSize
+        frame = CGRect(x: 0, y: 0, width: s, height: s)
+        backgroundColor = .clear
+        isEnabled = false
+        canShowCallout = false
+        zPriority = .max
+
+        // Outer white ring
+        let ring = UIView(frame: bounds)
+        ring.backgroundColor = .white
+        ring.layer.cornerRadius = s / 2
+        ring.layer.shadowColor = UIColor.black.cgColor
+        ring.layer.shadowOpacity = 0.25
+        ring.layer.shadowRadius = 3
+        ring.layer.shadowOffset = .zero
+        addSubview(ring)
+
+        // Inner blue fill
+        let inset: CGFloat = 3
+        let dot = UIView(frame: CGRect(x: inset, y: inset, width: s - inset * 2, height: s - inset * 2))
+        dot.backgroundColor = .systemBlue
+        dot.layer.cornerRadius = (s - inset * 2) / 2
+        addSubview(dot)
+    }
+
+    required init?(coder: NSCoder) { fatalError() }
+}
+
 // MARK: OfflineMapView
 
 /// Map view using bundled OSM tiles, bike point annotations, and optional destination pin.
@@ -56,6 +100,8 @@ struct OfflineMapView: UIViewRepresentable {
     let filteredBikePoints: [BikePoint]
     @Binding var selectedBikePoint: BikePoint?
     let destinationCoordinate: CLLocationCoordinate2D?
+    let mockUserLocation: CLLocationCoordinate2D?
+    let showsLiveUserLocation: Bool
     let isCompact: Bool
     let onBikePointTap: (BikePoint) -> Void
     let onMapTap: () -> Void
@@ -72,7 +118,8 @@ struct OfflineMapView: UIViewRepresentable {
         // OSM land beige shown outside tile coverage
         mapView.backgroundColor = UIColor(
             red: 237 / 255, green: 232 / 255, blue: 222 / 255, alpha: 1)
-        mapView.showsUserLocation = true
+        // Real GPS dot is shown only when live tracking is active; mock dot is managed separately.
+        mapView.showsUserLocation = showsLiveUserLocation
         mapView.showsScale = true
 
         // Add offline tile overlay as base layer
@@ -108,6 +155,11 @@ struct OfflineMapView: UIViewRepresentable {
             target: context.coordinator, action: #selector(Coordinator.handleMapTap(_:)))
         tap.delegate = context.coordinator
         mapView.addGestureRecognizer(tap)
+
+        // Show mock user location on first paint (updateUIView syncs it later)
+        if let loc = context.coordinator.parent.mockUserLocation {
+            mapView.addAnnotation(MockUserLocationAnnotation(coordinate: loc))
+        }
 
         return mapView
     }
@@ -174,6 +226,23 @@ struct OfflineMapView: UIViewRepresentable {
             }
         } else if let existing = existingDestination {
             mapView.removeAnnotation(existing)
+        }
+
+        // Sync mock user location dot
+        let existingMock = mapView.annotations.first(where: { $0 is MockUserLocationAnnotation })
+        if let loc = mockUserLocation {
+            if let existing = existingMock as? MockUserLocationAnnotation {
+                existing.coordinate = loc
+            } else {
+                mapView.addAnnotation(MockUserLocationAnnotation(coordinate: loc))
+            }
+        } else if let existing = existingMock {
+            mapView.removeAnnotation(existing)
+        }
+
+        // Toggle real GPS dot based on mode
+        if mapView.showsUserLocation != showsLiveUserLocation {
+            mapView.showsUserLocation = showsLiveUserLocation
         }
 
         // Push MapKit's built-in controls (scale, compass) above the bottom sheet
@@ -250,11 +319,27 @@ struct OfflineMapView: UIViewRepresentable {
                 return
             }
             parent.mapCameraCenter = center
+            // Keep the binding in sync with the actual map position so that a
+            // subsequent programmatic pan (e.g. "centre on location" button) is
+            // always recognised as a genuine position change by updateUIView.
+            let synced = MapCameraPosition.region(mapView.region)
+            lastAppliedPosition = synced
+            parent.cameraPosition = synced
         }
 
         // MARK: Annotation views
         func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
             if annotation is MKUserLocation { return nil }
+
+            if annotation is MockUserLocationAnnotation {
+                let id = "MockUserLocation"
+                let view =
+                    (mapView.dequeueReusableAnnotationView(withIdentifier: id)
+                        as? MockUserLocationAnnotationView)
+                    ?? MockUserLocationAnnotationView(annotation: annotation, reuseIdentifier: id)
+                view.annotation = annotation
+                return view
+            }
 
             if let bikeAnnotation = annotation as? BikePointAnnotation {
                 let id = "BikePoint"

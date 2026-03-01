@@ -1,3 +1,4 @@
+import CoreLocation
 import Foundation
 import SwiftUI
 
@@ -118,5 +119,13 @@ extension VelibProvider: OnboardingCityProvider {
         StampDefinition(id: "arc-de-triomphe", displayName: "Arc de Triomphe", type: .attraction,
             stampPNGBaseName: "ArcdeTriompheAttractionStamp", cityArtPNGBaseName: "ParisLocation",
             area: StampArea(centerLatitude: 48.8738, centerLongitude: 2.2950, radiusMeters: 300))
+    ] }
+    public var landmarks: [CityLandmark] { [
+        CityLandmark(id: "eiffel-tower-france", displayName: "Eiffel Tower - France",
+            coordinate: CLLocationCoordinate2D(latitude: 48.8584, longitude: 2.2945),
+            providerID: id),
+        CityLandmark(id: "arc-de-triomphe-france", displayName: "Arc de Triomphe - France",
+            coordinate: CLLocationCoordinate2D(latitude: 48.8738, longitude: 2.2950),
+            providerID: id)
     ] }
 }

@@ -1,3 +1,4 @@
+import CoreLocation
 import Foundation
 import SwiftUI
 
@@ -122,5 +123,13 @@ extension CitiBikeProvider: OnboardingCityProvider {
         StampDefinition(id: "new-york-city", displayName: "New York", type: .city,
             stampPNGBaseName: "NewYorkStamp", cityArtPNGBaseName: "NewYorkLocation",
             area: StampArea(centerLatitude: 40.7580, centerLongitude: -73.9855, radiusMeters: 30_000))
+    ] }
+    public var landmarks: [CityLandmark] { [
+        CityLandmark(id: "times-square-usa", displayName: "Times Square - USA",
+            coordinate: CLLocationCoordinate2D(latitude: 40.7580, longitude: -73.9855),
+            providerID: id),
+        CityLandmark(id: "central-park-usa", displayName: "Central Park - USA",
+            coordinate: CLLocationCoordinate2D(latitude: 40.7829, longitude: -73.9654),
+            providerID: id)
     ] }
 }

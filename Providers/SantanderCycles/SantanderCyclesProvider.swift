@@ -1,3 +1,4 @@
+import CoreLocation
 import Foundation
 import SwiftUI
 
@@ -158,5 +159,13 @@ extension SantanderCyclesProvider: OnboardingCityProvider {
         StampDefinition(id: "tower-bridge", displayName: "Tower Bridge", type: .attraction,
             stampPNGBaseName: "TowerBridgeAttractionStamp", cityArtPNGBaseName: "LondonLocation",
             area: StampArea(centerLatitude: 51.5055, centerLongitude: -0.0754, radiusMeters: 500))
+    ] }
+    public var landmarks: [CityLandmark] { [
+        CityLandmark(id: "tower-bridge-uk", displayName: "Tower Bridge - UK",
+            coordinate: CLLocationCoordinate2D(latitude: 51.5055, longitude: -0.0754),
+            providerID: id),
+        CityLandmark(id: "buckingham-palace-uk", displayName: "Buckingham Palace - UK",
+            coordinate: CLLocationCoordinate2D(latitude: 51.5014, longitude: -0.1419),
+            providerID: id)
     ] }
 }

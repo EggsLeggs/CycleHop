@@ -29,4 +29,5 @@ public extension OnboardingCityProvider {
     var cityArtPNGBaseName: String? { nil }
     var stampSVGName: String? { nil }
     var stampDefinitions: [StampDefinition] { [] }
+    var landmarks: [CityLandmark] { [] }
 }

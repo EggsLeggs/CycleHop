@@ -14,6 +14,7 @@ struct ContentView: View {
     @StateObject private var networkMonitor = NetworkMonitor()
 
     @EnvironmentObject private var stampStore: StampStore
+    @EnvironmentObject private var registry: ProviderRegistry
 
     @State private var selectedBikePoint: BikePoint? = nil
     @State private var sheetMode: SheetMode = .search
@@ -26,10 +27,15 @@ struct ContentView: View {
     @State private var selectedDetent: PresentationDetent = .height(90)
     @State private var midDetentHeight: CGFloat = 384
     @State private var hasMovedCamera = false
+    @State private var nearbyStampsRefreshTrigger = 0
     @AppStorage("hasSeenDebugTooltip") private var hasSeenDebugTooltip = false
     @AppStorage("locationChangeTrigger") private var locationChangeTrigger = 0
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
     @AppStorage("useOfflineMap") private var useOfflineMap = true
+    @AppStorage("mockLocationMode") private var mockLocationMode = "landmark"
+    @AppStorage("mockLandmarkID") private var mockLandmarkID = ""
+    @AppStorage("hasSeenMockLocationExplainer") private var hasSeenMockLocationExplainer = false
+    @State private var showMockLocationExplainer = false
     @State private var showDebugTooltip = false
     @State private var showDebugMenu = false
     @State private var showProfilePanel = false
@@ -92,6 +98,37 @@ struct ContentView: View {
             .map { $0 }
     }
 
+    /// Non-nil only in landmark mode — passed to the map to draw the mock dot.
+    /// In live mode the real GPS dot (MKUserLocation / UserAnnotation) handles it.
+    private var mockUserLocationForMap: CLLocationCoordinate2D? {
+        mockLocationMode == "landmark" ? effectiveUserLocation : nil
+    }
+
+    /// Fallback coordinates when registry lookup fails (e.g. timing) so the mock marker always shows in landmark mode.
+    private static let fallbackLandmarkByProviderID: [String: CLLocationCoordinate2D] = [
+        "com.tfl.santander-cycles": CLLocationCoordinate2D(latitude: 51.5055, longitude: -0.0754),
+        "com.citibikenyc.citi-bike": CLLocationCoordinate2D(latitude: 40.7580, longitude: -73.9855),
+        "com.velib-metropole.velib": CLLocationCoordinate2D(latitude: 48.8584, longitude: 2.2945)
+    ]
+
+    private var effectiveUserLocation: CLLocationCoordinate2D? {
+        switch mockLocationMode {
+        case "live": return locationManager.userLocation
+        case "none": return nil
+        default: // "landmark"
+            let providerID = storedProviderID.isEmpty ? (selectedProviderID ?? "") : storedProviderID
+            guard !providerID.isEmpty else { return nil }
+            if let provider = ProviderRegistry.shared.provider(id: providerID) as? any OnboardingCityProvider,
+               !provider.landmarks.isEmpty {
+                let marks = provider.landmarks
+                if let coord = (marks.first { $0.id == mockLandmarkID } ?? marks.first)?.coordinate {
+                    return coord
+                }
+            }
+            return Self.fallbackLandmarkByProviderID[providerID]
+        }
+    }
+
     private var bottomSheetContent: some View {
         BottomSheetView(
             sheetMode: $sheetMode,
@@ -102,16 +139,24 @@ struct ContentView: View {
             selectedDetent: $selectedDetent,
             showStampClaimSheet: $showStampClaimSheet,
             showProfilePanel: $showProfilePanel,
+            showCitySwitchAlert: $showCitySwitchAlert,
             isCompact: isCompact,
             nearbyStamps: nearbyStamps,
             midDetent: midDetent,
             collapsedDetent: collapsedDetent,
+            effectiveUserLocation: effectiveUserLocation,
+            suggestedCityName: suggestedCityName,
+            onSwitchCity: {
+                if let id = suggestedProviderID { storedProviderID = id }
+                withAnimation { showCitySwitchAlert = false }
+            },
+            onDismissMismatch: { withAnimation { showCitySwitchAlert = false } },
             bikePointService: bikePointService,
-            locationManager: locationManager,
             searchCompleter: searchCompleter,
             stampStore: stampStore,
             searchHistoryStore: searchHistoryStore,
-            networkMonitor: networkMonitor
+            networkMonitor: networkMonitor,
+            showMockLocationExplainer: $showMockLocationExplainer
         )
     }
 
@@ -124,16 +169,16 @@ struct ContentView: View {
             }
         }
         .onChange(of: locationManager.userLocation) { _, newLocation in
-            updateNearbyStamps(location: newLocation)
+            guard mockLocationMode == "live" else { return }
             searchCompleter.updateRegion(cityCenter: initialCenter,
                                          userLocation: newLocation)
             checkCitySuggestion(for: newLocation)
         }
         .onChange(of: stampStore.allDefinitions) { _, _ in
-            updateNearbyStamps(location: locationManager.userLocation)
+            updateNearbyStamps(location: effectiveUserLocation)
         }
         .onChange(of: stampStore.claimedStamps) { _, _ in
-            updateNearbyStamps(location: locationManager.userLocation)
+            updateNearbyStamps(location: effectiveUserLocation)
         }
         .onChange(of: storedProviderID) { _, newProviderID in
             guard !newProviderID.isEmpty else { return }
@@ -155,7 +200,14 @@ struct ContentView: View {
                     ))
                 }
                 searchCompleter.updateRegion(cityCenter: center,
-                                             userLocation: locationManager.userLocation)
+                                             userLocation: effectiveUserLocation)
+            }
+
+            // Auto-set landmark to first option for the new city.
+            if mockLocationMode == "landmark",
+               let provider = ProviderRegistry.shared.provider(id: newProviderID) as? any OnboardingCityProvider,
+               let first = provider.landmarks.first {
+                mockLandmarkID = first.id
             }
 
             // Collapse the sheet back to search mode.
@@ -177,7 +229,22 @@ struct ContentView: View {
                 ))
             }
             searchCompleter.updateRegion(cityCenter: center,
-                                         userLocation: locationManager.userLocation)
+                                         userLocation: effectiveUserLocation)
+        }
+        .onChange(of: mockLocationMode) { _, newMode in
+            if newMode == "live" { locationManager.requestLiveTracking() }
+            else { locationManager.stopLiveTracking() }
+            searchCompleter.updateRegion(cityCenter: initialCenter, userLocation: effectiveUserLocation)
+            updateNearbyStamps(location: effectiveUserLocation)
+        }
+        .onChange(of: mockLandmarkID) { _, _ in
+            updateNearbyStamps(location: effectiveUserLocation)
+        }
+        .onChange(of: effectiveUserLocation) { _, newLocation in
+            updateNearbyStamps(location: newLocation)
+        }
+        .onChange(of: nearbyStampsRefreshTrigger) { _, _ in
+            updateNearbyStamps(location: effectiveUserLocation)
         }
         .onChange(of: hasSeenDebugTooltip) { _, newValue in
             if !newValue && !showDebugTooltip {
@@ -189,9 +256,21 @@ struct ContentView: View {
             }
         }
         .onAppear {
-            updateNearbyStamps(location: locationManager.userLocation)
+            updateNearbyStamps(location: effectiveUserLocation)
             searchCompleter.updateRegion(cityCenter: initialCenter,
-                                         userLocation: locationManager.userLocation)
+                                         userLocation: effectiveUserLocation)
+            if hasCompletedOnboarding && !hasSeenMockLocationExplainer {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) { showMockLocationExplainer = true }
+            }
+            if mockLandmarkID.isEmpty, !storedProviderID.isEmpty,
+               let provider = ProviderRegistry.shared.provider(id: storedProviderID) as? any OnboardingCityProvider,
+               let first = provider.landmarks.first {
+                mockLandmarkID = first.id
+            }
+            // Deferred refresh so stamp prompt appears in mock (landmark) mode after registry/store are ready
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                nearbyStampsRefreshTrigger += 1
+            }
         }
     }
 
@@ -269,6 +348,8 @@ struct ContentView: View {
                 filteredBikePoints: filteredBikePoints,
                 selectedBikePoint: $selectedBikePoint,
                 destinationCoordinate: destinationCoordinate,
+                mockUserLocation: mockUserLocationForMap,
+                showsLiveUserLocation: mockLocationMode == "live",
                 isCompact: isCompact,
                 onBikePointTap: { bikePoint in
                     withAnimation(.spring(response: 0.3)) {
@@ -298,7 +379,7 @@ struct ContentView: View {
                     }
                 }
             )
-            .onChange(of: locationManager.userLocation) { _, newLocation in
+            .onChange(of: effectiveUserLocation) { _, newLocation in
                 guard !hasMovedCamera, let newLocation else { return }
                 let userLoc = CLLocation(latitude: newLocation.latitude, longitude: newLocation.longitude)
                 let cityLoc = CLLocation(latitude: initialCenter.latitude, longitude: initialCenter.longitude)
@@ -314,7 +395,24 @@ struct ContentView: View {
             }
         } else {
             Map(position: $cameraPosition) {
-                UserAnnotation()
+                if mockLocationMode == "live" {
+                    UserAnnotation()
+                }
+
+                if let loc = mockUserLocationForMap {
+                    Annotation("", coordinate: loc, anchor: .center) {
+                        ZStack {
+                            Circle()
+                                .fill(.white)
+                                .frame(width: 20, height: 20)
+                                .shadow(color: .black.opacity(0.25), radius: 3)
+                            Circle()
+                                .fill(.blue)
+                                .frame(width: 14, height: 14)
+                        }
+                        .allowsHitTesting(false)
+                    }
+                }
 
                 ForEach(filteredBikePoints) { bikePoint in
                     Annotation(bikePoint.commonName, coordinate: bikePoint.coordinate, anchor: .bottom) {
@@ -366,7 +464,7 @@ struct ContentView: View {
                     }
                 }
             }
-            .onChange(of: locationManager.userLocation) { _, newLocation in
+            .onChange(of: effectiveUserLocation) { _, newLocation in
                 guard !hasMovedCamera, let newLocation else { return }
                 let userLoc = CLLocation(latitude: newLocation.latitude, longitude: newLocation.longitude)
                 let cityLoc = CLLocation(latitude: initialCenter.latitude, longitude: initialCenter.longitude)
@@ -386,45 +484,6 @@ struct ContentView: View {
     @ViewBuilder
     private var floatingToolbar: some View {
         VStack {
-            // City-switch suggestion banner — drawn inline in the map area so it
-            // doesn't conflict with the permanent bottom-sheet presentation.
-            if showCitySwitchAlert, let cityName = suggestedCityName, let systemName = suggestedSystemName {
-                HStack(spacing: 10) {
-                    Image(systemName: "mappin.circle.fill")
-                        .font(.title3)
-                        .foregroundStyle(.tint)
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("You're near \(cityName)")
-                            .font(.subheadline.weight(.semibold))
-                        Text("Switch to \(systemName)?")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-                    Spacer()
-                    Button("Switch") {
-                        if let id = suggestedProviderID { storedProviderID = id }
-                        withAnimation { showCitySwitchAlert = false }
-                    }
-                    .font(.subheadline.weight(.semibold))
-                    .buttonStyle(.borderless)
-                    Button {
-                        withAnimation { showCitySwitchAlert = false }
-                    } label: {
-                        Image(systemName: "xmark.circle.fill")
-                            .foregroundStyle(.secondary)
-                    }
-                    .buttonStyle(.borderless)
-                }
-                .padding(.horizontal, 14)
-                .padding(.vertical, 10)
-                .background(.regularMaterial)
-                .clipShape(RoundedRectangle(cornerRadius: 14))
-                .shadow(color: .black.opacity(0.15), radius: 6, y: 3)
-                .padding(.top, 16)
-                .padding(.horizontal, 12)
-                .transition(.move(edge: .top).combined(with: .opacity))
-            }
-
             HStack {
                 Spacer()
                 VStack(spacing: 0) {
@@ -442,7 +501,7 @@ struct ContentView: View {
 
                     Button {
                         withAnimation {
-                            if let location = locationManager.userLocation {
+                            if let location = effectiveUserLocation {
                                 cameraPosition = .region(MKCoordinateRegion(
                                     center: location,
                                     span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
@@ -456,7 +515,7 @@ struct ContentView: View {
                             }
                         }
                     } label: {
-                        Image(systemName: locationManager.userLocation != nil ? "location.fill" : "location.slash.fill")
+                        Image(systemName: effectiveUserLocation != nil ? "location.fill" : "location.slash.fill")
                             .font(.system(size: toolbarIconSize, weight: .medium))
                             .frame(width: 44, height: 44)
                     }
@@ -513,14 +572,20 @@ struct ContentView: View {
                 .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
                 .sheet(isPresented: $showDebugMenu) {
                     NavigationStack {
-                        DebugMenuView(retriggerCitySuggestion: {
-                            // Reset suggestion state so the next location update re-runs the check.
-                            hasSuggestedCitySwitch = false
-                            showCitySwitchAlert = false
-                            suggestedProviderID = nil
-                            suggestedCityName = nil
-                            suggestedSystemName = nil
-                        })
+                        DebugMenuView(
+                            retriggerCitySuggestion: {
+                                // Reset suggestion state so the next location update re-runs the check.
+                                hasSuggestedCitySwitch = false
+                                showCitySwitchAlert = false
+                                suggestedProviderID = nil
+                                suggestedCityName = nil
+                                suggestedSystemName = nil
+                            },
+                                            reshowMockLocationExplainer: {
+                                hasSeenMockLocationExplainer = false
+                                showMockLocationExplainer = true
+                            }
+                        )
                         .environmentObject(searchHistoryStore)
                     }
                     .presentationDetents([.medium, .large])
@@ -539,7 +604,6 @@ struct ContentView: View {
 
             Spacer()
         }
-        .animation(reduceMotion ? nil : .spring(response: 0.4, dampingFraction: 0.85), value: showCitySwitchAlert)
     }
 
     private func updateNearbyStamps(location: CLLocationCoordinate2D?) {

@@ -54,12 +54,6 @@ struct OnboardingHost: View {
         }
         .environment(\.locale, overrideLocale ?? .current)
         .tint(providerAccentColor)
-        .task {
-            registry.register(SantanderCyclesProvider())
-            registry.register(CitiBikeProvider())
-            registry.register(VelibProvider())
-            stampStore.loadDefinitions(from: registry)
-        }
         .onAppear {
             #if DEBUG
             Task { await TestSuite.run() }

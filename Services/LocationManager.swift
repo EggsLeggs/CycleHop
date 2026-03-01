@@ -12,8 +12,16 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         super.init()
         manager.delegate = self
         manager.desiredAccuracy = kCLLocationAccuracyBest
+    }
+
+    func requestLiveTracking() {
         manager.requestWhenInUseAuthorization()
         manager.startUpdatingLocation()
+    }
+
+    func stopLiveTracking() {
+        manager.stopUpdatingLocation()
+        userLocation = nil
     }
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {

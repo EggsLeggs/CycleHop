@@ -88,7 +88,7 @@ struct StampClaimSheet: View {
             .padding(.horizontal, 24)
             .padding(.bottom, 24)
         }
-        .presentationDetents([.medium])
+        .presentationDetents([stamps.count > 1 ? PresentationDetent.fraction(0.65) : PresentationDetent.medium])
         .presentationDragIndicator(.visible)
         .onAppear {
             if !reduceMotion { motionManager.start() }

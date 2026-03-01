@@ -50,7 +50,6 @@ struct SearchResultsContent: View {
         stations.sort { $0.score > $1.score }
 
         // Nearest = nearest to the marker (destination), not to user
-        let destLoc = CLLocation(latitude: destinationCoordinate.latitude, longitude: destinationCoordinate.longitude)
         let nearest = stations.min(by: { a, b in
             let locA = CLLocation(latitude: a.bikePoint.lat, longitude: a.bikePoint.lon)
             let locB = CLLocation(latitude: b.bikePoint.lat, longitude: b.bikePoint.lon)

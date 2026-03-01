@@ -8,9 +8,15 @@ struct DebugMenuView: View {
     @AppStorage("userName") private var userName = ""
     @AppStorage("hasSeenDebugTooltip") private var hasSeenDebugTooltip = false
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
+    @AppStorage("hasSeenMockLocationExplainer") private var hasSeenMockLocationExplainer = false
+    @AppStorage("mockLocationMode") private var mockLocationMode = "landmark"
+    @AppStorage("mockLandmarkID") private var mockLandmarkID = ""
+    @AppStorage("selectedProviderID") private var selectedProviderID = ""
 
     /// Called when the user taps "Retrigger city suggestion". Provided by ContentView.
     var retriggerCitySuggestion: (() -> Void)? = nil
+    /// Called when the user taps "Reshow mock location explainer". Provided by ContentView.
+    var reshowMockLocationExplainer: (() -> Void)? = nil
 
     @State private var selectedStampID = ""
 
@@ -29,6 +35,57 @@ struct DebugMenuView: View {
                     .padding(.bottom, 8)
 
                 Divider()
+
+                HStack(spacing: rowSpacing) {
+                    Image(systemName: "location.circle")
+                        .frame(width: iconWidth)
+                    Text(NSLocalizedString("debug_location_mode", bundle: .localized, comment: ""))
+                    Spacer()
+                    Picker(NSLocalizedString("debug_location_mode", bundle: .localized, comment: ""), selection: $mockLocationMode) {
+                        Text(NSLocalizedString("debug_location_mode_mock", bundle: .localized, comment: "")).tag("landmark")
+                        Text(NSLocalizedString("debug_location_mode_none", bundle: .localized, comment: "")).tag("none")
+                        Text(NSLocalizedString("debug_location_mode_live", bundle: .localized, comment: "")).tag("live")
+                    }
+                    .labelsHidden()
+                    .pickerStyle(.menu)
+                }
+                .frame(minHeight: 54)
+                .padding(.horizontal, 16)
+
+                if mockLocationMode == "landmark" {
+                    Divider().padding(.leading, dividerInset)
+
+                    let currentProviderLandmarks = (ProviderRegistry.shared.provider(id: selectedProviderID) as? any OnboardingCityProvider)?.landmarks ?? []
+                    if !currentProviderLandmarks.isEmpty {
+                        HStack(spacing: rowSpacing) {
+                            Image(systemName: "mappin.and.ellipse")
+                                .frame(width: iconWidth)
+                            Text(NSLocalizedString("debug_landmark_picker", bundle: .localized, comment: ""))
+                            Spacer()
+                            Picker(NSLocalizedString("debug_landmark_picker", bundle: .localized, comment: ""), selection: $mockLandmarkID) {
+                                ForEach(currentProviderLandmarks) { landmark in
+                                    Text(landmark.displayName).tag(landmark.id)
+                                }
+                            }
+                            .labelsHidden()
+                            .pickerStyle(.menu)
+                        }
+                        .frame(minHeight: 54)
+                        .padding(.horizontal, 16)
+                    }
+                }
+
+                Divider().padding(.leading, dividerInset)
+
+                Button {
+                    reshowMockLocationExplainer?()
+                    dismiss()
+                } label: {
+                    debugRow(icon: "mappin.and.ellipse.circle", title: "Reshow mock location explainer")
+                }
+                .buttonStyle(.plain)
+
+                Divider().padding(.leading, dividerInset)
 
                 Button {
                     retriggerCitySuggestion?()

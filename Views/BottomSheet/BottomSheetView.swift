@@ -31,16 +31,27 @@ struct BottomSheetView: View {
     @Binding var selectedDetent: PresentationDetent
     @Binding var showStampClaimSheet: Bool
     @Binding var showProfilePanel: Bool
+    @Binding var showCitySwitchAlert: Bool
     var isCompact: Bool
     let nearbyStamps: [StampDefinition]
     let midDetent: PresentationDetent
     let collapsedDetent: PresentationDetent
+    let effectiveUserLocation: CLLocationCoordinate2D?
+    let suggestedCityName: String?
+    let onSwitchCity: () -> Void
+    let onDismissMismatch: () -> Void
     @ObservedObject var bikePointService: BikePointService
-    @ObservedObject var locationManager: LocationManager
     @ObservedObject var searchCompleter: SearchCompleter
     @ObservedObject var stampStore: StampStore
     @ObservedObject var searchHistoryStore: SearchHistoryStore
     @ObservedObject var networkMonitor: NetworkMonitor
+
+    @AppStorage("mockLocationMode") private var mockLocationMode = "landmark"
+    @AppStorage("mockLandmarkID") private var mockLandmarkID = ""
+    @AppStorage("selectedProviderID") private var selectedProviderID = ""
+    @AppStorage("hasSeenMockLocationExplainer") private var hasSeenMockLocationExplainer = false
+
+    @Binding var showMockLocationExplainer: Bool
 
     @State private var destinationName: String?
 
@@ -66,7 +77,7 @@ struct BottomSheetView: View {
                     SearchResultsContent(
                         destinationCoordinate: destinationCoordinate,
                         bikePoints: bikePointService.bikePoints,
-                        userLocation: locationManager.userLocation,
+                        userLocation: effectiveUserLocation,
                         selectedBikePoint: $selectedBikePoint,
                         sheetMode: $sheetMode,
                         cameraPosition: $cameraPosition,
@@ -79,7 +90,7 @@ struct BottomSheetView: View {
                 if let bikePoint = selectedBikePoint {
                     BikePointDetailContent(
                         bikePoint: bikePoint,
-                        userLocation: locationManager.userLocation,
+                        userLocation: effectiveUserLocation,
                         bikePointService: bikePointService
                     )
                 }
@@ -103,6 +114,11 @@ struct BottomSheetView: View {
             selectedDetent: selectedDetent,
             stampStore: stampStore
         ))
+        .sheet(isPresented: $showMockLocationExplainer, onDismiss: { hasSeenMockLocationExplainer = true }) {
+            MockLocationExplainerSheet()
+                .presentationDetents([.medium])
+                .presentationDragIndicator(.visible)
+        }
     }
 
     @ViewBuilder
@@ -138,6 +154,42 @@ struct BottomSheetView: View {
         } else {
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
+                    if mockLocationMode == "landmark" && selectedDetent != collapsedDetent {
+                        let landmarks = (ProviderRegistry.shared.provider(id: selectedProviderID) as? any OnboardingCityProvider)?.landmarks ?? []
+                        if landmarks.count > 1 {
+                            ScrollView(.horizontal, showsIndicators: false) {
+                                HStack(spacing: 8) {
+                                    ForEach(landmarks) { landmark in
+                                        Button {
+                                            mockLandmarkID = landmark.id
+                                        } label: {
+                                            Text(landmark.displayName)
+                                                .font(.caption.weight(.medium))
+                                                .padding(.horizontal, 12)
+                                                .padding(.vertical, 6)
+                                                .background(mockLandmarkID == landmark.id ? Color.accentColor : Color(.tertiarySystemBackground))
+                                                .foregroundStyle(mockLandmarkID == landmark.id ? Color.white : Color.primary)
+                                                .clipShape(Capsule())
+                                        }
+                                        .buttonStyle(.plain)
+                                        .accessibilityAddTraits(mockLandmarkID == landmark.id ? .isSelected : [])
+                                    }
+                                }
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 10)
+                            }
+                        }
+                    }
+
+                    if showCitySwitchAlert, let cityName = suggestedCityName, selectedDetent != collapsedDetent {
+                        LocationMismatchCard(
+                            cityName: cityName,
+                            onTap: onSwitchCity,
+                            onDismiss: onDismissMismatch
+                        )
+                        .padding(.top, 4)
+                    }
+
                     let promoStamps = nearbyStamps.filter { !stampStore.dismissedPromoIDs.contains($0.id) }
                     if !promoStamps.isEmpty && selectedDetent != collapsedDetent {
                         ForEach(promoStamps) { stamp in
