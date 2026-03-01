@@ -1,6 +1,26 @@
 import SwiftUI
 import MapKit
 
+/// Presents the profile as a sheet only when isCompact (iPhone). On iPad the profile is shown in the layout, not from here.
+private struct ProfileSheetOnCompactModifier: ViewModifier {
+    let isCompact: Bool
+    @Binding var showProfilePanel: Bool
+    let selectedDetent: PresentationDetent
+    @ObservedObject var stampStore: StampStore
+
+    func body(content: Content) -> some View {
+        if isCompact {
+            content
+                .sheet(isPresented: $showProfilePanel, onDismiss: { showProfilePanel = false }) {
+                    ProfileView(isPresented: $showProfilePanel, useSheetPresentation: true, startingDetent: selectedDetent == .large ? .large : .medium)
+                        .environmentObject(stampStore)
+                }
+        } else {
+            content
+        }
+    }
+}
+
 /// Bottom sheet content: header plus search, search results, or bike point detail.
 struct BottomSheetView: View {
     @Binding var sheetMode: SheetMode
@@ -10,6 +30,8 @@ struct BottomSheetView: View {
     @Binding var cameraPosition: MapCameraPosition
     @Binding var selectedDetent: PresentationDetent
     @Binding var showStampClaimSheet: Bool
+    @Binding var showProfilePanel: Bool
+    var isCompact: Bool
     let nearbyStamps: [StampDefinition]
     let midDetent: PresentationDetent
     let collapsedDetent: PresentationDetent
@@ -19,7 +41,6 @@ struct BottomSheetView: View {
     @ObservedObject var stampStore: StampStore
 
     @State private var destinationName: String?
-    @State private var showProfilePanel = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -65,9 +86,6 @@ struct BottomSheetView: View {
             Spacer(minLength: 0)
         }
         .frame(maxHeight: .infinity, alignment: .top)
-        .sheet(isPresented: $showProfilePanel) {
-            ProfileView(startingDetent: selectedDetent == .large ? .large : .medium)
-        }
         .onChange(of: searchText) { _, newValue in
             searchCompleter.searchQuery = newValue
         }
@@ -77,6 +95,12 @@ struct BottomSheetView: View {
                 destinationName = nil
             }
         }
+        .modifier(ProfileSheetOnCompactModifier(
+            isCompact: isCompact,
+            showProfilePanel: $showProfilePanel,
+            selectedDetent: selectedDetent,
+            stampStore: stampStore
+        ))
     }
 
     @ViewBuilder

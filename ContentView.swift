@@ -30,6 +30,7 @@ struct ContentView: View {
     @AppStorage("useOfflineMap") private var useOfflineMap = true
     @State private var showDebugTooltip = false
     @State private var showDebugMenu = false
+    @State private var showProfilePanel = false
     @ScaledMetric(relativeTo: .body) private var toolbarIconSize: CGFloat = 16
 
     private let initialCenter: CLLocationCoordinate2D
@@ -90,6 +91,8 @@ struct ContentView: View {
             cameraPosition: $cameraPosition,
             selectedDetent: $selectedDetent,
             showStampClaimSheet: $showStampClaimSheet,
+            showProfilePanel: $showProfilePanel,
+            isCompact: isCompact,
             nearbyStamps: nearbyStamps,
             midDetent: midDetent,
             collapsedDetent: collapsedDetent,
@@ -190,9 +193,23 @@ struct ContentView: View {
 
     private var regularLayout: some View {
         HStack(spacing: 0) {
-            bottomSheetContent
-                .frame(width: 360)
-                .background(.regularMaterial)
+            ZStack(alignment: .leading) {
+                bottomSheetContent
+                    .frame(width: 360)
+                    .background(.regularMaterial)
+
+                if showProfilePanel {
+                    ProfileView(isPresented: $showProfilePanel, useSheetPresentation: false)
+                        .environmentObject(stampStore)
+                        .frame(width: 420)
+                        .background(.regularMaterial)
+                        .shadow(color: .black.opacity(0.15), radius: 8, x: -2, y: 0)
+                        .zIndex(1)
+                        .transition(.move(edge: .trailing))
+                }
+            }
+            .frame(width: showProfilePanel ? 420 : 360)
+            .animation(.easeInOut(duration: 0.25), value: showProfilePanel)
 
             ZStack {
                 mapView

@@ -1,11 +1,32 @@
 import SwiftUI
 import PhotosUI
 
+/// Applies sheet-only modifiers (detents, drag indicator, background) when useSheetPresentation is true.
+private struct ProfileSheetPresentationModifier: ViewModifier {
+    let useSheetPresentation: Bool
+    @Binding var presentationDetent: PresentationDetent
+
+    func body(content: Content) -> some View {
+        if useSheetPresentation {
+            content
+                .presentationDetents([.medium, .large], selection: $presentationDetent)
+                .presentationDragIndicator(.visible)
+                .presentationBackground(.regularMaterial)
+        } else {
+            content
+        }
+    }
+}
+
 /// Profile sheet: photo, name, stamp collection (filter by year), settings, debug link.
+/// Can be shown as a sheet (iPhone) or embedded side panel (iPad); use isPresented + useSheetPresentation for panel mode.
 struct ProfileView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) private var colorScheme
     @EnvironmentObject private var stampStore: StampStore
+    @Binding var isPresented: Bool
+    var useSheetPresentation: Bool
+
     @AppStorage("userName") private var userName = ""
     @AppStorage("showUnownedStamps") private var showUnownedStamps = false
 
@@ -21,7 +42,9 @@ struct ProfileView: View {
     @State private var showCamera = false
     @State private var showPhotoPicker = false
 
-    init(startingDetent: PresentationDetent = .medium) {
+    init(isPresented: Binding<Bool> = .constant(false), useSheetPresentation: Bool = true, startingDetent: PresentationDetent = .medium) {
+        _isPresented = isPresented
+        self.useSheetPresentation = useSheetPresentation
         _presentationDetent = State(initialValue: startingDetent)
     }
 
@@ -42,7 +65,7 @@ struct ProfileView: View {
         }
     }
 
-    var body: some View {
+    private var mainContent: some View {
         VStack(spacing: 0) {
             header
             Divider()
@@ -53,12 +76,28 @@ struct ProfileView: View {
                 if filteredClaimedStamps.isEmpty { emptyState } else { stampSections }
             }
         }
-        .presentationDetents([.medium, .large], selection: $presentationDetent)
-        .presentationDragIndicator(.visible)
-        .presentationBackground(.regularMaterial)
-        .sheet(isPresented: $showSettings) {
-            SettingsView()
+    }
+
+    @ViewBuilder
+    private var bodyContent: some View {
+        if useSheetPresentation {
+            // iPhone: original sheet behaviour – detents and Settings in a sheet
+            mainContent
+                .modifier(ProfileSheetPresentationModifier(useSheetPresentation: true, presentationDetent: $presentationDetent))
+                .sheet(isPresented: $showSettings) {
+                    SettingsView()
+                }
+        } else {
+            // iPad: side panel – NavigationStack and NavigationLink for Settings (no sheet)
+            NavigationStack {
+                mainContent
+                    .modifier(ProfileSheetPresentationModifier(useSheetPresentation: false, presentationDetent: $presentationDetent))
+            }
         }
+    }
+
+    var body: some View {
+        bodyContent
         .alert("Your Name", isPresented: $isEditingName) {
             TextField("Enter your name", text: $editingText)
             Button("Save") { saveName() }
@@ -142,7 +181,7 @@ struct ProfileView: View {
                 Spacer()
 
                 Button {
-                    dismiss()
+                    isPresented = false
                 } label: {
                     Image(systemName: "xmark")
                         .fontWeight(.semibold)
@@ -150,26 +189,36 @@ struct ProfileView: View {
                 .accessibilityLabel(NSLocalizedString("a11y_close", bundle: .localized, comment: ""))
             }
 
-            Button {
-                showSettings = true
-            } label: {
-                HStack(spacing: 6) {
-                    Image(systemName: "gearshape")
-                        .font(.system(size: 13, weight: .semibold))
-                    Text("Settings")
-                        .font(.subheadline.weight(.medium))
+            Group {
+                if useSheetPresentation {
+                    Button {
+                        showSettings = true
+                    } label: { settingsButtonLabel }
+                } else {
+                    NavigationLink(destination: SettingsView()) {
+                        settingsButtonLabel
+                    }
                 }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
-                .frame(maxWidth: .infinity)
-                .background(Color.secondary.opacity(0.12))
-                .clipShape(Capsule())
             }
             .accessibilityLabel(NSLocalizedString("a11y_settings", bundle: .localized, comment: ""))
         }
         .padding(.horizontal, 20)
         .padding(.top, 24)
         .padding(.bottom, 16)
+    }
+
+    private var settingsButtonLabel: some View {
+        HStack(spacing: 6) {
+            Image(systemName: "gearshape")
+                .font(.system(size: 13, weight: .semibold))
+            Text("Settings")
+                .font(.subheadline.weight(.medium))
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
+        .frame(maxWidth: .infinity)
+        .background(Color.secondary.opacity(0.12))
+        .clipShape(Capsule())
     }
 
     private var filterBar: some View {
