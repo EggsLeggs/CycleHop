@@ -27,40 +27,35 @@ struct SearchResultsContent: View {
         }
 
         let userLoc = CLLocation(latitude: userLocation.latitude, longitude: userLocation.longitude)
-
-        // Direction vector from user to destination
-        let destDx = destinationCoordinate.longitude - userLocation.longitude
-        let destDy = destinationCoordinate.latitude - userLocation.latitude
+        let destLoc = CLLocation(latitude: destinationCoordinate.latitude, longitude: destinationCoordinate.longitude)
 
         var stations = bikePoints.compactMap { bp -> ScoredStation? in
             let stationLoc = CLLocation(latitude: bp.lat, longitude: bp.lon)
+            let distToDest = destLoc.distance(from: stationLoc)
             let distToUser = userLoc.distance(from: stationLoc)
 
-            guard distToUser < 3000 else { return nil } // Only within 3km
-            guard distToUser > 10 else { return nil } // Avoid division issues
+            guard distToDest < 1000 else { return nil } // Only within 1km of destination
+            guard distToDest > 1 else { return nil } // Avoid division issues
 
             let totalBikes = bp.nbBikes ?? 0
             let docks = max(bp.nbDocks ?? 1, 1)
             let availabilityFactor = Double(totalBikes) / Double(docks)
 
-            // Direction alignment
-            let stationDx = bp.lon - userLocation.longitude
-            let stationDy = bp.lat - userLocation.latitude
-            let dot = destDx * stationDx + destDy * stationDy
-            let magDest = sqrt(destDx * destDx + destDy * destDy)
-            let magStation = sqrt(stationDx * stationDx + stationDy * stationDy)
-            let cosAngle = (magDest > 0 && magStation > 0) ? dot / (magDest * magStation) : 0
-            let directionFactor = (1 + cosAngle) / 2
-
-            let score = (1.0 / distToUser) * availabilityFactor * directionFactor
+            // Score by proximity to destination and availability
+            let score = (1.0 / distToDest) * availabilityFactor
 
             return ScoredStation(bikePoint: bp, score: score, distance: distToUser, badges: [])
         }
 
         stations.sort { $0.score > $1.score }
 
-        // Determine badge winners
-        let nearest = stations.min(by: { $0.distance < $1.distance })
+        // Nearest = nearest to the marker (destination), not to user
+        let destLoc = CLLocation(latitude: destinationCoordinate.latitude, longitude: destinationCoordinate.longitude)
+        let nearest = stations.min(by: { a, b in
+            let locA = CLLocation(latitude: a.bikePoint.lat, longitude: a.bikePoint.lon)
+            let locB = CLLocation(latitude: b.bikePoint.lat, longitude: b.bikePoint.lon)
+            return locA.distance(from: destLoc) < locB.distance(from: destLoc)
+        })
         let mostBikes = stations.max(by: { ($0.bikePoint.nbBikes ?? 0) < ($1.bikePoint.nbBikes ?? 0) })
         let mostEBikes = stations.max(by: { ($0.bikePoint.nbEBikes ?? 0) < ($1.bikePoint.nbEBikes ?? 0) })
 

@@ -83,6 +83,7 @@
 /* Debug */
 "Tooltips" = "Infobulles";
 "Retrigger demo button tooltip" = "Réafficher l'infobulle de démo";
+"Retrigger city suggestion banner" = "Réafficher la bannière de suggestion de ville";
 "Profile" = "Profil";
 "Reset name" = "Réinitialiser le nom";
 "Remove profile photo" = "Supprimer la photo de profil";

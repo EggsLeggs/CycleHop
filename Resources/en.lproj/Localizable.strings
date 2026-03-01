@@ -39,18 +39,18 @@
 "When you visit new towns, cities, or attractions, you'll collect stamps to remember every adventure." = "When you visit new towns, cities, or attractions, you'll collect stamps to remember every adventure.";
 "Cities" = "Cities";
 "Attractions" = "Attractions";
-"Visit to collect" = "Visit to collect";
+"Visit to collect" = "Visit to Collect";
 
 /* Stamp claim & promo */
 "Add All" = "Add All";
-"Add stamp" = "Add stamp";
+"Add stamp" = "Add Stamp";
 "Stamp Available" = "Stamp Available";
 "New Stamp Available" = "New Stamp Available";
 "stamps_available_format" = "%d Stamps Available";
 
 /* Bottom sheet & map */
-"Search for a destination" = "Search for a destination";
-"Search history" = "Search history";
+"Search for a destination" = "Search for a Destination";
+"Search history" = "Search History";
 "search_empty_headline" = "Search for a destination";
 "search_empty_body" = "Search for a place to see bike stations nearby.";
 "search_offline_headline" = "You're offline";
@@ -62,7 +62,7 @@
 "Destination" = "Destination";
 "Recommended" = "Recommended";
 "Nearby" = "Nearby";
-"Return to onboarding" = "Return to onboarding";
+"Return to onboarding" = "Return to Onboarding";
 
 /* Station badges */
 "Best Overall" = "Best Overall";
@@ -82,24 +82,25 @@
 
 /* Debug */
 "Tooltips" = "Tooltips";
-"Retrigger demo button tooltip" = "Retrigger demo button tooltip";
+"Retrigger demo button tooltip" = "Retrigger Demo Button Tooltip";
+"Retrigger city suggestion banner" = "Retrigger City Suggestion Banner";
 "Profile" = "Profile";
-"Reset name" = "Reset name";
-"Remove profile photo" = "Remove profile photo";
+"Reset name" = "Reset Name";
+"Remove profile photo" = "Remove Profile Photo";
 "Stamps" = "Stamps";
 "Reset Stamps" = "Reset Stamps";
-"Add all stamps" = "Add all stamps";
+"Add all stamps" = "Add All Stamps";
 "Add Stamp" = "Add Stamp";
 "Select…" = "Select…";
 "Onboarding" = "Onboarding";
-"Restart onboarding" = "Restart onboarding";
+"Restart onboarding" = "Restart Onboarding";
 "Search" = "Search";
-"Reset search history" = "Reset search history";
+"Reset search history" = "Reset Search History";
 "Debug" = "Debug";
 "Done" = "Done";
 
 /* ContentView */
-"Try out demo features!" = "Try out demo features!";
+"Try out demo features!" = "Try Out Demo Features!";
 
 /* Stamp & city display names */
 "Paris" = "Paris";
@@ -112,7 +113,7 @@
 /* Settings */
 "Settings" = "Settings";
 "Change Location" = "Change Location";
-"Changes city theming and map centre" = "Changes city theming and map centre";
+"Changes city theming and map centre" = "Changes City Theming and Map Centre";
 "Manage" = "Manage";
 "Debug Menu" = "Debug Menu";
 "Online / Offline Maps" = "Online / Offline Maps";
@@ -146,9 +147,9 @@
 /* Map style (onboarding + settings) */
 "Choose Your Map" = "Choose Your Map";
 "Offline Map" = "Offline Map";
-"Works without internet" = "Works without internet";
+"Works without internet" = "Works Without Internet";
 "Apple Maps" = "Apple Maps";
-"Requires connection" = "Requires connection";
+"Requires connection" = "Requires Connection";
 "This app is built for the Swift Student Challenge, which requires offline support. The bundled map uses OpenStreetMap tiles and works anywhere - no connection needed." = "This app is built for the Swift Student Challenge, which requires offline support. The bundled map uses OpenStreetMap tiles and works anywhere - no connection needed.";
 "Apple Maps loads live map tiles from Apple's servers. If you have offline regions downloaded in the Maps app, those will work here too." = "Apple Maps loads live map tiles from Apple's servers. If you have offline regions downloaded in the Maps app, those will work here too.";
 "Requires Internet" = "Requires Internet";
@@ -159,6 +160,21 @@
 "This app is built for the Swift Student Challenge, which requires projects to work fully offline. The bundled offline map uses OpenStreetMap tiles so everything works without a network connection. If you have Apple Maps regions downloaded for offline use, Apple Maps should work here too." = "This app is built for the Swift Student Challenge, which requires projects to work fully offline. The bundled offline map uses OpenStreetMap tiles so everything works without a network connection. If you have Apple Maps regions downloaded for offline use, Apple Maps should work here too.";
 "Offline Map works without an internet connection using locally bundled tiles." = "Offline Map works without an internet connection using locally bundled tiles.";
 "Apple Maps shows live map data but requires an internet connection." = "Apple Maps shows live map data but requires an internet connection.";
+
+/* Mock location & mismatch */
+"mock_location_explainer_title" = "You're at a Landmark";
+"mock_location_explainer_body" = "This demo places you at a landmark so you can explore nearby bike stations without sharing your real location. Change it anytime in the Debug menu.";
+"mock_location_explainer_cta" = "Got It";
+"location_mismatch_title" = "You seem to be nearby";
+"location_mismatch_body" = "You appear to be near %@. Switch to see local stations?";
+"location_mismatch_action" = "Tap to switch city";
+
+/* Debug location mode */
+"debug_location_mode" = "Location Mode";
+"debug_location_mode_mock" = "Mock";
+"debug_location_mode_none" = "None";
+"debug_location_mode_live" = "Live GPS";
+"debug_landmark_picker" = "Landmark";
 
 /* Accessibility labels */
 "a11y_profile_photo" = "Profile photo";
@@ -180,6 +196,8 @@
 "a11y_search_history_section_format" = "Search history, %d items";
 "a11y_search_history_item_format" = "Previous search: %@, %@";
 "a11y_search_history_hint" = "Double tap to search again";
+"a11y_location_mismatch_format" = "You appear to be near %@";
+"a11y_location_mismatch_hint" = "Double tap to switch to that city";
 
 /* Provider open-app buttons */
 "Open Vélib' Métropole" = "Open Vélib' Métropole";

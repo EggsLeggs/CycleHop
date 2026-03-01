@@ -21,11 +21,60 @@ struct DebugMenuView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
+                // Location
+
+                Text("Location")
+                    .font(.title3.bold())
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 8)
+
+                Divider()
+
+                Button {
+                    retriggerCitySuggestion?()
+                    dismiss()
+                } label: {
+                    debugRow(icon: "mappin.circle", title: "Retrigger city suggestion banner")
+                }
+                .buttonStyle(.plain)
+
+                Divider().padding(.leading, dividerInset)
+
+                NavigationLink {
+                    ChangeLocationView()
+                        .environmentObject(ProviderRegistry.shared)
+                } label: {
+                    debugRow(icon: "mappin.and.ellipse", title: "Change Location")
+                }
+                .buttonStyle(.plain)
+
+                Divider()
+
+                // Onboarding
+
+                Text("Onboarding")
+                    .font(.title3.bold())
+                    .padding(.horizontal, 16)
+                    .padding(.top, 28)
+                    .padding(.bottom, 8)
+
+                Divider()
+
+                Button {
+                    hasCompletedOnboarding = false
+                } label: {
+                    debugRow(icon: "arrow.uturn.backward", title: "Restart onboarding", tint: .red)
+                }
+                .buttonStyle(.plain)
+
+                Divider()
+
                 // Tooltips
 
                 Text("Tooltips")
                     .font(.title3.bold())
                     .padding(.horizontal, 16)
+                    .padding(.top, 28)
                     .padding(.bottom, 8)
 
                 Divider()
@@ -137,55 +186,6 @@ struct DebugMenuView: View {
                     searchHistoryStore.reset()
                 } label: {
                     debugRow(icon: "clock.arrow.circlepath", title: "Reset search history", tint: .red)
-                }
-                .buttonStyle(.plain)
-
-                Divider()
-
-                // Location
-
-                Text("Location")
-                    .font(.title3.bold())
-                    .padding(.horizontal, 16)
-                    .padding(.top, 28)
-                    .padding(.bottom, 8)
-
-                Divider()
-
-                Button {
-                    retriggerCitySuggestion?()
-                    dismiss()
-                } label: {
-                    debugRow(icon: "mappin.circle", title: "Retrigger city suggestion banner")
-                }
-                .buttonStyle(.plain)
-
-                Divider()
-
-                // Onboarding
-
-                Text("Onboarding")
-                    .font(.title3.bold())
-                    .padding(.horizontal, 16)
-                    .padding(.top, 28)
-                    .padding(.bottom, 8)
-
-                Divider()
-
-                NavigationLink {
-                    ChangeLocationView()
-                        .environmentObject(ProviderRegistry.shared)
-                } label: {
-                    debugRow(icon: "mappin.and.ellipse", title: "Change Location")
-                }
-                .buttonStyle(.plain)
-
-                Divider().padding(.leading, dividerInset)
-
-                Button {
-                    hasCompletedOnboarding = false
-                } label: {
-                    debugRow(icon: "arrow.uturn.backward", title: "Restart onboarding", tint: .red)
                 }
                 .buttonStyle(.plain)
 
