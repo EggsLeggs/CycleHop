@@ -107,6 +107,25 @@ struct SettingsView: View {
                     .buttonStyle(.plain)
 
                     Divider()
+
+                    // --- Misc ---
+
+                    Text("Misc")
+                        .font(.title3.bold())
+                        .padding(.horizontal, 16)
+                        .padding(.top, 28)
+                        .padding(.bottom, 8)
+
+                    Divider()
+
+                    NavigationLink {
+                        AboutSettingsView()
+                    } label: {
+                        settingsRow(icon: "info.circle", title: "About")
+                    }
+                    .buttonStyle(.plain)
+
+                    Divider()
                 }
                 .padding(.bottom, 32)
             }
