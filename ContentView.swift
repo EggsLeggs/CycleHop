@@ -405,7 +405,7 @@ struct ContentView: View {
                     }
                 }
             }
-            .ignoresSafeArea(edges: .top)
+            .ignoresSafeArea(edges: [.top, .bottom])
         } else {
             Map(position: $cameraPosition) {
                 if mockLocationMode == "live" {
@@ -461,7 +461,7 @@ struct ContentView: View {
             }
             .mapStyle(.standard(pointsOfInterest: .excludingAll))
             .safeAreaPadding(.bottom, isCompact ? 100 : 0)
-            .ignoresSafeArea(edges: .top)
+            .ignoresSafeArea(edges: [.top, .bottom])
             .mapControls {
                 MapScaleView()
             }
@@ -622,6 +622,27 @@ struct ContentView: View {
     }
 
     private func updateNearbyStamps(location: CLLocationCoordinate2D?) {
+        if mockLocationMode == "landmark" {
+            // Proxied location: show only the selected city stamp + at most one landmark/attraction stamp.
+            let providerID = storedProviderID.isEmpty ? (selectedProviderID ?? "") : storedProviderID
+            let unclaimed: [StampDefinition]
+            if !providerID.isEmpty,
+               let provider = ProviderRegistry.shared.provider(id: providerID) as? any OnboardingCityProvider {
+                unclaimed = provider.stampDefinitions.filter { !stampStore.isAlreadyClaimed($0) }
+            } else {
+                unclaimed = stampStore.allDefinitions.filter { !stampStore.isAlreadyClaimed($0) }
+            }
+            let cityStamp = unclaimed.first { $0.type == .city }
+            let attractionStamps = unclaimed.filter { $0.type == .attraction }
+            let oneAttraction = attractionStamps.first { mockLandmarkID.isEmpty || mockLandmarkID.contains($0.id) || $0.id.contains(mockLandmarkID) }
+                ?? attractionStamps.first
+            var limited = [cityStamp, oneAttraction].compactMap { $0 }
+            if limited.isEmpty, !unclaimed.isEmpty {
+                limited = Array(unclaimed.prefix(2))
+            }
+            withAnimation { nearbyStamps = limited }
+            return
+        }
         guard let location else {
             withAnimation { nearbyStamps = [] }
             return
