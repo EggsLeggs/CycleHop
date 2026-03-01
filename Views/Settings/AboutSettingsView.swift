@@ -50,8 +50,8 @@ struct AboutSettingsView: View {
                 creditSection(
                     title: NSLocalizedString("about_credit_santander_title", bundle: .localized, comment: ""),
                     license: NSLocalizedString("about_credit_santander_license", bundle: .localized, comment: ""),
-                    description: "BikePoint station data for Santander Cycles in London. © Transport for London. Used under TfL’s data terms.",
-                    link: ("tfl.gov.uk", "https://tfl.gov.uk")
+                    description: NSLocalizedString("about_credit_santander_description", bundle: .localized, comment: ""),
+                    link: (NSLocalizedString("about_credit_santander_link", bundle: .localized, comment: ""), "https://tfl.gov.uk")
                 )
 
                 creditSection(
