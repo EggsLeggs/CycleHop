@@ -13,7 +13,7 @@ struct CitySelectScreen: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
                 Text(
-                    "This is a demo for the Apple Student Challenge. As the app is required to work offline, the data is an offline snapshot and location services are mocked. Online implementations are available on GitHub."
+                    "This is a demo for the Apple Student Challenge. As the app is required to work offline, the data is an offline snapshot and location services are mocked."
                 )
                 .font(.footnote)
                 .foregroundStyle(.secondary)
